@@ -4,3 +4,9 @@ out
 target
 feeds
 
+# Custom & scratch scripts
+scripts/
+scratch/
+*.py
+
+
