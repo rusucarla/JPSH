@@ -2,6 +2,10 @@
 
 This repository contains the progressive implementation of the **Bank Application** across all 5 Spring Framework exercises.
 
+## Java Runtime
+
+The project runs on **Java 21 LTS**. Ensure `JAVA_HOME` is set to your JDK 21 installation (`C:\Program Files\Java\jdk-21`).
+
 ## Overview & Branch Structure
 
 The application starts from a standard Spring Framework IoC XML setup and progressively evolves into a modern Spring Boot application with Aspect-Oriented Programming (AOP) and decoupled Spring Events.
