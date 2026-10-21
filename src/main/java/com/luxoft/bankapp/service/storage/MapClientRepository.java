@@ -1,9 +1,14 @@
 package com.luxoft.bankapp.service.storage;
 
 import com.luxoft.bankapp.model.Client;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class MapClientRepository implements ClientRepository {
 
     private Map<Long, Client> data;
