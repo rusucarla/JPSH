@@ -1,65 +1,102 @@
 package com.luxoft.bankapp.model;
 
-import java.util.Objects;
+import com.luxoft.bankapp.service.feed.Feed;
 
-public abstract class AbstractAccount {
+import java.io.Serializable;
+import java.util.Map;
 
+public abstract class AbstractAccount implements Account, Serializable
+{
     private long id;
 
+    @Feed
     private double balance;
 
-    public AbstractAccount() {
+    @Feed
+    final AccountType type;
+
+    public AbstractAccount(AccountType type)
+    {
+        this.type = type;
     }
 
-    public void deposit(double amount) {
-        if (amount < 0) {
+    @Override
+    public void deposit(double amount)
+    {
+        if (amount < 0)
+        {
             return;
         }
 
         balance += amount;
+        System.out.println("Successful deposit to " + type + " account.");
     }
 
-    public abstract void withdraw(double amount);
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
         AbstractAccount that = (AbstractAccount) o;
-        return id == that.id &&
-                Double.compare(that.balance, balance) == 0;
+
+        return Double.compare(that.balance, balance) == 0;
+
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, balance);
-    }
-
-    @Override
-    public String toString() {
-
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder
                 .append("\n")
+                .append(getType())
                 .append("\n\tbalance = ")
                 .append(balance);
-
         return builder.toString();
     }
 
-    public double getBalance() {
+    @Override
+    public AccountType getType()
+    {
+        return type;
+    }
+
+    @Override
+    public double getBalance()
+    {
         return balance;
     }
 
-    void setBalance(double balance) {
+    void setBalance(double balance)
+    {
         this.balance = balance;
     }
 
-    public long getId() {
+    @Override
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    @Override
+    public void setId(long id)
+    {
         this.id = id;
     }
+
+    // TODO feed
+    public void parseFeed(Map<String, String> map)
+    {
+        String balance = map.get("balance");
+        this.balance = Double.parseDouble(balance != null ? balance : "");
+    }
+
+
 }

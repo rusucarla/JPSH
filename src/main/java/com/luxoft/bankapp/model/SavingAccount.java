@@ -2,25 +2,36 @@ package com.luxoft.bankapp.model;
 
 import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 
-public class SavingAccount extends AbstractAccount {
+import java.util.Map;
 
-    public SavingAccount() {
-    }
+public class SavingAccount extends AbstractAccount
+{
 
-    public SavingAccount(double initialBalance) {
+    public SavingAccount(double initialBalance)
+    {
+        super(AccountType.SAVING);
 
-        if (initialBalance >= 0) {
+        if (initialBalance >= 0)
+        {
             setBalance(initialBalance);
         }
     }
 
     @Override
-    public void withdraw(double amount) {
-
-        if (getBalance() < amount) {
+    public void withdraw(double amount)
+    {
+        if (getBalance() < amount)
+        {
             throw new NotEnoughFundsException(amount);
         }
 
-        setBalance(getBalance() - amount);
+        System.out.println("Successful withdrawal from " + type + " account." );
+    }
+
+    // TODO feed
+    @Override
+    public void parseFeed(Map<String, String> map)
+    {
+        super.parseFeed(map);
     }
 }

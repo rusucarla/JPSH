@@ -2,159 +2,174 @@ package com.luxoft.bankapp.model;
 
 import com.luxoft.bankapp.exceptions.AccountNumberLimitException;
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
-import com.luxoft.bankapp.service.storage.ClientRepository;
-import java.util.*;
+import com.luxoft.bankapp.service.feed.Feed;
+import com.luxoft.bankapp.service.storage.Storage;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Client {
-
+public class Client implements Identifiable, Serializable
+{
     private long id;
 
+    @Feed("NAME")
     private String name;
 
-    private List<AbstractAccount> accounts = new ArrayList<>(2);
+    @Feed("ACCOUNTS")
+    private Set<Account> accounts = new HashSet<>(2);
 
-    private AbstractAccount activeAccount;
+    private Account activeAccount;
 
+    @Feed("GENDER")
     private Gender gender;
 
+    @Feed("CITY")
     private String city;
 
-    private ClientRepository repository;
+    private Storage<Client> storage;
 
-    public Client() {
+    public Client(String name)
+    {
+        this(name, Gender.UNDEFINED);
     }
 
-    public Client(String name, Gender gender) {
+    public Client(String name, Gender gender)
+    {
         this.name = name;
         this.gender = gender;
     }
 
-    public synchronized double getBalance() {
-
-        if (!checkIfActiveAccountSet()) {
-
+    public synchronized double getBalance()
+    {
+        if (!checkIfActiveAccountSet())
+        {
             throw new ActiveAccountNotSet(name);
         }
 
         return activeAccount.getBalance();
     }
 
-    public synchronized void deposit(double amount) {
-
-        if (!checkIfActiveAccountSet()) {
-
+    public synchronized void deposit(double amount)
+    {
+        if (!checkIfActiveAccountSet())
+        {
             throw new ActiveAccountNotSet(name);
         }
 
         activeAccount.deposit(amount);
-        repository.update(this);
+        storage.update(this);
     }
 
-    public synchronized void withdraw(double amount) {
-
-        if (!checkIfActiveAccountSet()) {
-
+    public synchronized void withdraw(double amount)
+    {
+        if (!checkIfActiveAccountSet())
+        {
             throw new ActiveAccountNotSet(name);
         }
 
         activeAccount.withdraw(amount);
-        repository.update(this);
+        storage.update(this);
     }
 
-    private boolean checkIfActiveAccountSet() {
-
+    private boolean checkIfActiveAccountSet()
+    {
         return activeAccount != null;
     }
 
-    public void removeAccount(Class type) {
-
+    public void removeAccount(AccountType type)
+    {
         accounts = accounts.stream()
-                .filter(a -> a.getClass() != type)
-                .collect(Collectors.toList());
-
-        repository.update(this);
+                .filter(a -> a.getType() != type)
+                .collect(Collectors.toSet());
     }
 
-    public void setAccounts(Set<AbstractAccount> accounts) {
-
+    public void setAccounts(Set<Account> accounts)
+    {
         this.accounts.clear();
         this.accounts.addAll(accounts);
-
-        repository.update(this);
     }
 
-    public List<AbstractAccount> getAccounts() {
-
-        return Collections.unmodifiableList(accounts);
+    public Set<Account> getAccounts()
+    {
+        return Collections.unmodifiableSet(accounts);
     }
 
-    public AbstractAccount getAccount(Class type) {
-
-        for (AbstractAccount account : accounts) {
-
-            if (account.getClass().equals(type)) {
+    public Account getAccount(AccountType type)
+    {
+        for (Account account : accounts)
+        {
+            if (account.getType().equals(type))
+            {
                 return account;
             }
         }
-
         return null;
     }
 
-    public void addAccount(AbstractAccount account) throws AccountNumberLimitException {
-
-        if (accounts.size() >= 2) {
-
+    public void addAccount(Account account) throws AccountNumberLimitException
+    {
+        if (accounts.size() >= 2)
+        {
             throw new AccountNumberLimitException();
         }
-
-        if (account != null) {
-
+        if (account != null)
+        {
             accounts.add(account);
         }
     }
 
-    public void setDefaultActiveAccountIfNotSet() {
+    public void setDefaultActiveAccountIfNotSet()
+    {
+        if (activeAccount == null && accounts != null && !accounts.isEmpty())
+        {
+            Account account = getAccount(AccountType.CHECKING);
 
-        if (activeAccount == null && accounts != null && !accounts.isEmpty()) {
-
-            AbstractAccount account = getAccount(CheckingAccount.class);
-
-            if (account == null) {
-
+            if (account == null)
+            {
                 account = accounts.iterator().next();
             }
 
             activeAccount = account;
+            storage.update(this);
 
-            repository.update(this);
-
-            System.out.println("Default account set for " + name + ":"
-                    + activeAccount.getClass().getSimpleName());
+            System.out.println("Default account set for " + name + ":" + activeAccount.getType());
         }
     }
 
+    public void parseFeed(Map<String, String> map)
+    {
+        this.city = map.get("CITY");
+        this.gender = Client.Gender.valueOf(map.get("GENDER"));
+    }
+
     @Override
-    public boolean equals(Object o) {
-
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
         Client client = (Client) o;
-
-        return id == client.id &&
-                Objects.equals(name, client.name) &&
-                Objects.equals(city, client.city);
+        return id == client.id;
     }
 
     @Override
-    public int hashCode() {
-
-        return Objects.hash(id, name, city);
+    public int hashCode()
+    {
+        return Objects.hash(id);
     }
 
-    private StringBuilder getSimpleInfoBuilder() {
+    private StringBuilder getSimpleInfoBuilder()
+    {
         StringBuilder builder = new StringBuilder();
 
         builder.append("\nClient: ")
@@ -166,84 +181,107 @@ public class Client {
     }
 
     @Override
-    public String toString() {
-
+    public String toString()
+    {
         StringBuilder builder = getSimpleInfoBuilder();
 
         builder.append("\nAccounts:");
 
-        for (AbstractAccount account : accounts) {
+        for (Account account : accounts)
+        {
             builder.append(account.toString());
         }
 
         builder.append("\nActive account: ");
 
-        builder.append(checkIfActiveAccountSet() ?
-                activeAccount.getClass().getSimpleName() : "not set");
+        builder.append(checkIfActiveAccountSet() ? activeAccount.getType() : "not set");
 
         return builder.toString();
     }
 
-    public long getId() {
+    @Override
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-    public AbstractAccount getActiveAccount() {
+    public Account getActiveAccount()
+    {
         return activeAccount;
     }
 
-    public void setActiveAccount(AbstractAccount activeAccount) {
+    public void setActiveAccount(Account activeAccount)
+    {
         this.activeAccount = activeAccount;
     }
 
-    public Gender getGender() {
+    public Gender getGender()
+    {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(Gender gender)
+    {
         this.gender = gender;
     }
 
-    public String getCity() {
+    public String getCity()
+    {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city)
+    {
         this.city = city;
     }
 
-    public enum Gender {
-
+    public enum Gender
+    {
         MALE("Mr"), FEMALE("Ms"), UNDEFINED("");
 
         private String prefix;
 
-        String getSalutation() {
+        String getSalutation()
+        {
             return prefix;
         }
 
-        Gender(String prefix) {
+        Gender(String prefix)
+        {
             this.prefix = prefix;
+        }
+
+        public static Gender parse(String s)
+        {
+            if ("m".equals(s))
+            {
+                return MALE;
+            }
+            else if ("f".equals(s))
+            {
+                return FEMALE;
+            }
+            return UNDEFINED;
         }
     }
 
-    public void setRepository(ClientRepository repository) {
-        this.repository = repository;
-    }
-
-    public void setAccounts(List<AbstractAccount> accounts) {
-        this.accounts = accounts;
+    public void setStorage(Storage<Client> storage)
+    {
+        this.storage = storage;
     }
 }
