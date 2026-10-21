@@ -20,7 +20,7 @@ public class BankApplication {
 
     public static void main(String[] args) {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
         Banking banking = initialize(context);
 
         workWithExistingClients(banking);
@@ -105,21 +105,25 @@ public class BankApplication {
 
         Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+        if (context.containsBean("client1")) {
+            Client client_1 = (Client) context.getBean("client1");
+            Client client_2 = (Client) context.getBean("client2");
+            banking.addClient(client_1);
+            banking.addClient(client_2);
+        } else {
+            Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+            AbstractAccount savingAccount = new SavingAccount(1000);
+            client_1.addAccount(savingAccount);
+            AbstractAccount checkingAccount = new CheckingAccount(1000);
+            client_1.addAccount(checkingAccount);
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
+            Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
+            AbstractAccount checking = new CheckingAccount(1500);
+            client_2.addAccount(checking);
 
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
-
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
-
-        AbstractAccount checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
-
-        banking.addClient(client_1);
-        banking.addClient(client_2);
+            banking.addClient(client_1);
+            banking.addClient(client_2);
+        }
 
         return banking;
     }
