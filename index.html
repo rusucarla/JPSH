@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b1120">
+  <title>Spring Lab — Pregătire Interviu &amp; Grilă Interactivă (Ex 1–5)</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --bg-elev: #111827;
+      --card: #151e31;
+      --card-2: #1a253c;
+      --border: #26334d;
+      --border-soft: #1f2a40;
+      --text: #e6edf7;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.14);
+      --green: #22c55e;
+      --green-soft: rgba(34, 197, 94, 0.14);
+      --red: #ef4444;
+      --red-soft: rgba(239, 68, 68, 0.14);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --purple: #a78bfa;
+      --purple-soft: rgba(167, 139, 250, 0.14);
+      --code-bg: #090e1a;
+      --code-hl: rgba(245, 158, 11, 0.13);
+      --code-hl-bar: #f59e0b;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    }
+
+    /* Sticky Top Navigation */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 17, 32, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .topbar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .score-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: var(--bg-elev);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 40px;
+      padding: 6px 8px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: var(--card-2);
+      color: var(--accent);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 14px 28px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Category Filter Pills */
+    .filter-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 13px;
+      min-height: 38px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Controls / Search / Jump Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .jump-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 240px;
+      min-width: 0;
+    }
+
+    .select-jump {
+      width: 100%;
+      min-height: 42px;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 13.5px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-ghost {
+      appearance: none;
+      background: var(--card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      min-height: 42px;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ghost:active { transform: scale(0.98); }
+    .btn-ghost.active-toggle {
+      background: var(--purple-soft);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    /* Progress Bar */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 7px;
+      background: var(--card);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #6366f1);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+      width: 0%;
+    }
+
+    .progress-label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Question Card */
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .q-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+    }
+
+    .badge-hot { background: var(--amber-soft); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-prob { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35); }
+    .badge-trap { background: var(--red-soft); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .badge-ex { background: var(--purple-soft); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); }
+    .badge-branch {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .bookmark-btn {
+      appearance: none;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      min-height: 38px;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .bookmark-btn.saved {
+      background: var(--amber-soft);
+      border-color: var(--amber);
+      color: #fbbf24;
+    }
+
+    /* Code Block */
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-soft);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .code-filename {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #cbd5e1;
+    }
+
+    .code-lang {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .code-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 10px 0;
+      font-family: var(--font-mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+    }
+
+    .code-line {
+      display: flex;
+      padding: 1px 12px 1px 0;
+      min-width: max-content;
+    }
+
+    .code-line.hl {
+      background: var(--code-hl);
+      box-shadow: inset 3px 0 0 var(--code-hl-bar);
+    }
+
+    .ln {
+      user-select: none;
+      -webkit-user-select: none;
+      width: 38px;
+      text-align: right;
+      padding-right: 12px;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      font-size: 11.5px;
+    }
+
+    .lc {
+      white-space: pre;
+      color: #e2e8f0;
+    }
+
+    /* Syntax Token Colors */
+    .tok-kw { color: #c084fc; font-weight: 600; }
+    .tok-ann { color: #fbbf24; }
+    .tok-str { color: #86efac; }
+    .tok-com { color: #64748b; font-style: italic; }
+    .tok-type { color: #38bdf8; }
+    .tok-num { color: #fb923c; }
+    .tok-tag { color: #60a5fa; }
+    .tok-attr { color: #fbbf24; }
+
+    /* Question Prompt */
+    .q-prompt {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin: 0 0 14px;
+      line-height: 1.45;
+    }
+
+    .q-prompt code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    /* Options */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opt-btn {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      background: var(--bg-elev);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      min-height: 48px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14.5px;
+      line-height: 1.45;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      transition: transform 0.1s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      border-color: #475569;
+      background: #172033;
+    }
+
+    .opt-btn:active:not(:disabled) {
+      transform: scale(0.992);
+    }
+
+    .opt-letter {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .opt-btn.correct {
+      background: var(--green-soft);
+      border-color: var(--green);
+      animation: popOk 0.25s ease;
+    }
+
+    .opt-btn.correct .opt-letter {
+      background: var(--green);
+      border-color: var(--green);
+      color: #052e16;
+    }
+
+    .opt-btn.wrong {
+      background: var(--red-soft);
+      border-color: var(--red);
+      animation: shakeErr 0.28s ease;
+    }
+
+    .opt-btn.wrong .opt-letter {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    .opt-btn.dimmed {
+      opacity: 0.58;
+    }
+
+    @keyframes popOk {
+      0% { transform: scale(0.99); }
+      50% { transform: scale(1.012); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shakeErr {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    /* Study Panel */
+    .study-panel {
+      margin-top: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .study-panel.visible {
+      display: flex;
+    }
+
+    .study-box {
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .study-box h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .study-box p {
+      margin: 0;
+    }
+
+    .study-box code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 1px 5px;
+      border-radius: 5px;
+      color: #bae6fd;
+    }
+
+    .box-explain {
+      background: rgba(56, 189, 248, 0.09);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+    }
+    .box-explain h4 { color: var(--accent); }
+
+    .box-speech {
+      background: rgba(34, 197, 94, 0.09);
+      border: 1px solid rgba(34, 197, 94, 0.28);
+    }
+    .box-speech h4 { color: #4ade80; }
+
+    .box-screen {
+      background: rgba(167, 139, 250, 0.09);
+      border: 1px solid rgba(167, 139, 250, 0.28);
+    }
+    .box-screen h4 { color: #c4b5fd; }
+
+    /* Nav Footer inside Card */
+    .nav-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-primary {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      min-height: 46px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-secondary {
+      appearance: none;
+      background: var(--bg-elev);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 46px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn-primary:disabled, .btn-secondary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 36px 18px;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+    }
+
+    /* Mock Interview Styles */
+    .sim-intro, .sim-summary {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+    }
+
+    .sim-intro h2, .sim-summary h2 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .sim-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .stat-tile {
+      background: var(--bg-elev);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .stat-tile .val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat-tile .lbl {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .grade-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(99, 102, 241, 0.16));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .grade-score {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .review-item {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .review-item.ok { border-left: 4px solid var(--green); }
+    .review-item.bad { border-left: 4px solid var(--red); }
+
+    /* Cheat Sheet Styles */
+    .cs-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .cs-section h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cs-section h3 {
+      margin: 14px 0 8px;
+      font-size: 14.5px;
+      color: var(--accent);
+    }
+
+    .cs-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .cs-list li {
+      margin-bottom: 7px;
+    }
+
+    .callout {
+      background: var(--amber-soft);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .callout strong { color: #fbbf24; }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      min-width: 520px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: top;
+    }
+
+    th {
+      background: #0f172a;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    td code, .cs-section code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: rgba(15, 23, 42, 0.85);
+      color: #7dd3fc;
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    .cmd-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+    }
+
+    .cmd-text {
+      overflow-x: auto;
+      white-space: nowrap;
+      color: #cbd5e1;
+    }
+
+    .copy-btn {
+      appearance: none;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      min-height: 34px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 720px) {
+      .topbar-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand-row {
+        flex: 1;
+      }
+      .tabs {
+        width: 420px;
+        flex-shrink: 0;
+      }
+      .q-card {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-row">
+      <div class="brand">
+        <div class="brand-icon">S</div>
+        <div class="brand-text">
+          <h1>Spring Lab — Pregătire Interviu</h1>
+          <p>Bazat pe codul tău din JPSH (Ex 1–5) &amp; întrebările colegilor</p>
+        </div>
+      </div>
+      <div class="score-pill" id="globalScorePill" title="Scor total în modul Grilă">
+        <span class="dot"></span>
+        <span id="globalScoreText">0 / 26</span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="quiz" role="tab" aria-selected="true">🎯 Grilă (26)</button>
+      <button class="tab-btn" data-tab="sim" role="tab" aria-selected="false">🎤 Simulare (5)</button>
+      <button class="tab-btn" data-tab="cheat" role="tab" aria-selected="false">📋 Cheat-Sheet</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- TAB 1: QUIZ / PRACTICE -->
+  <section id="view-quiz" class="view active">
+    <div class="filter-scroll" id="categoryFilters"></div>
+
+    <div class="controls-bar">
+      <div class="jump-wrap">
+        <select id="questionJump" class="select-jump" aria-label="Sari la întrebare"></select>
+      </div>
+      <div class="action-row">
+        <button class="btn-ghost" id="toggleStudyModeBtn" type="button">👁️ Mod studiu</button>
+        <button class="btn-ghost" id="resetProgressBtn" type="button">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="quizProgressFill"></div></div>
+      <div class="progress-label" id="quizProgressLabel">0 / 0</div>
+    </div>
+
+    <div id="quizStage"></div>
+  </section>
+
+  <!-- TAB 2: MOCK INTERVIEW SIMULATOR -->
+  <section id="view-sim" class="view">
+    <div id="simStage"></div>
+  </section>
+
+  <!-- TAB 3: STRATEGY & CHEAT SHEET -->
+  <section id="view-cheat" class="view">
+    <div class="cs-section">
+      <h2>🕵️ Distilarea conversației de pe WhatsApp (Cum decurge prezentarea)</h2>
+      <ul class="cs-list">
+        <li><strong>Formatul apelului:</strong> Profesorul te sună (<strong>fără cameră</strong>, doar share screen). Nu te pune să parcurgi toate cele 5 exerciții.</li>
+        <li><strong>Tu alegi ce arăți:</strong> Îți cere să alegi <strong>un singur exercițiu</strong> din cele 5 (majoritatea colegilor au ales <strong>Ex 2</strong> și a fost super rapid).</li>
+        <li><strong>Întrebările vin strict din ce vede pe ecran:</strong> Dacă ai un bloc <code>try/catch</code> pe ecran, întreabă de el; dacă ai <code>@Autowired</code>, întreabă ce face; dacă vede XML-ul, întreabă de <code>&lt;bean&gt;</code> și <code>autowire</code>.</li>
+        <li><strong>Notarea:</strong> Foarte lejeră — colegii au primit minim ~23/25 pe Java și note maxime dacă știau să explice conceptele de bază de pe ecran.</li>
+      </ul>
+      <div class="callout">
+        <strong>💡 Descoperire cheie din codul tău:</strong> Colegul care a spus <em>„m-a întrebat ce face un bloc try/catch și de ce nu fac nimic în catch”</em> avea probabil deschis <code>BankApplicationTask1Tests.java</code> (metoda <code>init()</code> are <code>catch (Exception e) { // ignore }</code>) sau <code>BankApplication.java</code>! Pregătește ambele răspunsuri (Întrebarea #1 și #2 din grilă).
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <h2>🌟 Strategia de Aur: Ce tab-uri să lași deschise pe ecran</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin-top:0;">
+        Comută pe branch-ul <code>ex2-annotation-dependencies</code> în <code>JPSH</code> și deschide <strong>exact aceste 4 tab-uri</strong> în IntelliJ (închide testele ca să nu te întrebe de reflection-ul din <code>@BeforeEach</code>):
+      </p>
+      <ul class="cs-list">
+        <li><strong>Tab 1 (activ):</strong> <code>src/main/resources/application-context.xml</code> — mic, curat, arată imediat <code>&lt;context:annotation-config /&gt;</code> și cele 3 <code>&lt;bean&gt;</code>-uri.</li>
+        <li><strong>Tab 2:</strong> <code>src/main/java/com/luxoft/bankapp/service/BankingImpl.java</code> — arată <code>@Autowired private ClientRepository repository;</code>.</li>
+        <li><strong>Tab 3:</strong> <code>src/main/java/com/luxoft/bankapp/service/BankReportServiceImpl.java</code> — al doilea loc unde se folosește <code>clientRepository</code> cu <code>@Autowired</code>.</li>
+        <li><strong>Tab 4:</strong> <code>src/main/java/BankApplication.java</code> — arată <code>ClassPathXmlApplicationContext(...)</code> și <code>context.getBean("banking")</code>.</li>
+      </ul>
+    </div>
+
+    <div class="cs-section">
+      <h2>⚖️ Tabel Rapid: Unde declar bean-urile vs. Unde le folosesc (Ex 1–5)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Exercițiu &amp; Branch</th>
+              <th>Unde declar bean-urile?</th>
+              <th>Cum injectez / le folosesc?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ex 1 (XML)</strong><br><code>ex1-xml-configuration</code></td>
+              <td>În <code>application-context.xml</code> (<code>&lt;bean id="..." class="..."/&gt;</code>) și <code>test-clients.xml</code></td>
+              <td><code>autowire="byType"</code> în XML + <code>&lt;property ref="..."/&gt;</code> + <code>context.getBean(...)</code> în <code>BankApplication</code></td>
+            </tr>
+            <tr>
+              <td><strong>Ex 2 (Adnotări)</strong><br><code>ex2-annotation-dependencies</code></td>
+              <td>Tot în <code>application-context.xml</code> (+ <code>&lt;context:annotation-config /&gt;</code>)</td>
+              <td><code>@Autowired</code> direct pe câmpul <code>repository</code> în <code>BankingImpl</code> &amp; <code>BankReportServiceImpl</code></td>
+            </tr>
+            <tr>
+              <td><strong>Ex 3 (Java Config)</strong><br><code>ex3-java-configuration</code></td>
+              <td><code>@Service</code> pe clase (<code>MapClientRepository</code>, <code>BankingImpl</code>, <code>BankReportServiceImpl</code>) + <code>@Bean</code> în <code>BankApplication</code></td>
+              <td><code>@Configuration</code> + <code>@ComponentScan("com.luxoft.bankapp")</code> + <code>AnnotationConfigApplicationContext</code></td>
+            </tr>
+            <tr>
+              <td><strong>Ex 4 (Spring Boot)</strong><br><code>ex4-spring-boot</code></td>
+              <td><code>@SpringBootApplication</code> + <code>@Service</code> (+ <code>@Profile("dev")</code> pe <code>DemoBankInitializationService</code>)</td>
+              <td><code>@Autowired</code>, <code>@Value("${feed.filename}")</code> din <code>application.yml</code>, <code>@PostConstruct</code></td>
+            </tr>
+            <tr>
+              <td><strong>Ex 5 (AOP &amp; Events)</strong><br><code>ex5-aop-events</code></td>
+              <td><code>@Service</code> (<code>BankingOperationsServiceImpl</code>, <code>AuditService</code>), <code>@Aspect @Configuration</code> (<code>AuditAspect</code>), <code>@Component</code> (<code>EventConditionFilter</code>)</td>
+              <td><code>@Pointcut</code> / <code>@Before</code> / <code>@Around</code> → <code>applicationContext.publishEvent(...)</code> → <code>@EventListener(condition = "...")</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <h2>🔌 Tipuri de Autowiring în XML (întrebare confirmată!)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mod</th>
+              <th>Cum caută Spring bean-ul?</th>
+              <th>Când pică / Observație</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>byType</code></td>
+              <td>După <strong>tipul clasei/interfeței</strong> din setter (ex: <code>ClientRepository</code>).</td>
+              <td>Pică cu <code>NoUniqueBeanDefinitionException</code> dacă sunt ≥ 2 bean-uri de același tip.</td>
+            </tr>
+            <tr>
+              <td><code>byName</code></td>
+              <td>După <strong>numele proprietății/setter-ului</strong> (<code>setRepository</code> → caută bean cu <code>id="repository"</code>).</td>
+              <td>Dacă în XML bean-ul are <code>id="clientRepository"</code> (ca la noi), <code>byName</code> <strong>NU</strong> îl găsește!</td>
+            </tr>
+            <tr>
+              <td><code>constructor</code></td>
+              <td>Similar cu <code>byType</code>, dar aplicat pe parametrii constructorului clasei.</td>
+              <td>Necesită constructor cu parametri compatibili.</td>
+            </tr>
+            <tr>
+              <td><code>no</code> (default)</td>
+              <td>Nu face autowiring automat; dependențele se leagă manual cu <code>&lt;property ref="..."/&gt;</code> sau <code>@Autowired</code>.</td>
+              <td>Acesta e modul folosit implicit în Ex 2.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>&lt;constructor-arg&gt; vs &lt;property&gt; și value vs ref</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Element / Atribut</th>
+              <th>Ce apelează / ce pasează?</th>
+              <th>Exemplu din <code>test-clients.xml</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>&lt;constructor-arg&gt;</code></td>
+              <td>Apelează <strong>constructorul</strong> la crearea obiectului.</td>
+              <td><code>&lt;constructor-arg name="name" value="${client1}" /&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>&lt;property&gt;</code></td>
+              <td>Apelează <strong>setter-ul</strong> (<code>setCity</code>, <code>setAccounts</code>) după constructor.</td>
+              <td><code>&lt;property name="city" value="Moscow" /&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>value="..."</code></td>
+              <td>Pentru valori simple: primitive, <code>String</code>, Enum, <code>${...}</code>.</td>
+              <td><code>value="MALE"</code>, <code>value="1000"</code></td>
+            </tr>
+            <tr>
+              <td><code>ref="..."</code></td>
+              <td>Referință către <strong>alt bean</strong> administrat de containerul Spring.</td>
+              <td><code>&lt;property name="repository" ref="clientRepository" /&gt;</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <h2>💻 Comenzi rapide Git pentru prezentare (în folderul <code>JPSH</code>)</h2>
+      <div class="cmd-row">
+        <span class="cmd-text">git checkout ex2-annotation-dependencies</span>
+        <button class="copy-btn" data-copy="git checkout ex2-annotation-dependencies">Copiază</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-text">git checkout ex1-xml-configuration</span>
+        <button class="copy-btn" data-copy="git checkout ex1-xml-configuration">Copiază</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-text">git checkout ex3-java-configuration</span>
+        <button class="copy-btn" data-copy="git checkout ex3-java-configuration">Copiază</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-text">git checkout ex4-spring-boot</span>
+        <button class="copy-btn" data-copy="git checkout ex4-spring-boot">Copiază</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-text">git checkout ex5-aop-events</span>
+        <button class="copy-btn" data-copy="git checkout ex5-aop-events">Copiază</button>
+      </div>
+      <div class="cmd-row">
+        <span class="cmd-text">$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; .\mvnw.cmd test</span>
+        <button class="copy-btn" data-copy='$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; .\mvnw.cmd test'>Copiază</button>
+      </div>
+    </div>
+    <div class="cs-section">
+      <h2>📱 Cum deschizi acest fișier pe iPhone / iOS Safari</h2>
+      <p style="font-size:14px; margin-top:0;">
+        Aplicația <em>Files</em> (Quick Look) de pe iPhone blochează JavaScript-ul în fișierele <code>.html</code> locale. Ca să meargă toate butoanele și simularea pe iOS:
+      </p>
+      <ul class="cs-list">
+        <li><strong>Varianta 1 (pe același Wi-Fi cu PC-ul):</strong> rulează <code>python -m http.server 8080</code> în folderul <code>Spring</code> și intră din Safari pe iPhone la <code>http://&lt;IP-PC&gt;:8080/spring_interview_prep.html</code> (apoi Share → <em>Add to Home Screen</em>).</li>
+        <li><strong>Varianta 2 (offline pe telefon):</strong> deschide fișierul cu o aplicație iOS gratuită care rulează JS local (ex. <em>HTML Viewer Q</em> sau <em>Documents by Readdle</em>).</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  const QUESTIONS = [
+    // ======================== HOT: ÎNTREBATE COLEGILOR (Q1 - Q7) ========================
+    {
+      id: 1,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/test/java/BankApplicationTask1Tests.java",
+      lang: "java",
+      hlLines: [3, 4, 5, 6, 7],
+      code:
+`@BeforeEach
+public void init() {
+    try {
+        BankApplication.class.getMethod("initialize", ApplicationContext.class)
+            .invoke(null, applicationContext);
+    } catch (Exception e) {
+        // ignore
+    }
+}`,
+      question: "Profesorul vede acest bloc pe ecran și te întreabă: „Ce face blocul try/catch de aici și de ce nu faci nimic în catch?”",
+      options: [
+        "Prinde excepții de conectare la baza de date SQL și le ignoră intenționat ca testele să nu pice.",
+        "Apelează dinamic prin Java Reflection metoda statică initialize(ApplicationContext); blocul catch e gol în scheletul de test ca testele să compileze și să ruleze chiar și înainte ca studentul să modifice semnătura metodei (deși în producție e anti-pattern).",
+        "Face autowiring manual pentru ApplicationContext atunci când @Autowired eșuează.",
+        "Repornește containerul Spring înainte de fiecare test dacă apare NullPointerException."
+      ],
+      correct: 1,
+      explain: "Codul face parte din scheletul testelor de laborator (vezi comentariul TODO de dedesubt în fișier). Folosește Reflection (<code>getMethod(...).invoke(...)</code>) pentru a apela <code>BankApplication.initialize(applicationContext)</code> dacă studentul a actualizat semnătura de la Task 1. Dacă metoda nu există încă (<code>NoSuchMethodException</code>), blocul <code>catch</code> o ignoră ca să poată rula testele inițiale.",
+      speech: "Acesta este codul din scheletul testului JUnit: încearcă să apeleze prin Java Reflection metoda statică initialize(ApplicationContext) înainte de fiecare test. Blocul catch e gol aici intenționat ca testul să poată compila și rula și înainte de refactoring, deși în producție nu e recomandat să înghițim excepțiile fără logging.",
+      screen: "Branch ex2-annotation-dependencies → src/test/java/BankApplicationTask1Tests.java (liniile 31–42) — sau și mai bine, închide tab-ul de teste în timpul prezentării."
+    },
+    {
+      id: 2,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [3, 4, 5, 6, 7, 8, 9],
+      code:
+`Client jonny = banking.getClient(CLIENT_NAMES[0]);
+
+try {
+    jonny.deposit(5_000);
+} catch (ActiveAccountNotSet e) {
+    System.out.println(e.getMessage());
+
+    jonny.setDefaultActiveAccountIfNotSet();
+    jonny.deposit(5_000);
+}`,
+      question: "Dacă profesorul dă peste acest try/catch din BankApplication.java și te întreabă ce face și de ce există, ce îi spui?",
+      options: [
+        "Încearcă depunerea pe contul activ al clientului; dacă nu e setat niciun cont activ, prinde ActiveAccountNotSet, setează contul implicit și reîncearcă depunerea.",
+        "Creează un cont nou SavingAccount în catch pentru că clientul nu avea niciun cont în XML.",
+        "Ignoră eroarea de fonduri insuficiente și continuă execuția programului.",
+        "Resetează soldul clientului Jonny la 5000 în cazul în care containerul Spring nu a injectat repository-ul."
+      ],
+      correct: 0,
+      explain: "Clientul <code>jonny</code> are două conturi încărcate din XML, dar proprietatea <code>activeAccount</code> este inițial <code>null</code>. Apelul <code>jonny.deposit(5_000)</code> aruncă excepția verificată/business <code>ActiveAccountNotSet</code>; blocul <code>catch</code> o tratează concret: afișează mesajul, apelează <code>setDefaultActiveAccountIfNotSet()</code> (care alege primul cont) și reexecută depunerea.",
+      speech: "Aici încercăm să depunem 5000 în contul activ al lui Jonny, dar la pornire activeAccount este null și se aruncă ActiveAccountNotSet. În catch afișăm mesajul, setăm contul activ implicit cu setDefaultActiveAccountIfNotSet() și apoi reluăm depunerea cu succes.",
+      screen: "Branch ex2-annotation-dependencies → src/main/java/BankApplication.java → metoda workWithExistingClients(Banking)."
+    },
+    {
+      id: 3,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/main/resources/application-context.xml",
+      lang: "xml",
+      hlLines: [1, 3, 5, 7],
+      code:
+`<context:annotation-config />
+
+<bean id="clientRepository" class="com.luxoft.bankapp.service.storage.MapClientRepository" />
+
+<bean id="banking" class="com.luxoft.bankapp.service.BankingImpl" />
+
+<bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" />`,
+      question: "„Unde declari bean-urile și unde le folosești?” (întrebare pusă exact așa la prezentare pe Ex 2)",
+      options: [
+        "Le declar în BankApplication.java cu new MapClientRepository() și le folosesc în pom.xml.",
+        "Le declar în BankingImpl cu @Bean și le folosesc doar în fișierele de test.",
+        "Le declar în application-context.xml (și test-clients.xml) prin tag-uri <bean>, și le folosesc fie prin injectare cu @Autowired (în BankingImpl și BankReportServiceImpl), fie extrăgându-le din context cu context.getBean(...) în BankApplication.",
+        "Le declar în application.yml și le folosesc prin @PostConstruct."
+      ],
+      correct: 2,
+      explain: "În Ex 2 avem o configurație hibridă: <strong>declararea</strong> bean-urilor (instanțierea lor de către containerul Spring) rămâne în XML (<code>application-context.xml</code> pentru servicii și <code>test-clients.xml</code> pentru clienți/conturi), iar <strong>folosirea / legarea</strong> lor se face în Java prin <code>@Autowired</code> (pentru dependențe între servicii) și <code>context.getBean(...)</code> în <code>BankApplication</code>.",
+      speech: "Bean-urile sunt declarate în application-context.xml și test-clients.xml folosind tag-urile bean. Apoi le folosesc în două locuri: în BankingImpl și BankReportServiceImpl injectez clientRepository cu @Autowired, iar în BankApplication le preiau din container cu context.getBean().",
+      screen: "Arăți mai întâi application-context.xml (<bean>), apoi schimbi tab-ul pe BankingImpl.java (@Autowired) și BankApplication.java (context.getBean)."
+    },
+    {
+      id: 4,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/main/java/com/luxoft/bankapp/service/BankingImpl.java",
+      lang: "java",
+      hlLines: [3, 4],
+      code:
+`public class BankingImpl implements Banking {
+
+    @Autowired
+    private ClientRepository repository;
+
+    @Override
+    public Client addClient(Client c) {
+        Client created = repository.add(c);
+        c.setRepository(repository);
+        return created;
+    }
+}`,
+      question: "„Ce face @Autowired aici și cum reușește Spring să injecteze într-un câmp private fără să apeleze setter-ul?”",
+      options: [
+        "Creează o instanță nouă de ClientRepository de fiecare dată când se apelează addClient().",
+        "Instruiește Spring să caute în ApplicationContext un bean compatibil cu tipul ClientRepository și să-l injecteze automat după constructor folosind Java Reflection (setAccessible(true)).",
+        "Generează automat un getter și un setter la compilare, la fel ca Lombok.",
+        "Marchează clasa BankingImpl ca să fie scanată de @ComponentScan."
+      ],
+      correct: 1,
+      explain: "<code>@Autowired</code> realizează Dependency Injection automată (implicit <em>byType</em>). Deși câmpul <code>repository</code> este <code>private</code>, <code>AutowiredAnnotationBeanPostProcessor</code> folosește Java Reflection (<code>field.setAccessible(true)</code>) pentru a seta valoarea direct pe câmp imediat după instanțierea bean-ului <code>banking</code>.",
+      speech: "@Autowired îi spune lui Spring să caute în ApplicationContext bean-ul de tip ClientRepository — adică MapClientRepository — și să îl injecteze automat în acest câmp. Reușește să acceseze câmpul private folosind Java Reflection după ce a apelat constructorul clasei.",
+      screen: "Branch ex2-annotation-dependencies → BankingImpl.java (liniile 10–14) și BankReportServiceImpl.java."
+    },
+    {
+      id: 5,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex1-xml-configuration",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/main/resources/application-context.xml",
+      lang: "xml",
+      hlLines: [3, 5],
+      code:
+`<bean id="clientRepository" class="com.luxoft.bankapp.service.storage.MapClientRepository" />
+
+<bean id="banking" class="com.luxoft.bankapp.service.BankingImpl" autowire="byType" />
+
+<bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" autowire="byType" />`,
+      question: "„Care este diferența dintre autowire=\"byType\" și celelalte moduri (byName, constructor, no)? De ce ar pica byName aici?”",
+      options: [
+        "byType injectează prin constructor, iar byName injectează doar primitive String și int.",
+        "byType funcționează doar dacă există cel puțin două bean-uri de același tip în XML.",
+        "Nu există nicio diferență; ambele caută mereu după numele clasei Java.",
+        "byType caută după tipul parametrului setter-ului (ClientRepository), pe când byName ar căuta un bean cu id=\"repository\" (după numele setter-ului setRepository), deci n-ar găsi bean-ul id=\"clientRepository\"!"
+      ],
+      correct: 3,
+      explain: "În <code>BankingImpl</code> avem setter-ul <code>setRepository(ClientRepository repository)</code>. Cu <code>autowire=\"byType\"</code>, Spring caută după tipul <code>ClientRepository</code> și găsește <code>MapClientRepository</code>. Cu <code>autowire=\"byName\"</code>, Spring ar căuta un bean cu <code>id=\"repository\"</code> — dar în XML-ul nostru id-ul este <code>clientRepository</code>, deci injecția ar rămâne <code>null</code>! <code>constructor</code> face același matching după tip pe argumentele constructorului, iar <code>no</code> dezactivează autowiring-ul din XML.",
+      speech: "autowire=\"byType\" caută în container un bean care implementează tipul cerut de setter, adică ClientRepository, și îl găsește pe MapClientRepository. În schimb, byName ar căuta după numele proprietății — ar căuta id=\"repository\" în loc de \"clientRepository\" și nu l-ar găsi, iar constructor aplică aceeași potrivire pe parametrii constructorului.",
+      screen: "Comută pe ex1-xml-configuration → application-context.xml și arată setRepository() din BankingImpl.java."
+    },
+    {
+      id: 6,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "hot",
+      priorityLabel: "🔥 Întrebat colegilor",
+      file: "src/main/resources/application-context.xml",
+      lang: "xml",
+      hlLines: [5, 7, 9],
+      code:
+`<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       ...>
+
+    <context:annotation-config />
+
+    <bean id="clientRepository" class="com.luxoft.bankapp.service.storage.MapClientRepository" />
+    <bean id="banking" class="com.luxoft.bankapp.service.BankingImpl" />
+    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" />
+</beans>`,
+      question: "Ce se întâmplă în Exercițiul 2 dacă ștergi linia <context:annotation-config /> din application-context.xml?",
+      options: [
+        "Proiectul nu mai compilează în Maven.",
+        "Spring ignoră adnotarea @Autowired din BankingImpl și BankReportServiceImpl, iar câmpul repository rămâne null (aruncă NullPointerException la rulare).",
+        "Spring trece automat la configurarea din Exercițiul 3 cu @ComponentScan.",
+        "Bean-urile devin automat prototype în loc de singleton."
+      ],
+      correct: 1,
+      explain: "<code>&lt;context:annotation-config /&gt;</code> înregistrează în container procesoarele interne Spring (precum <code>AutowiredAnnotationBeanPostProcessor</code> și <code>CommonAnnotationBeanPostProcessor</code>). Fără această linie, Spring instanțiază bean-urile din XML, dar nu procesează <code>@Autowired</code> de pe câmpuri, lăsând <code>repository == null</code>.",
+      speech: "Linia <context:annotation-config /> activează BeanPostProcessor-ii Spring responsabili de adnotări, cum e AutowiredAnnotationBeanPostProcessor. Dacă o ștergem și nu avem nici autowire în XML, Spring va ignora @Autowired și câmpul repository va rămâne null.",
+      screen: "Branch ex2-annotation-dependencies → src/main/resources/application-context.xml (linia 11)."
+    },
+    {
+      id: 7,
+      cat: "hot",
+      catLabel: "🔥 Întrebat colegilor",
+      branch: "ex2-annotation-dependencies",
+      priority: "trap",
+      priorityLabel: "⚠️ Capcană clasică",
+      file: "src/main/java/com/luxoft/bankapp/service/BankingImpl.java",
+      lang: "java",
+      hlLines: [1, 2],
+      code:
+`@Autowired
+private ClientRepository repository;
+
+// Presupune că în context avem ȘI MapClientRepository,
+// ȘI un nou bean SqlClientRepository (ambele implementează ClientRepository).`,
+      question: "Dacă ai avea două bean-uri care implementează ClientRepository în container, ce s-ar întâmpla la pornire cu @Autowired și cum rezolvi?",
+      options: [
+        "Spring le combină automat într-o listă și injectează prima implementare alfabetică.",
+        "Nu apare nicio eroare până când cineva apelează getClient().",
+        "Spring aruncă NoUniqueBeanDefinitionException la pornire; rezolvăm adăugând @Qualifier(\"clientRepository\") lângă @Autowired sau @Primary pe unul dintre bean-uri.",
+        "Trebuie neapărat să ștergem @Autowired și să trecem la autowire=\"byType\"."
+      ],
+      correct: 2,
+      explain: "Pentru că <code>@Autowired</code> rezolvă implicit după tip (<em>byType</em>), prezența a 2 candidați de tip <code>ClientRepository</code> creează ambiguitate și containerul refuză să pornească cu <code>NoUniqueBeanDefinitionException</code>. Soluția: <code>@Qualifier(\"numeBean\")</code> pe punctul de injecție sau <code>@Primary</code> pe implementarea preferată (sau denumirea câmpului exact ca id-ul bean-ului ca fallback).",
+      speech: "Deoarece @Autowired caută implicit după tip, dacă găsește două bean-uri de tip ClientRepository va arunca NoUniqueBeanDefinitionException la pornirea contextului. Putem rezolva ambiguizarea cu @Qualifier(\"idBean\") pe câmp sau marcând implementarea principală cu @Primary.",
+      screen: "Branch ex2-annotation-dependencies → BankingImpl.java, chiar deasupra câmpului repository."
+    },
+
+    // ======================== EX 1: XML CONFIGURATION (Q8 - Q11) ========================
+    {
+      id: 8,
+      cat: "ex1",
+      catLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [2, 3, 7],
+      code:
+`public static void main(String[] args) {
+    ApplicationContext context =
+        new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
+    Banking banking = initialize(context);
+    ...
+}
+public static Banking initialize(ApplicationContext context) {
+    Banking banking = (Banking) context.getBean("banking");`,
+      question: "Ce este ApplicationContext aici și ce principiu am aplicat când am înlocuit new MapClientRepository() și new BankingImpl()?",
+      options: [
+        "Am aplicat principiul Inversion of Control (IoC) și Dependency Injection (DI): containerul Spring creează și leagă obiectele (bean-urile), nu codul nostru cu new.",
+        "Am aplicat principiul Singleton Manual fără container.",
+        "ApplicationContext este doar un parser JSON pentru fișiere de proprietăți.",
+        "ClassPathXmlApplicationContext compilează fișierele XML în bytecode Java."
+      ],
+      correct: 0,
+      explain: "Înainte de Ex 1, <code>BankApplication</code> apela manual <code>new MapClientRepository()</code> și <code>banking.setRepository(repository)</code> (cuplare strânsă). Cu <code>ClassPathXmlApplicationContext</code>, controlul instanțierii și al legării dependențelor este transferat containerului Spring — aceasta este <strong>Inversion of Control (IoC)</strong> realizată prin <strong>Dependency Injection (DI)</strong>.",
+      speech: "ApplicationContext este containerul IoC al lui Spring, responsabil să citească configurarea XML, să creeze bean-urile și să le injecteze dependențele. În felul acesta aplicăm Inversion of Control și Dependency Injection în locul instanțierii manuale cu new.",
+      screen: "Branch ex1-xml-configuration → src/main/java/BankApplication.java (metodele main și initialize)."
+    },
+    {
+      id: 9,
+      cat: "ex1",
+      catLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/resources/test-clients.xml",
+      lang: "xml",
+      hlLines: [2, 3, 4, 5, 8],
+      code:
+`<bean id="client1" class="com.luxoft.bankapp.model.Client">
+    <constructor-arg name="name" value="\${client1}" />
+    <constructor-arg name="gender" value="MALE" />
+    <property name="repository" ref="clientRepository" />
+    <property name="city" value="Moscow" />
+    <property name="accounts">
+        <list>
+            <ref bean="savingAccount1"/>
+            <ref bean="checkingAccount1"/>
+        </list>
+    </property>
+</bean>`,
+      question: "Care este diferența dintre &lt;constructor-arg&gt; și &lt;property&gt;, respectiv între atributele value și ref?",
+      options: [
+        "Ambele apelează constructorul, doar că property e pentru XML și constructor-arg e pentru adnotări.",
+        "<constructor-arg> apelează constructorul clasei Client, iar <property> apelează setter-ii (ex: setCity, setAccounts) după construire; value pasează valori simple/String/Enum, iar ref pasează referința către un alt bean din Spring.",
+        "value se folosește doar pentru numere întregi, iar ref se folosește pentru String-uri.",
+        "<property> creează o clasă anonimă, iar <constructor-arg> o injectează prin reflection."
+      ],
+      correct: 1,
+      explain: "Spring creează mai întâi obiectul apelând constructorul potrivit cu <code>&lt;constructor-arg&gt;</code> (<code>new Client(name, gender)</code>), apoi populează restul proprietăților apelând metodele <code>setRepository</code>, <code>setCity</code>, <code>setAccounts</code> prin <code>&lt;property&gt;</code>. Atributul <code>value</code> convertește textul în String/primitive/Enum, iar <code>ref</code> leagă alt bean gestionat de Spring.",
+      speech: "<constructor-arg> îi pasează argumentele constructorului la crearea obiectului, în timp ce <property> apelează metodele setter imediat după construire. Folosim value pentru valori directe ca String-uri, numere sau Enum-uri, și ref când vrem să legăm un alt bean definit în container.",
+      screen: "Branch ex1-xml-configuration (sau ex2) → src/main/resources/test-clients.xml."
+    },
+    {
+      id: 10,
+      cat: "ex1",
+      catLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/resources/test-clients.xml",
+      lang: "xml",
+      hlLines: [1, 2, 3, 6],
+      code:
+`<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+    <property name="location" value="clients.properties"/>
+</bean>
+...
+<bean id="client1" class="com.luxoft.bankapp.model.Client">
+    <constructor-arg name="name" value="\${client1}" />`,
+      question: "Ce rol are bean-ul PropertySourcesPlaceholderConfigurer din test-clients.xml?",
+      options: [
+        "Încarcă fișierul clients.properties și înlocuiește placeholder-ele de forma ${client1} cu valorile reale (ex: \"Jonny Bravo\") înainte de crearea bean-urilor.",
+        "Scrie automat clienții noi înapoi în clients.properties la închiderea aplicației.",
+        "Criptează numele clienților în memorie.",
+        "Înlocuiește ClassPathXmlApplicationContext cu Spring Boot."
+      ],
+      correct: 0,
+      explain: "<code>PropertySourcesPlaceholderConfigurer</code> este un <code>BeanFactoryPostProcessor</code> care citește fișierul extern <code>clients.properties</code> și rezolvă expresiile <code>${...}</code> din definițiile de bean-uri înainte ca Spring să instanțieze clienții.",
+      speech: "Acest bean este un BeanFactoryPostProcessor care încarcă fișierul clients.properties și înlocuiește placeholder-ele precum ${client1} cu valorile reale din fișier înainte să fie instanțiate bean-urile client1 și client2.",
+      screen: "src/main/resources/test-clients.xml și src/main/resources/clients.properties."
+    },
+    {
+      id: 11,
+      cat: "ex1",
+      catLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      priority: "ex",
+      priorityLabel: "💡 Structură XML",
+      file: "src/main/resources/test-clients.xml",
+      lang: "xml",
+      hlLines: [1, 3],
+      code:
+`<import resource="application-context.xml" />
+...
+<property name="repository" ref="clientRepository" />`,
+      question: "De ce avem nevoie de <import resource=\"application-context.xml\" /> în interiorul fișierului test-clients.xml?",
+      options: [
+        "Pentru că XML-ul nu permite mai mult de 3 bean-uri într-un singur fișier.",
+        "Pentru a activa @Autowired fără <context:annotation-config />.",
+        "Ca să se încarce automat clasa BankApplication ca bean.",
+        "Ca să putem testa test-clients.xml și izolat, și să avem vizibil bean-ul clientRepository definit în application-context.xml."
+      ],
+      correct: 3,
+      explain: "Bean-urile <code>client1</code> și <code>client2</code> din <code>test-clients.xml</code> referențiază <code>ref=\"clientRepository\"</code>, care este definit în <code>application-context.xml</code>. Prin <code>&lt;import&gt;</code>, <code>test-clients.xml</code> își aduce definițiile necesare chiar și atunci când un context încarcă doar acest fișier.",
+      speech: "Folosim <import> ca să aducem definițiile din application-context.xml în test-clients.xml, în special bean-ul clientRepository de care au nevoie client1 și client2, astfel încât fișierul să fie complet chiar și încărcat separat.",
+      screen: "src/main/resources/test-clients.xml (linia 8)."
+    },
+
+    // ======================== EX 2 & DI / SCOPES / TESTS (Q12 - Q14) ========================
+    {
+      id: 12,
+      cat: "ex2",
+      catLabel: "Ex 2 & DI",
+      branch: "ex5-aop-events",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/service/feed/BankFeedServiceImpl.java",
+      lang: "java",
+      hlLines: [5, 6],
+      code:
+`public class BankFeedServiceImpl implements BankFeedService {
+    private Banking banking;
+
+    @Autowired
+    public BankFeedServiceImpl(Banking banking) {
+        this.banking = banking;
+    }
+}`,
+      question: "În laborator am văzut atât Field Injection (pe câmp în BankingImpl) cât și Constructor Injection (aici). Care e mai bună și de ce?",
+      options: [
+        "Field Injection este mereu mai bună pentru că scrie mai puține linii și permite dependențe circulare ascunse.",
+        "Constructor Injection este preferată în producție: permite câmpuri final (immutability), garantează că obiectul nu poate fi creat într-o stare incompletă și face testarea unitară ușoară fără Spring.",
+        "Setter Injection este singura care funcționează cu @Service.",
+        "Nu există nicio diferență tehnică între ele."
+      ],
+      correct: 1,
+      explain: "Field Injection (<code>@Autowired private ...</code>) este concisă în exemplele de laborator (Ex 2), dar ascunde dependențele clasei și nu permite <code>private final</code>. Constructor Injection asigură că dependențele obligatorii sunt mereu prezente la creare și poți instanția clasa în teste simple cu <code>new BankFeedServiceImpl(mockBanking)</code> fără Reflection.",
+      speech: "Deși în Ex 2 am pus @Autowired pe câmp pentru simplitate, în proiecte reale Constructor Injection este preferată pentru că garantează că bean-ul nu e creat fără dependențele lui obligatorii, permite câmpuri final și face testarea unitară mult mai simplă.",
+      screen: "Comparație între BankingImpl.java (field injection) și BankFeedServiceImpl.java (constructor injection)."
+    },
+    {
+      id: 13,
+      cat: "ex2",
+      catLabel: "Ex 2 & DI",
+      branch: "ex3-java-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/service/storage/MapClientRepository.java",
+      lang: "java",
+      hlLines: [1, 2, 7, 8],
+      code:
+`@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class MapClientRepository implements ClientRepository { ... }
+
+// vs în BankFeedServiceImpl:
+@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class BankFeedServiceImpl implements BankFeedService { ... }`,
+      question: "Care este diferența dintre scope-ul singleton (implicit) și prototype în Spring?",
+      options: [
+        "singleton există doar în XML, iar prototype doar în Spring Boot.",
+        "prototype garantează că obiectul nu este distrus niciodată, nici la oprirea aplicației.",
+        "singleton creează o singură instanță per ApplicationContext (partajată peste tot); prototype creează o instanță nouă de fiecare dată când bean-ul este cerut sau injectat.",
+        "singleton creează o instanță per thread."
+      ],
+      correct: 2,
+      explain: "Implicit în Spring orice bean este <strong>singleton</strong> per container (toate serviciile care cer <code>ClientRepository</code> primesc exact aceeași instanță cu același <code>HashMap</code> de clienți!). În schimb, un bean cu <code>@Scope(\"prototype\")</code> generează un obiect proaspăt la fiecare <code>getBean()</code> sau injecție.",
+      speech: "Scope-ul singleton, care e și implicit în Spring, înseamnă că se creează o singură instanță per ApplicationContext, partajată de toată aplicația — ideal pentru MapClientRepository. Scope-ul prototype creează câte o instanță nouă de fiecare dată când cineva cere bean-ul.",
+      screen: "Branch ex3-java-configuration → MapClientRepository.java (liniile 9–11) și BankFeedServiceImpl.java."
+    },
+    {
+      id: 14,
+      cat: "ex2",
+      catLabel: "Ex 2 & DI",
+      branch: "ex2-annotation-dependencies",
+      priority: "ex",
+      priorityLabel: "💡 Testare Spring",
+      file: "src/test/java/BankApplicationTask1Tests.java",
+      lang: "java",
+      hlLines: [1, 3],
+      code:
+`@SpringJUnitConfig(locations = "classpath:application-context.xml")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class BankApplicationTask1Tests {`,
+      question: "La ce ajută adnotarea @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD) din testele JUnit?",
+      options: [
+        "Șterge fișierele XML de pe disc după fiecare test.",
+        "Semnalează lui Spring TestContext că testul modifică starea containerului (clienți/solduri în MapClientRepository), deci ApplicationContext-ul trebuie recreat curat după fiecare metodă de test.",
+        "Dezactivează toate adnotările @Autowired din teste.",
+        "Rulează testele în paralel pe mai multe procese."
+      ],
+      correct: 1,
+      explain: "Deoarece <code>MapClientRepository</code> este singleton în memorie, testele adaugă clienți și modifică solduri. Fără <code>@DirtiesContext</code>, modificările dintr-un test s-ar scurge în testul următor; adnotarea forțează reîncărcarea unui <code>ApplicationContext</code> proaspăt după fiecare test.",
+      speech: "@DirtiesContext îi spune framework-ului de testare să închidă și să recreeze ApplicationContext-ul după fiecare metodă de test, astfel încât datele modificate în singleton-ul MapClientRepository să nu afecteze celelalte teste.",
+      screen: "src/test/java/BankApplicationTask1Tests.java (liniile 17–19)."
+    },
+
+    // ======================== EX 3: JAVA CONFIGURATION (Q15 - Q17) ========================
+    {
+      id: 15,
+      cat: "ex3",
+      catLabel: "Ex 3: Java Config",
+      branch: "ex3-java-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [1, 2, 3, 7],
+      code:
+`@Configuration
+@PropertySource("classpath:clients.properties")
+@ComponentScan("com.luxoft.bankapp")
+public class BankApplication {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(BankApplication.class);
+        Banking banking = initialize(context);`,
+      question: "În Exercițiul 3 am șters complet fișierele XML. Ce rol au cele 3 adnotări de pe BankApplication și ce clasă de context am folosit?",
+      options: [
+        "@Configuration marchează clasa ca sursă de bean-uri; @PropertySource încarcă clients.properties; @ComponentScan caută automat clasele @Service/@Component din pachetul com.luxoft.bankapp; contextul devine AnnotationConfigApplicationContext.",
+        "@ComponentScan compilează codul Java în XML la pornire.",
+        "@PropertySource înlocuiește necesitatea metodei main.",
+        "@Configuration pornește automat un server Tomcat pe portul 8080."
+      ],
+      correct: 0,
+      explain: "Aceasta este trecerea la configurare 100% în Java: <code>AnnotationConfigApplicationContext(BankApplication.class)</code> pornește de la clasa <code>@Configuration</code>, citește <code>clients.properties</code> via <code>@PropertySource</code> (accesibil prin <code>Environment</code>), și scanează automat pachetul <code>com.luxoft.bankapp</code> după componente adnotate.",
+      speech: "În Ex 3 am înlocuit ClassPathXmlApplicationContext cu AnnotationConfigApplicationContext. @Configuration spune că BankApplication e clasă de configurare, @ComponentScan descoperă automat clasele cu @Service din com.luxoft.bankapp, iar @PropertySource încarcă fișierul clients.properties.",
+      screen: "Branch ex3-java-configuration → src/main/java/BankApplication.java (liniile 24–42)."
+    },
+    {
+      id: 16,
+      cat: "ex3",
+      catLabel: "Ex 3: Java Config",
+      branch: "ex3-java-configuration",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [1, 6, 10],
+      code:
+`@Bean(name = "savingAccount1")
+public SavingAccount getDemoSavingAccount1() {
+    return new SavingAccount(1000);
+}
+
+@Bean(name = "client1")
+public Client getDemoClient1() {
+    String name = environment.getProperty("client1");
+    Client client = new Client(name, Gender.MALE);
+    client.addAccount((SavingAccount) applicationContext.getBean("savingAccount1"));
+    return client;
+}`,
+      question: "De ce pe BankingImpl am pus @Service, dar pentru client1, client2 și conturi am scris metode @Bean în BankApplication?",
+      options: [
+        "Pentru că @Service nu funcționează pe clase care au cuvântul Client în nume.",
+        "Pentru că metodele @Bean nu sunt gestionate de ApplicationContext.",
+        "Pentru că @Bean este obligatoriu mai rapid la runtime decât @Service.",
+        "Punem @Service pe o clasă când vrem un singur bean descoperit automat, și folosim metode @Bean în @Configuration când vrem să configurăm manual mai multe instanțe ale aceleiași clase cu parametri diferiți (ex: client1 vs client2) sau clase externe."
+      ],
+      correct: 3,
+      explain: "Cu <code>@Service</code> pe clasa <code>Client</code> am obține o singură definiție generică fără să știm ce nume/conturi să-i punem fiecăruia. Cu metodele <code>@Bean</code> în <code>BankApplication</code> avem control programatic complet: putem crea <code>client1</code> cu două conturi (Moscow) și <code>client2</code> cu un cont (Kiev), citind numele din <code>Environment</code>.",
+      speech: "@Service se pune pe o clasă când vrem o singură instanță creată automat prin ComponentScan. Folosim metode @Bean într-o clasă @Configuration atunci când vrem control manual asupra instanțierii, cum ar fi să creăm mai multe bean-uri de tip Client sau CheckingAccount cu parametri diferiți, sau clase din biblioteci externe.",
+      screen: "Branch ex3-java-configuration → BankApplication.java (liniile 140–185) vs BankingImpl.java."
+    },
+    {
+      id: 17,
+      cat: "ex3",
+      catLabel: "Ex 3: Java Config",
+      branch: "ex3-java-configuration",
+      priority: "ex",
+      priorityLabel: "💡 Stereotipuri Spring",
+      file: "src/main/java/com/luxoft/bankapp/service/storage/MapClientRepository.java",
+      lang: "java",
+      hlLines: [1],
+      code:
+`@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class MapClientRepository implements ClientRepository {`,
+      question: "Care este diferența dintre @Component, @Service, @Repository și @Controller?",
+      options: [
+        "Sunt complet incompatibile și nu pot fi injectate între ele cu @Autowired.",
+        "@Component funcționează doar în Spring Boot, iar @Service doar în XML.",
+        "Toate sunt stereotipuri detectate de @ComponentScan și creează bean-uri; @Service e semantic pentru logică de business, @Controller pentru stratul web, iar @Repository adaugă traducerea automată a excepțiilor SQL/persistență în DataAccessException.",
+        "@Repository face bean-ul automat prototype."
+      ],
+      correct: 2,
+      explain: "Toate cele 4 adnotări sunt specializări ale lui <code>@Component</code>. Pe lângă claritatea arhitecturală (Service vs Repository vs Controller), <code>@Repository</code> are un comportament tehnic în plus: activează <code>PersistenceExceptionTranslationPostProcessor</code> pentru a converti excepțiile native ale driver-ului DB în ierarhia uniformă <code>DataAccessException</code> din Spring.",
+      speech: "Toate marchează clasa pentru @ComponentScan ca să devină bean în Spring. @Component e forma generică, @Service e pentru stratul de business, @Controller pentru web, iar @Repository are și un rol tehnic suplimentar: traduce excepțiile specifice bazei de date în DataAccessException din Spring.",
+      screen: "Branch ex3-java-configuration → MapClientRepository.java și BankingImpl.java."
+    },
+
+    // ======================== EX 4: SPRING BOOT & PROFILES (Q18 - Q20) ========================
+    {
+      id: 18,
+      cat: "ex4",
+      catLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/BankApplication.java",
+      lang: "java",
+      hlLines: [1, 5],
+      code:
+`@SpringBootApplication
+@PropertySource("classpath:clients.properties")
+public class BankApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BankApplication.class, args);
+    }
+}`,
+      question: "Ce face adnotarea @SpringBootApplication și ce 3 adnotări combină ea în spate?",
+      options: [
+        "Combină @SpringBootConfiguration (echivalent @Configuration), @EnableAutoConfiguration (configurează automat bean-urile pe baza dependențelor din pom.xml) și @ComponentScan (scanează pachetul curent și sub-pachetele lui).",
+        "Combină @Aspect, @EventListener și @Profile.",
+        "Pornește automat o bază de date Oracle externă.",
+        "Înlocuiește metoda main cu un servlet XML."
+      ],
+      correct: 0,
+      explain: "De aceea în Ex 4 am putut șterge tot codul manual din <code>BankApplication</code>: <code>@SpringBootApplication</code> este o meta-adnotare compusă din <code>@SpringBootConfiguration</code>, <code>@EnableAutoConfiguration</code> și <code>@ComponentScan</code> (pornește scanarea din pachetul <code>com.luxoft.bankapp</code> în jos).",
+      speech: "@SpringBootApplication combină trei adnotări importante: @SpringBootConfiguration, @EnableAutoConfiguration — care autoconfigurează Spring în funcție de starterele din pom.xml — și @ComponentScan, care scanează automat pachetul com.luxoft.bankapp și sub-pachetele lui.",
+      screen: "Branch ex4-spring-boot → src/main/java/com/luxoft/bankapp/BankApplication.java."
+    },
+    {
+      id: 19,
+      cat: "ex4",
+      catLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/resources/application.yml",
+      lang: "yaml",
+      hlLines: [1, 2, 7, 13],
+      code:
+`spring.profiles.active: dev
+feed.filename: demo.feed
+
+---
+
+spring:
+    profiles: dev
+debug: true
+
+---
+
+spring:
+    profiles: prod
+debug: false`,
+      question: "Ce se întâmplă în aplicație dacă schimbăm în application.yml linia 1 din dev în prod?",
+      options: [
+        "Aplicația nu mai pornește deloc pentru că lipsește profilul dev.",
+        "Se încarcă fișierul default.feed în locul lui demo.feed.",
+        "Toate metodele din AuditService sunt dezactivate.",
+        "Debug logging-ul devine false, iar bean-ul DemoBankInitializationService (marcat cu @Profile(\"dev\")) NU mai este creat de Spring, deci datele demo din demo.feed nu se mai încarcă."
+      ],
+      correct: 3,
+      explain: "<code>DemoBankInitializationService</code> are adnotarea <code>@Profile(\"dev\")</code>. Când profilul activ este <code>prod</code>, Spring ignoră complet acest bean (și activează documentul YAML pentru <code>prod</code> unde <code>debug: false</code>), ceea ce previne încărcarea clienților fictivi de test într-un mediu de producție.",
+      speech: "Dacă trecem profilul activ pe prod, Spring folosește secțiunea de prod cu debug: false și nu mai instanțiază bean-ul DemoBankInitializationService, deoarece el este condiționat cu @Profile(\"dev\"). Astfel nu se mai încarcă clienții demo în producție.",
+      screen: "Branch ex4-spring-boot → src/main/resources/application.yml și DemoBankInitializationService.java."
+    },
+    {
+      id: 20,
+      cat: "ex4",
+      catLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      priority: "trap",
+      priorityLabel: "⚠️ Capcană clasică",
+      file: "src/main/java/com/luxoft/bankapp/service/demo/DemoBankInitializationService.java",
+      lang: "java",
+      hlLines: [4, 7, 10, 11],
+      code:
+`@Service
+@Profile("dev")
+public class DemoBankInitializationService implements BankInitializationService {
+    @Value("\${feed.filename}")
+    private String fileName;
+
+    @Autowired
+    private BankFeedServiceImpl feedService;
+
+    @Override
+    @PostConstruct
+    public void createClientsForDemo() {
+        feedService.loadFeed(new File(fileName));
+    }
+}`,
+      question: "Întrebare capcană: „De ce ai folosit @PostConstruct pe createClientsForDemo() și nu ai apelat feedService.loadFeed(...) direct în constructor?”",
+      options: [
+        "Pentru că un constructor în Java nu are voie să lucreze cu obiecte File.",
+        "Pentru că în momentul execuției constructorului, câmpurile injectate prin @Value (fileName) și @Autowired (feedService) sunt încă null — ar arunca NullPointerException! @PostConstruct rulează imediat DUPĂ injectarea dependențelor.",
+        "Pentru că @PostConstruct face metoda să ruleze într-un thread separat după 10 secunde.",
+        "Pentru că @Value nu funcționează decât dacă există @PostConstruct în clasă."
+      ],
+      correct: 1,
+      explain: "Ordinea ciclului de viață în Spring este: 1) Apelare constructor → 2) Injectare dependențe (<code>@Autowired</code>, <code>@Value</code>) → 3) Apelare metode <code>@PostConstruct</code>. Dacă am accesa <code>feedService</code> sau <code>fileName</code> în constructor, am primi <code>NullPointerException</code>.",
+      speech: "În momentul în care se execută constructorul, Spring încă nu a injectat câmpurile @Autowired și @Value, deci feedService și fileName ar fi null și am primi NullPointerException. Adnotarea @PostConstruct garantează că metoda se apelează imediat după ce toate dependențele au fost injectate.",
+      screen: "Branch ex4-spring-boot → DemoBankInitializationService.java (liniile 13–34)."
+    },
+
+    // ======================== EX 5: AOP, EVENTS & SpEL (Q21 - Q26) ========================
+    {
+      id: 21,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java",
+      lang: "java",
+      hlLines: [1, 2],
+      code:
+`@Pointcut("execution(* com.luxoft.bankapp.service.operations.*.deposit(..))")
+public void anyDeposit() {}
+
+@Before("anyDeposit()")
+public void logDeposit(JoinPoint joinPoint) {
+    Object[] methodArgs = joinPoint.getArgs();
+    applicationContext.publishEvent(
+        new DepositEvent(getAccountId(methodArgs), (double) methodArgs[1]));
+}`,
+      question: "Cum se citește expresia Pointcut execution(* com.luxoft.bankapp.service.operations.*.deposit(..))?",
+      options: [
+        "Interceptează doar metodele void cu numele deposit care nu au parametri.",
+        "Interceptează orice metodă numită deposit, cu orice tip de return (*), din orice clasă (*) a pachetului operations, indiferent de numărul sau tipul parametrilor (..).",
+        "Interceptează doar constructorii din pachetul service.audit.",
+        "Interceptează toate metodele din aplicație care întorc un obiect Account."
+      ],
+      correct: 1,
+      explain: "Descompunerea expresiei AspectJ: primul <code>*</code> = orice tip de return; <code>com.luxoft.bankapp.service.operations.*</code> = orice clasă/interfață din pachetul <code>operations</code>; <code>.deposit</code> = numele metodei; <code>(..)</code> = orice listă de parametri (în <code>BankingOperationsServiceImpl</code> avem două suprascrieri: <code>deposit(Client, double)</code> și <code>deposit(Account, double)</code>).",
+      speech: "Primul asterisc înseamnă orice tip de return, apoi pachetul operations urmat de asterisc înseamnă orice clasă din acel pachet, .deposit este numele metodei, iar (..) înseamnă orice număr și tip de parametri — necesar pentru că avem deposit atât cu Client, cât și cu Account.",
+      screen: "Branch ex5-aop-events → src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java (liniile 24–39)."
+    },
+    {
+      id: 22,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java",
+      lang: "java",
+      hlLines: [1, 5, 10, 14],
+      code:
+`@Around("anyWithdraw()")
+public Object logWithdrawal(ProceedingJoinPoint thisJoinPoint) throws Throwable {
+    Object[] methodArgs = thisJoinPoint.getArgs();
+    applicationContext.publishEvent(
+        new WithdrawEvent(getAccountId(methodArgs), (double) methodArgs[1])); // TRYING
+
+    Object result;
+    try {
+        result = thisJoinPoint.proceed();
+        applicationContext.publishEvent(
+            new WithdrawEvent(getAccountId(methodArgs), (double) methodArgs[1], WithdrawEvent.State.SUCCESSFUL));
+    } catch (Exception e) {
+        applicationContext.publishEvent(
+            new WithdrawEvent(getAccountId(methodArgs), (double) methodArgs[1], WithdrawEvent.State.FAILED));
+        throw e;
+    }
+    return result;
+}`,
+      question: "De ce am folosit @Around cu ProceedingJoinPoint la withdraw (spre deosebire de @Before la deposit) și câte evenimente se emit per retragere?",
+      options: [
+        "Pentru că @Before nu poate citi argumentele metodei; se emite 1 singur eveniment.",
+        "Pentru că withdraw nu are voie să arunce excepții fără @Around; se emit 3 evenimente.",
+        "@Around înconjoară execuția metodei: ne lasă să emitem un eveniment TRYING înainte de proceed(), și apoi SUCCESSFUL dacă reușește sau FAILED în catch — deci 2 evenimente per apel.",
+        "@Around înlocuiește metoda withdraw și o rulează de două ori."
+      ],
+      correct: 2,
+      explain: "Cu <code>@Before</code> putem rula cod doar înainte de metodă. Pentru <code>withdraw</code> avem nevoie să știm dacă retragerea a reușit sau a aruncat <code>NotEnoughFundsException</code>! <code>@Around</code> primește <code>ProceedingJoinPoint</code>, emite mai întâi <code>TRYING</code>, apelează <code>proceed()</code>, și apoi emite fie <code>SUCCESSFUL</code>, fie <code>FAILED</code> (în total 2 evenimente).",
+      speech: "La withdraw avem nevoie de @Around pentru că vrem să audităm atât intenția (TRYING) înainte de execuție, cât și rezultatul (SUCCESSFUL sau FAILED) după apelul thisJoinPoint.proceed(). Astfel, pentru o singură retragere se publică două evenimente de audit.",
+      screen: "Branch ex5-aop-events → AuditAspect.java (liniile 41–66) și BankApplicationTests4.java."
+    },
+    {
+      id: 23,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "trap",
+      priorityLabel: "⚠️ Capcană clasică",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java",
+      lang: "java",
+      hlLines: [5],
+      code:
+`} catch (Exception e) {
+    applicationContext.publishEvent(
+        new WithdrawEvent(getAccountId(methodArgs),
+            (double) methodArgs[1], WithdrawEvent.State.FAILED));
+    throw e;
+}`,
+      question: "Ce se întâmplă dacă ștergi linia throw e; din acest bloc catch din AuditAspect?",
+      options: [
+        "Nu se întâmplă nimic rău, evenimentul FAILED tot ajunge în AuditService.",
+        "Aplicația intră într-o buclă infinită de evenimente.",
+        "Spring oprește automat containerul.",
+        "Excepția NotEnoughFundsException este „înghițită” de aspect! Apelantul (și testul assertThrows) ar crede că retragerea fără fonduri a reușit normal."
+      ],
+      correct: 3,
+      explain: "Aspectul interceptează apelul între client și metoda țintă. Dacă prinde excepția în <code>catch</code> ca să logheze <code>State.FAILED</code> și uită să facă <code>throw e;</code>, excepția dispare și codul apelant nu va ști niciodată că retragerea a eșuat (iar testul <code>assertThrows(NotEnoughFundsException.class, ...)</code> va pica).",
+      speech: "Dacă șterg throw e;, aspectul ar înghiți excepția NotEnoughFundsException. Chiar dacă evenimentul FAILED s-ar publica în audit, codul care a apelat withdraw() ar crede că retragerea a mers fără eroare și testele cu assertThrows ar pica.",
+      screen: "Branch ex5-aop-events → AuditAspect.java (liniile 60–66)."
+    },
+    {
+      id: 24,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "trap",
+      priorityLabel: "⚠️ Capcană clasică",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java",
+      lang: "java",
+      hlLines: [2],
+      code:
+`try {
+    result = thisJoinPoint.proceed();
+    applicationContext.publishEvent(
+        new WithdrawEvent(..., WithdrawEvent.State.SUCCESSFUL));
+}`,
+      question: "Ce se întâmplă dacă ștergi linia result = thisJoinPoint.proceed(); din logWithdrawal?",
+      options: [
+        "Spring apelează oricum metoda withdraw() imediat după ce se termină aspectul.",
+        "Metoda reală withdraw() din BankingOperationsServiceImpl nu se mai execută deloc! S-ar emite TRYING și SUCCESSFUL în audit, dar soldul contului ar rămâne nemodificat.",
+        "Se aruncă automat IllegalStateException.",
+        "Se execută metoda deposit() în locul ei."
+      ],
+      correct: 1,
+      explain: "Într-un advice <code>@Around</code>, aspectul deține controlul total asupra invocării. Apelul <code>thisJoinPoint.proceed()</code> este cel care pasează execuția către metoda reală <code>withdraw()</code> de pe bean-ul țintă. Fără el, banii nu se mai retrag din cont.",
+      speech: "thisJoinPoint.proceed() este apelul care execută efectiv metoda reală withdraw() din BankingOperationsServiceImpl. Fără această linie, aspectul ar emite evenimentele TRYING și SUCCESSFUL, dar banii din cont n-ar mai fi retrași niciodată.",
+      screen: "Branch ex5-aop-events → AuditAspect.java (linia 54)."
+    },
+    {
+      id: 25,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "prob",
+      priorityLabel: "⭐ Foarte probabil",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditService.java",
+      lang: "java",
+      hlLines: [2, 8],
+      code:
+`@Override
+@EventListener(condition = "#event.amount >= @eventConditionFilter.depositLimit")
+public void auditOperation(DepositEvent event) {
+    events.add(event);
+    System.out.println("ACCOUNT ID: " + event.getAccountId() + ...);
+}
+// EventConditionFilter: @Component cu depositLimit = 99 din application.yml`,
+      question: "De ce am folosit Spring Events între AuditAspect și AuditService și ce face exact expresia SpEL din @EventListener?",
+      options: [
+        "Pentru decuplare (AuditAspect doar publică evenimente în ApplicationContext fără să depindă de AuditService); SpEL verifică dacă event.getAmount() este >= valoarea depositLimit (99) din bean-ul eventConditionFilter.",
+        "Pentru a salva automat evenimentele într-o bază de date PostgreSQL.",
+        "Semnul @ din @eventConditionFilter indică o adnotare Java, nu un bean.",
+        "Fără SpEL, @EventListener ar asculta doar evenimente de tip BalanceEvent."
+      ],
+      correct: 0,
+      explain: "În Task 2, <code>AuditAspect</code> depindea direct de <code>AuditService</code>; în Task 3 am decuplat complet prin <code>ApplicationEvent</code> + <code>@EventListener</code>. În SpEL (Task 4), <code>#event</code> referențiază parametrul metodei (<code>#event.amount</code> → <code>getAmount()</code>), iar <code>@eventConditionFilter</code> (cu <code>@</code>) referențiază bean-ul Spring <code>EventConditionFilter</code>.",
+      speech: "Folosim Spring Events pentru decuplare: AuditAspect doar publică evenimentul fără să știe de AuditService. În condiția SpEL, #event referențiază parametrul metodei, iar @eventConditionFilter referențiază bean-ul cu pragurile din application.yml, astfel încât audităm doar sumele >= 99.",
+      screen: "Branch ex5-aop-events → AuditService.java, EventConditionFilter.java și application.yml."
+    },
+    {
+      id: 26,
+      cat: "ex5",
+      catLabel: "Ex 5: AOP & Events",
+      branch: "ex5-aop-events",
+      priority: "trap",
+      priorityLabel: "⚠️ Capcană AOP",
+      file: "src/main/java/com/luxoft/bankapp/service/operations/BankingOperationsServiceImpl.java",
+      lang: "java",
+      hlLines: [1, 2],
+      code:
+`@Service
+public class BankingOperationsServiceImpl implements BankingOperationsService {
+    @Override
+    public void deposit(Client client, double amount) { client.deposit(amount); }
+}`,
+      question: "Cum funcționează Spring AOP în spate (Proxy) și de ce NU s-ar declanșa AuditAspect dacă o metodă din BankingOperationsServiceImpl ar apela this.deposit(...)?",
+      options: [
+        "Spring AOP modifică fișierul .java înainte de compilare; this.deposit nu are parametrii corecți.",
+        "Spring AOP folosește doar thread-uri separate și nu interceptează metodele void.",
+        "Spring învelește bean-ul într-un Dynamic Proxy (JDK Proxy pe interfață sau CGLIB); apelurile din exterior trec prin Proxy și activează aspectul, dar un apel intern pe this ocolește Proxy-ul (self-invocation).",
+        "Ba da, this.deposit declanșează mereu AuditAspect fără excepție."
+      ],
+      correct: 2,
+      explain: "La inițializarea bean-ului, Spring creează un <strong>Dynamic Proxy</strong> în jurul lui <code>BankingOperationsServiceImpl</code> (JDK Dynamic Proxy pentru că implementează interfața <code>BankingOperationsService</code>, sau CGLIB dacă nu ar avea interfață). Apelul din teste trece prin Proxy → rulează <code>AuditAspect</code> → apelează ținta reală. Un apel <code>this.deposit(...)</code> din interior rămâne pe instanța țintă și sare peste Proxy.",
+      speech: "În spate, Spring AOP creează un Proxy Dinamic — JDK Proxy sau CGLIB — în jurul bean-ului BankingOperationsServiceImpl. Când apelăm din exterior, apelul trece prin Proxy și se execută aspectul, însă un apel intern cu this.deposit() ocolește Proxy-ul și nu mai declanșează auditul.",
+      screen: "Branch ex5-aop-events → BankingOperationsServiceImpl.java și AuditAspect.java."
+    }
+  ];
+
+  const CATEGORIES = [
+    { id: "all", label: "Toate (26)" },
+    { id: "hot", label: "🔥 Întrebate colegilor (7)" },
+    { id: "ex1", label: "Ex 1: XML (4)" },
+    { id: "ex2", label: "Ex 2 & DI (3)" },
+    { id: "ex3", label: "Ex 3: Java Config (3)" },
+    { id: "ex4", label: "Ex 4: Spring Boot (3)" },
+    { id: "ex5", label: "Ex 5: AOP & Events (6)" },
+    { id: "saved", label: "🔖 Salvate / Greșite" }
+  ];
+
+  // Safe localStorage wrapper (never fails in restricted iOS WebViews / private mode)
+  const STORAGE_KEY = "jpsh_spring_quiz_v1";
+  let state = {
+    tab: "quiz",
+    cat: "all",
+    idx: 0,
+    studyMode: false,
+    answers: {},    // { [qId]: selectedIndex }
+    bookmarks: []   // [qId, ...]
+  };
+
+  function loadState() {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          state.answers = parsed.answers || {};
+          state.bookmarks = Array.isArray(parsed.bookmarks) ? parsed.bookmarks : [];
+          state.cat = parsed.cat || "all";
+          state.studyMode = Boolean(parsed.studyMode);
+        }
+      }
+    } catch (e) {}
+  }
+
+  function saveState() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        answers: state.answers,
+        bookmarks: state.bookmarks,
+        cat: state.cat,
+        studyMode: state.studyMode
+      }));
+    } catch (e) {}
+  }
+
+  // HTML escaping + Single-Pass Tokenizer (safe for XML tags & Java generics)
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function highlightLine(rawLine, lang) {
+    const escaped = escHtml(rawLine);
+
+    if (lang === "xml") {
+      // Single-pass XML tokenizer on escaped text (&lt; ... &gt;); quotes remain literal
+      const xmlSafeRe = /(&lt;!--.*?--&gt;)|(&lt;\/?[a-zA-Z0-9_:-]+)|(\/?&gt;)|(\b[a-zA-Z0-9_:-]+)(=)("[^"]*")/g;
+      return escaped.replace(xmlSafeRe, function (_, comment, tagOpen, tagClose, attrName, eq, attrVal) {
+        if (comment) return '<span class="tok-com">' + comment + '</span>';
+        if (tagOpen) return '<span class="tok-tag">' + tagOpen + '</span>';
+        if (tagClose) return '<span class="tok-tag">' + tagClose + '</span>';
+        if (attrName) return '<span class="tok-attr">' + attrName + '</span>' + eq + '<span class="tok-str">' + attrVal + '</span>';
+        return _;
+      });
+    }
+
+    if (lang === "yaml") {
+      const yamlRe = /(#.*$)|(^\s*[a-zA-Z0-9_.-]+)(?=:)|\b(true|false)\b|(\b\d+\b)/g;
+      return escaped.replace(yamlRe, function (m, com, key, boolVal, num) {
+        if (com) return '<span class="tok-com">' + com + '</span>';
+        if (key) return '<span class="tok-attr">' + key + '</span>';
+        if (boolVal) return '<span class="tok-kw">' + boolVal + '</span>';
+        if (num) return '<span class="tok-num">' + num + '</span>';
+        return m;
+      });
+    }
+
+    // Java single-pass tokenizer
+    const javaRe = /(\/\/.*$)|("(?:\\.|[^"\\])*")|(@[A-Za-z_][A-Za-z0-9_]*)|\b(public|private|protected|class|interface|implements|extends|return|void|new|try|catch|throw|throws|if|else|static|final|double|long|boolean|int|null|true|false)\b|\b([A-Z][A-Za-z0-9_]*)\b|(\b\d+(?:_\d+)*\b)/g;
+    return escaped.replace(javaRe, function (m, com, str, ann, kw, typeName, num) {
+      if (com) return '<span class="tok-com">' + com + '</span>';
+      if (str) return '<span class="tok-str">' + str + '</span>';
+      if (ann) return '<span class="tok-ann">' + ann + '</span>';
+      if (kw) return '<span class="tok-kw">' + kw + '</span>';
+      if (typeName) return '<span class="tok-type">' + typeName + '</span>';
+      if (num) return '<span class="tok-num">' + num + '</span>';
+      return m;
+    });
+  }
+
+  function renderCodeBlock(q) {
+    const lines = q.code.split("\n");
+    const hlSet = new Set(q.hlLines || []);
+    const linesHtml = lines.map((line, i) => {
+      const lineNo = i + 1;
+      const cls = hlSet.has(lineNo) ? "code-line hl" : "code-line";
+      return `<div class="${cls}"><span class="ln">${lineNo}</span><span class="lc">${highlightLine(line, q.lang)}</span></div>`;
+    }).join("");
+
+    return `
+      <div class="code-box">
+        <div class="code-header">
+          <span class="code-filename" title="${escHtml(q.file)}">📄 ${escHtml(q.file)}</span>
+          <span class="code-lang">${escHtml(q.lang)}</span>
+        </div>
+        <div class="code-scroll">${linesHtml}</div>
+      </div>
+    `;
+  }
+
+  function getFilteredQuestions() {
+    if (state.cat === "all") return QUESTIONS;
+    if (state.cat === "saved") {
+      return QUESTIONS.filter(q => {
+        const isBookmarked = state.bookmarks.includes(q.id);
+        const ans = state.answers[q.id];
+        const isWrong = ans !== undefined && ans !== q.correct;
+        return isBookmarked || isWrong;
+      });
+    }
+    return QUESTIONS.filter(q => q.cat === state.cat);
+  }
+
+  function getPriorityBadgeClass(p) {
+    if (p === "hot") return "badge-hot";
+    if (p === "trap") return "badge-trap";
+    if (p === "prob") return "badge-prob";
+    return "badge-ex";
+  }
+
+  function updateGlobalScore() {
+    let correctCount = 0;
+    QUESTIONS.forEach(q => {
+      if (state.answers[q.id] === q.correct) correctCount++;
+    });
+    document.getElementById("globalScoreText").textContent = `${correctCount} / ${QUESTIONS.length}`;
+  }
+
+  function renderFilters() {
+    const wrap = document.getElementById("categoryFilters");
+    const savedCount = QUESTIONS.filter(q =>
+      state.bookmarks.includes(q.id) || (state.answers[q.id] !== undefined && state.answers[q.id] !== q.correct)
+    ).length;
+
+    wrap.innerHTML = CATEGORIES.map(c => {
+      const label = c.id === "saved" ? `🔖 Salvate / Greșite (${savedCount})` : c.label;
+      const active = state.cat === c.id ? "active" : "";
+      return `<button class="filter-pill ${active}" data-cat="${c.id}" type="button">${label}</button>`;
+    }).join("");
+  }
+
+  function renderQuiz() {
+    renderFilters();
+    updateGlobalScore();
+
+    const studyBtn = document.getElementById("toggleStudyModeBtn");
+    studyBtn.classList.toggle("active-toggle", state.studyMode);
+    studyBtn.textContent = state.studyMode ? "👁️ Mod studiu: ON" : "👁️ Mod studiu";
+
+    const list = getFilteredQuestions();
+    const jump = document.getElementById("questionJump");
+    const stage = document.getElementById("quizStage");
+    const fill = document.getElementById("quizProgressFill");
+    const pLabel = document.getElementById("quizProgressLabel");
+
+    if (list.length === 0) {
+      jump.innerHTML = `<option value="0">Nicio întrebare în filtru</option>`;
+      fill.style.width = "0%";
+      pLabel.textContent = "0 / 0";
+      stage.innerHTML = `
+        <div class="empty-state">
+          <p style="font-size:16px; color:var(--text); font-weight:700; margin-top:0;">Nu ai întrebări salvate sau greșite aici încă.</p>
+          <p style="font-size:14px;">Apasă 🔖 <strong>Salvează</strong> pe orice întrebare dificilă sau revino la toate întrebările.</p>
+          <button class="btn-primary" id="backToAllBtn" type="button" style="margin-top:8px;">Vezi toate cele 26 întrebări</button>
+        </div>`;
+      const b = document.getElementById("backToAllBtn");
+      if (b) b.addEventListener("click", () => { state.cat = "all"; state.idx = 0; saveState(); renderQuiz(); });
+      return;
+    }
+
+    if (state.idx >= list.length) state.idx = 0;
+    if (state.idx < 0) state.idx = list.length - 1;
+
+    jump.innerHTML = list.map((item, i) => {
+      const mark = state.answers[item.id] === item.correct ? "✅ " :
+                   state.answers[item.id] !== undefined ? "❌ " : "";
+      const shortQ = item.question.length > 54 ? item.question.slice(0, 54) + "…" : item.question;
+      return `<option value="${i}" ${i === state.idx ? "selected" : ""}>${mark}#${item.id}: ${shortQ}</option>`;
+    }).join("");
+
+    const q = list[state.idx];
+    const selected = state.answers[q.id];
+    const answered = selected !== undefined;
+    const isBookmarked = state.bookmarks.includes(q.id);
+    const pct = Math.round(((state.idx + 1) / list.length) * 100);
+    fill.style.width = pct + "%";
+    pLabel.textContent = `${state.idx + 1} / ${list.length}`;
+
+    const letters = ["A", "B", "C", "D"];
+    const optsHtml = q.options.map((optText, i) => {
+      let cls = "opt-btn";
+      if (answered) {
+        if (i === q.correct) cls += " correct";
+        else if (i === selected) cls += " wrong";
+        else cls += " dimmed";
+      } else if (state.studyMode && i === q.correct) {
+        cls += " correct";
+      }
+      return `
+        <button class="${cls}" data-opt="${i}" type="button" ${answered ? "disabled" : ""}>
+          <span class="opt-letter">${letters[i]}</span>
+          <span>${escHtml(optText)}</span>
+        </button>`;
+    }).join("");
+
+    const showStudy = answered || state.studyMode;
+
+    stage.innerHTML = `
+      <article class="q-card">
+        <div class="q-header">
+          <div class="badges">
+            <span class="badge ${getPriorityBadgeClass(q.priority)}">${q.priorityLabel}</span>
+            <span class="badge badge-ex">${q.catLabel}</span>
+            <span class="badge badge-branch">git: ${escHtml(q.branch)}</span>
+          </div>
+          <button class="bookmark-btn ${isBookmarked ? "saved" : ""}" id="bookmarkBtn" type="button">
+            ${isBookmarked ? "🔖 Salvată" : "🔖 Salvează"}
+          </button>
+        </div>
+
+        ${renderCodeBlock(q)}
+
+        <h2 class="q-prompt">#${q.id}. ${q.question}</h2>
+
+        <div class="options" id="optionsWrap">
+          ${optsHtml}
+        </div>
+
+        <div class="study-panel ${showStudy ? "visible" : ""}">
+          <div class="study-box box-explain">
+            <h4>🧠 Explicația clară</h4>
+            <p>${q.explain}</p>
+          </div>
+          <div class="study-box box-speech">
+            <h4>🗣️ Cum îi răspunzi profului (direct pe call)</h4>
+            <p>„${escHtml(q.speech)}”</p>
+          </div>
+          <div class="study-box box-screen">
+            <h4>👀 Ce îi arăți pe ecran</h4>
+            <p>${escHtml(q.screen)}</p>
+          </div>
+        </div>
+
+        <div class="nav-footer">
+          <button class="btn-secondary" id="prevQBtn" type="button" ${list.length <= 1 ? "disabled" : ""}>← Înapoi</button>
+          <button class="btn-primary" id="nextQBtn" type="button" ${list.length <= 1 ? "disabled" : ""}>Următoarea →</button>
+        </div>
+      </article>
+    `;
+
+    // Wire events inside stage
+    document.getElementById("bookmarkBtn").addEventListener("click", () => {
+      const idx = state.bookmarks.indexOf(q.id);
+      if (idx === -1) state.bookmarks.push(q.id);
+      else state.bookmarks.splice(idx, 1);
+      saveState();
+      renderQuiz();
+    });
+
+    stage.querySelectorAll("[data-opt]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (state.answers[q.id] !== undefined) return;
+        state.answers[q.id] = Number(btn.getAttribute("data-opt"));
+        saveState();
+        renderQuiz();
+      });
+    });
+
+    document.getElementById("prevQBtn").addEventListener("click", () => {
+      state.idx = (state.idx - 1 + list.length) % list.length;
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("nextQBtn").addEventListener("click", () => {
+      state.idx = (state.idx + 1) % list.length;
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // ======================== MOCK INTERVIEW SIMULATOR ========================
+  let sim = {
+    active: false,
+    finished: false,
+    questions: [],
+    step: 0,
+    picks: [] // selected option indices
+  };
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startSimulation() {
+    const hotPool = shuffle(QUESTIONS.filter(q => q.cat === "hot"));
+    const otherPool = shuffle(QUESTIONS.filter(q => q.cat !== "hot"));
+    sim.questions = hotPool.slice(0, 3).concat(otherPool.slice(0, 2));
+    sim.questions = shuffle(sim.questions);
+    sim.step = 0;
+    sim.picks = [];
+    sim.active = true;
+    sim.finished = false;
+    renderSimulation();
+  }
+
+  function renderSimulation() {
+    const stage = document.getElementById("simStage");
+
+    if (!sim.active) {
+      stage.innerHTML = `
+        <div class="sim-intro">
+          <h2>🎤 Simulare Interviu (5 întrebări ca pe call)</h2>
+          <p style="color:var(--text-muted); margin-top:4px;">
+            Simulează un apel real de 3–5 minute cu profesorul: primești <strong>3 întrebări</strong> din cele raportate de colegi pe WhatsApp + <strong>2 întrebări</strong> din codul Ex 1–5. La final vezi nota estimată pe baremul de 25 de puncte.
+          </p>
+          <div class="sim-meta-grid">
+            <div class="stat-tile">
+              <div class="val">5</div>
+              <div class="lbl">Întrebări pe bucăți reale de cod</div>
+            </div>
+            <div class="stat-tile">
+              <div class="val">25 pct</div>
+              <div class="lbl">Barem echivalent laborator</div>
+            </div>
+            <div class="stat-tile">
+              <div class="val">~3 min</div>
+              <div class="lbl">Durată medie de parcurgere</div>
+            </div>
+          </div>
+          <button class="btn-primary" id="startSimBtn" type="button" style="width:100%;">Începe simularea acum →</button>
+        </div>
+      `;
+      document.getElementById("startSimBtn").addEventListener("click", startSimulation);
+      return;
+    }
+
+    if (sim.finished) {
+      let score = 0;
+      sim.questions.forEach((q, idx) => {
+        if (sim.picks[idx] === q.correct) score++;
+      });
+      const points = 20 + score; // 20..25 scale mirroring prof's generous grading
+      const verdict = score === 5 ? "Impecabil! Ești gata pentru 25/25 🏆" :
+                      score >= 4 ? "Foarte bine! Răspunsuri solide pentru nota maximă ✨" :
+                      score >= 3 ? "Binișor, dar mai repetă explicațiile pentru punctaj maxim 📚" :
+                      "Mai parcurge o dată tab-ul „🔥 Întrebate colegilor” înainte de apel 💡";
+
+      const reviewHtml = sim.questions.map((q, idx) => {
+        const ok = sim.picks[idx] === q.correct;
+        return `
+          <div class="review-item ${ok ? "ok" : "bad"}">
+            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:4px;">
+              ${ok ? "✅ Corect" : "❌ Greșit"} · <code>${escHtml(q.file)}</code>
+            </div>
+            <div style="font-weight:700; font-size:14.5px; margin-bottom:6px;">${q.question}</div>
+            <div style="font-size:13.5px; color:#4ade80;"><strong>Ce îi spui profului:</strong> „${escHtml(q.speech)}”</div>
+          </div>
+        `;
+      }).join("");
+
+      stage.innerHTML = `
+        <div class="sim-summary">
+          <h2>Rezultat Simulare Interviu</h2>
+          <div class="grade-banner">
+            <div>
+              <div style="font-size:13px; color:var(--text-muted);">Scor obținut</div>
+              <div class="grade-score">${score} / 5 corecte</div>
+              <div style="font-size:13.5px; margin-top:4px;">${verdict}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px; color:var(--text-muted);">Estimare punctaj</div>
+              <div style="font-size:26px; font-weight:800; color:#4ade80;">${points} / 25</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn-primary" id="restartSimBtn" type="button">🔄 Încearcă altă combinație de 5 întrebări</button>
+            <button class="btn-secondary" id="goToCheatBtn" type="button">📋 Vezi Cheat-Sheet</button>
+          </div>
+          <div class="review-list">${reviewHtml}</div>
+        </div>
+      `;
+      document.getElementById("restartSimBtn").addEventListener("click", startSimulation);
+      document.getElementById("goToCheatBtn").addEventListener("click", () => switchTab("cheat"));
+      return;
+    }
+
+    const q = sim.questions[sim.step];
+    const picked = sim.picks[sim.step];
+    const answered = picked !== undefined;
+    const letters = ["A", "B", "C", "D"];
+
+    const optsHtml = q.options.map((optText, i) => {
+      let cls = "opt-btn";
+      if (answered) {
+        if (i === q.correct) cls += " correct";
+        else if (i === picked) cls += " wrong";
+        else cls += " dimmed";
+      }
+      return `
+        <button class="${cls}" data-sim-opt="${i}" type="button" ${answered ? "disabled" : ""}>
+          <span class="opt-letter">${letters[i]}</span>
+          <span>${escHtml(optText)}</span>
+        </button>`;
+    }).join("");
+
+    stage.innerHTML = `
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" style="width:${((sim.step + 1) / 5) * 100}%"></div></div>
+        <div class="progress-label">Întrebarea ${sim.step + 1} din 5</div>
+      </div>
+      <article class="q-card">
+        <div class="q-header">
+          <div class="badges">
+            <span class="badge ${getPriorityBadgeClass(q.priority)}">${q.priorityLabel}</span>
+            <span class="badge badge-branch">git: ${escHtml(q.branch)}</span>
+          </div>
+        </div>
+        ${renderCodeBlock(q)}
+        <h2 class="q-prompt">${q.question}</h2>
+        <div class="options">${optsHtml}</div>
+        <div class="study-panel ${answered ? "visible" : ""}">
+          <div class="study-box box-speech">
+            <h4>🗣️ Răspuns ideal pentru call</h4>
+            <p>„${escHtml(q.speech)}”</p>
+          </div>
+          <div class="study-box box-explain">
+            <h4>🧠 Pe scurt</h4>
+            <p>${q.explain}</p>
+          </div>
+        </div>
+        <div class="nav-footer">
+          <button class="btn-secondary" id="abortSimBtn" type="button">Ieși din simulare</button>
+          <button class="btn-primary" id="nextSimBtn" type="button" ${!answered ? "disabled" : ""}>
+            ${sim.step === 4 ? "Vezi rezultatul final →" : "Următoarea întrebare →"}
+          </button>
+        </div>
+      </article>
+    `;
+
+    stage.querySelectorAll("[data-sim-opt]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (sim.picks[sim.step] !== undefined) return;
+        sim.picks[sim.step] = Number(btn.getAttribute("data-sim-opt"));
+        renderSimulation();
+      });
+    });
+
+    document.getElementById("abortSimBtn").addEventListener("click", () => {
+      sim.active = false;
+      renderSimulation();
+    });
+
+    document.getElementById("nextSimBtn").addEventListener("click", () => {
+      if (sim.step < 4) {
+        sim.step++;
+      } else {
+        sim.finished = true;
+      }
+      renderSimulation();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // ======================== TAB SWITCHING & GLOBAL EVENTS ========================
+  function switchTab(tabName) {
+    state.tab = tabName;
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      const isTarget = btn.getAttribute("data-tab") === tabName;
+      btn.classList.toggle("active", isTarget);
+      btn.setAttribute("aria-selected", isTarget ? "true" : "false");
+    });
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.getElementById("view-" + tabName).classList.add("active");
+    if (tabName === "sim") renderSimulation();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
+  });
+
+  document.getElementById("categoryFilters").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-cat]");
+    if (!btn) return;
+    state.cat = btn.getAttribute("data-cat");
+    state.idx = 0;
+    saveState();
+    renderQuiz();
+  });
+
+  document.getElementById("questionJump").addEventListener("change", (e) => {
+    state.idx = Number(e.target.value) || 0;
+    renderQuiz();
+  });
+
+  document.getElementById("toggleStudyModeBtn").addEventListener("click", () => {
+    state.studyMode = !state.studyMode;
+    saveState();
+    renderQuiz();
+  });
+
+  document.getElementById("resetProgressBtn").addEventListener("click", () => {
+    state.answers = {};
+    state.bookmarks = [];
+    state.idx = 0;
+    saveState();
+    renderQuiz();
+  });
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const txt = btn.getAttribute("data-copy");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = "Copiat ✓";
+          setTimeout(() => { btn.textContent = orig; }, 1200);
+        }).catch(() => {});
+      }
+    });
+  });
+
+  // Init
+  loadState();
+  renderQuiz();
+})();
+</script>
+</body>
+</html>
