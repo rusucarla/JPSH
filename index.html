@@ -225,7 +225,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 4px;
       background: var(--surface-2);
       padding: 3px;
@@ -239,13 +239,18 @@
       background: transparent;
       color: var(--text-muted);
       font-family: inherit;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 600;
       min-height: 36px;
-      padding: 6px 8px;
+      padding: 6px 4px;
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 400px) {
+      .tab-btn { font-size: 12px; padding: 6px 2px; }
     }
 
     .tab-btn.active {
@@ -952,6 +957,119 @@
 
     .copy-btn:hover { background: var(--surface-2); }
 
+    /* Speeches View */
+    .rec-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 13px 14px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .rec-box-title {
+      font-weight: 700;
+      font-size: 14.5px;
+      margin: 0 0 6px;
+      color: var(--text);
+    }
+
+    .rec-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .rec-list li { margin-bottom: 4px; }
+    .rec-list li:last-child { margin-bottom: 0; }
+
+    .speech-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .speech-step {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      background: var(--surface);
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .speech-step.clickable { cursor: pointer; }
+    .speech-step.clickable:hover { background: var(--surface-2); }
+
+    .step-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .step-cue {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .step-hint {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .step-body {
+      margin: 0;
+      font-size: 14.5px;
+      line-height: 1.58;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .step-hidden {
+      margin: 0;
+      font-size: 13.5px;
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    .terms-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .terms-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .term-chip {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
     @media (min-width: 680px) {
       .topbar-inner {
         flex-direction: row;
@@ -959,7 +1077,7 @@
         justify-content: space-between;
       }
       .brand-row { flex: 1; }
-      .tabs { width: 320px; flex-shrink: 0; }
+      .tabs { width: 410px; flex-shrink: 0; }
       .q-card { padding: 20px; }
       .kv-cols.cols-2 { grid-template-columns: 1fr 1fr; gap: 12px; }
     }
@@ -990,6 +1108,7 @@
     </div>
     <nav class="tabs" role="tablist">
       <button class="tab-btn active" data-tab="quiz" role="tab" aria-selected="true">Grilă (26)</button>
+      <button class="tab-btn" data-tab="speeches" role="tab" aria-selected="false">Discursuri (16)</button>
       <button class="tab-btn" data-tab="sim" role="tab" aria-selected="false">Simulare (5)</button>
       <button class="tab-btn" data-tab="cheat" role="tab" aria-selected="false">Cheat-Sheet</button>
     </nav>
@@ -1019,7 +1138,38 @@
     <div id="quizStage"></div>
   </section>
 
-  <!-- TAB 2: SIMULATOR -->
+  <!-- TAB 2: SPEECHES -->
+  <section id="view-speeches" class="view">
+    <div class="rec-box">
+      <div class="rec-box-title">Ce fișier e cel mai bun să îl ai deschis pe ecran?</div>
+      <ul class="rec-list">
+        <li><strong>#1 Recomandat:</strong> <code>application-context.xml</code> pe <code>ex2-annotation-dependencies</code> — doar 16 linii, 0 capcane, acoperă tot ce i-a întrebat pe colegi (bean-uri, <code>@Autowired</code>, <code>byType</code> vs <code>byName</code>).</li>
+        <li><strong>#2 Alternativă foarte bună:</strong> <code>test-clients.xml</code> (Ex 1 / Ex 2) — exact ce a prezentat colegul pe 24 nov; acoperă constructor vs setter, <code>value</code> vs <code>ref</code>, colecții și <code>PropertySourcesPlaceholderConfigurer</code>.</li>
+        <li><strong>Evită ca tab activ:</strong> <code>BankApplicationTask1Tests.java</code> (are <code>try/catch { // ignore }</code> prin Reflection).</li>
+      </ul>
+    </div>
+
+    <div class="filter-scroll" id="speechFilters"></div>
+
+    <div class="controls-bar">
+      <div class="jump-wrap">
+        <select id="speechJump" class="select-jump" aria-label="Alege fișierul"></select>
+      </div>
+      <div class="action-row">
+        <button class="btn-ghost" id="toggleCueModeBtn" type="button">Mod repetiție</button>
+        <button class="btn-ghost" id="toggleSpeechCodeBtn" type="button">Ascunde cod</button>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="speechProgressFill"></div></div>
+      <div class="progress-label" id="speechProgressLabel">0 / 0</div>
+    </div>
+
+    <div id="speechStage"></div>
+  </section>
+
+  <!-- TAB 3: SIMULATOR -->
   <section id="view-sim" class="view">
     <div id="simStage"></div>
   </section>
@@ -2103,6 +2253,719 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     { id: "saved", label: "Salvate / Greșite" }
   ];
 
+  const SPEECHES = [
+    // ======================== EX 1: XML CONFIGURATION (S1 - S4) ========================
+    {
+      id: "ex1-app-ctx",
+      ex: "ex1",
+      exLabel: "Ex 1: XML",
+      recommended: false,
+      recLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      slides: "Core-IoC1 P17, P25, P33, P48–49",
+      file: "src/main/resources/application-context.xml",
+      lang: "xml",
+      hlLines: [5, 7, 9],
+      code:
+`<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="...">
+
+    <bean id="clientRepository" class="com.luxoft.bankapp.service.storage.MapClientRepository" />
+
+    <bean id="banking" class="com.luxoft.bankapp.service.BankingImpl" autowire="byType" />
+
+    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" autowire="byType" />
+</beans>`,
+      steps: [
+        {
+          cue: "1. Deschidere (IoC & ce face fișierul)",
+          text: "Acesta este fișierul de configurare XML pentru containerul IoC din Exercițiul 1. În locul instanțierii manuale cu <code>new</code>, cedăm controlul către <code>ApplicationContext</code>, care păstrează intern un Map cu bean-urile gestionate și le leagă prin Dependency Injection."
+        },
+        {
+          cue: "2. Explicație pe bean-urile de pe ecran",
+          text: "Declar trei bean-uri singleton: <code>clientRepository</code> (instanță de <code>MapClientRepository</code>), <code>banking</code> (<code>BankingImpl</code>) și <code>bankReport</code> (<code>BankReportServiceImpl</code>). Implicit bean-urile nu sunt lazy (<code>lazy-init=\"false\"</code>), deci se creează imediat la pornirea contextului."
+        },
+        {
+          cue: "3. Cum funcționează autowire=\"byType\"",
+          text: "Pe <code>banking</code> și <code>bankReport</code> am pus <code>autowire=\"byType\"</code>. Spring se uită la setter-ul <code>setRepository(ClientRepository repository)</code> din ambele clase, găsește în container unicul bean compatibil cu tipul <code>ClientRepository</code> — adică <code>MapClientRepository</code> — și îl injectează automat."
+        },
+        {
+          cue: "4. „Pe lângă” din curs (celelalte moduri & erori)",
+          text: "Cele 4 moduri din XML sunt <code>no</code> (default), <code>byType</code>, <code>byName</code> și <code>constructor</code>. Dacă aș pune <code>byName</code>, Spring ar căuta un bean cu <code>id=\"repository\"</code> (după numele setter-ului) și nu l-ar găsi pe <code>clientRepository</code>; iar dacă aș avea două bean-uri de tip <code>ClientRepository</code> cu <code>byType</code>, ar arunca <code>UnsatisfiedDependencyException</code> / <code>NoUniqueBeanDefinitionException</code>."
+        }
+      ],
+      terms: ["Inversion of Control (IoC)", "Map intern (Name -> Ref)", "autowire=\"byType\" vs byName", "UnsatisfiedDependencyException", "lazy-init"]
+    },
+    {
+      id: "ex1-test-clients",
+      ex: "ex1",
+      exLabel: "Ex 1: XML",
+      recommended: true,
+      recLabel: "#2 Recomandat (ca colegul)",
+      branch: "ex1-xml-configuration",
+      slides: "Core-IoC1 P35, P37–39, P42–46, P55–61",
+      file: "src/main/resources/test-clients.xml",
+      lang: "xml",
+      hlLines: [5, 7, 11, 19, 20, 21, 23],
+      code:
+`<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="...">
+
+    <import resource="application-context.xml" />
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="location" value="clients.properties"/>
+    </bean>
+
+    <bean id="savingAccount1" class="com.luxoft.bankapp.model.SavingAccount">
+        <constructor-arg name="initialBalance" value="1000" />
+    </bean>
+    <bean id="checkingAccount1" class="com.luxoft.bankapp.model.CheckingAccount">
+        <constructor-arg name="overdraft" value="1000" />
+    </bean>
+
+    <bean id="client1" class="com.luxoft.bankapp.model.Client">
+        <constructor-arg name="name" value="\${client1}" />
+        <constructor-arg name="gender" value="MALE" />
+        <property name="repository" ref="clientRepository" />
+        <property name="city" value="Moscow" />
+        <property name="accounts">
+            <list>
+                <ref bean="savingAccount1"/>
+                <ref bean="checkingAccount1"/>
+            </list>
+        </property>
+    </bean>
+</beans>`,
+      steps: [
+        {
+          cue: "1. Deschidere (<import> + Properties)",
+          text: "În <code>test-clients.xml</code> am mutat datele de test (clienții și conturile) din codul Java în XML. Sus folosesc <code>&lt;import resource=\"application-context.xml\" /&gt;</code> ca să am acces la bean-ul <code>clientRepository</code>, și declar <code>PropertySourcesPlaceholderConfigurer</code> ca să citesc numele clienților din <code>clients.properties</code> prin placeholder-e precum <code>${client1}</code>."
+        },
+        {
+          cue: "2. Constructor Injection (<constructor-arg>)",
+          text: "Conturile <code>savingAccount1</code> și <code>checkingAccount1</code> sunt create cu <code>&lt;constructor-arg&gt;</code> (<code>initialBalance=1000</code>, <code>overdraft=1000</code>). La fel, <code>client1</code> primește prin constructor numele rezolvat din proprietăți și genul <code>MALE</code> folosind atributul <code>value</code>, care e pentru literali și Enum-uri."
+        },
+        {
+          cue: "3. Setter Injection (<property>) & Colecții (<list>)",
+          text: "După apelarea constructorului, Spring apelează setter-ii prin <code>&lt;property&gt;</code>: <code>setCity(\"Moscow\")</code> cu <code>value</code>, <code>setRepository</code> cu <code>ref=\"clientRepository\"</code> (pentru referințe către alt bean) și <code>setAccounts</code> cu un tag <code>&lt;list&gt;</code> care conține referințe către cele două conturi."
+        },
+        {
+          cue: "4. „Pe lângă” din curs (colecții & dependențe circulare)",
+          text: "Pe lângă <code>&lt;list&gt;</code>, Spring suportă în XML și <code>&lt;set&gt;</code>, <code>&lt;map&gt;</code> (cu <code>&lt;entry&gt;</code>) și <code>&lt;props&gt;</code>. Și un avantaj important al Setter Injection față de Constructor Injection din curs: dacă două bean-uri depind unul de altul circular prin constructor, apare <code>BeanCurrentlyInCreationException</code>, iar soluția este să înlocuim cu Setter Injection."
+        }
+      ],
+      terms: ["<import resource>", "PropertySourcesPlaceholderConfigurer", "<constructor-arg> vs <property>", "value vs ref", "<list> / <set> / <map>", "BeanCurrentlyInCreationException"]
+    },
+    {
+      id: "ex1-clients-props",
+      ex: "ex1",
+      exLabel: "Ex 1: XML",
+      recommended: false,
+      recLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      slides: "Core-IoC1 P21, P37–39",
+      file: "src/main/resources/clients.properties",
+      lang: "yaml",
+      hlLines: [1, 2, 3],
+      code:
+`client1=Jonny Bravo
+client2=Adam Budzinski
+client3=Anna Smith`,
+      steps: [
+        {
+          cue: "1. Rolul fișierului (externalizarea literalilor)",
+          text: "<code>clients.properties</code> externalizează valorile hardcodate (numele clienților de test) în afara codului Java și a XML-ului, exact cum recomandă cursul: putem schimba datele de configurare fără recompilarea aplicației."
+        },
+        {
+          cue: "2. Cum este citit în Ex 1–2 vs Ex 3–4",
+          text: "În Ex 1 și 2 este încărcat de <code>PropertySourcesPlaceholderConfigurer</code> în <code>test-clients.xml</code> și înlocuiește <code>${client1}</code> și <code>${client2}</code> înainte de crearea bean-urilor. În Ex 3 îl citim cu <code>@PropertySource(\"classpath:clients.properties\")</code> prin obiectul <code>Environment</code>."
+        }
+      ],
+      terms: ["Externalizare literali", "Placeholder ${...}", "Zero recompilare", "PropertySourcesPlaceholderConfigurer"]
+    },
+    {
+      id: "ex1-bank-app",
+      ex: "ex1",
+      exLabel: "Ex 1: XML",
+      recommended: false,
+      recLabel: "Ex 1: XML",
+      branch: "ex1-xml-configuration",
+      slides: "Core-IoC1 P5, P23–24, P28–29",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [2, 3, 12, 13, 17, 19],
+      code:
+`public static void main(String[] args) {
+    ApplicationContext context =
+        new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
+    Banking banking = initialize(context);
+    workWithExistingClients(banking);
+    bankingServiceDemo(banking);
+    bankReportsDemo(context);
+}
+
+public static Banking initialize(ApplicationContext context) {
+    Banking banking = (Banking) context.getBean("banking");
+    Client client_1 = (Client) context.getBean("client1");
+    Client client_2 = (Client) context.getBean("client2");
+    banking.addClient(client_1);
+    banking.addClient(client_2);
+    return banking;
+}
+// În workWithExistingClients:
+try { jonny.deposit(5_000); }
+catch (ActiveAccountNotSet e) {
+    System.out.println(e.getMessage());
+    jonny.setDefaultActiveAccountIfNotSet();
+    jonny.deposit(5_000);
+}`,
+      steps: [
+        {
+          cue: "1. Punctul de intrare & Containerul",
+          text: "În <code>main()</code> pornim containerul Spring folosind <code>ClassPathXmlApplicationContext</code> cu ambele fișiere XML (<code>application-context.xml</code> și <code>test-clients.xml</code>). Spre deosebire de o bibliotecă pe care o apelăm noi, Spring ca framework preia structura și ne gestionează obiectele."
+        },
+        {
+          cue: "2. De ce ApplicationContext și nu BeanFactory",
+          text: "Folosim <code>ApplicationContext</code> (care extinde <code>BeanFactory</code>) pentru că adaugă suport pentru evenimente, internaționalizare (i18n), resurse/mesaje și integrare cu Spring AOP."
+        },
+        {
+          cue: "3. Extragerea bean-urilor & try/catch",
+          text: "În <code>initialize()</code> și <code>bankReportsDemo()</code> nu mai facem <code>new</code>, ci cerem bean-urile gata legate cu <code>context.getBean(\"banking\")</code>, <code>client1</code>, <code>client2</code>, <code>bankReport</code>. Iar în <code>workWithExistingClients()</code>, blocul <code>try/catch</code> prinde <code>ActiveAccountNotSet</code> (pentru că Jonny nu are încă <code>activeAccount</code> setat), apelează <code>setDefaultActiveAccountIfNotSet()</code> și reîncearcă depunerea."
+        }
+      ],
+      terms: ["ClassPathXmlApplicationContext", "ApplicationContext vs BeanFactory", "context.getBean(...)", "ActiveAccountNotSet"]
+    },
+
+    // ======================== EX 2: ANNOTATION-BASED DI (S5 - S7) ========================
+    {
+      id: "ex2-app-ctx",
+      ex: "ex2",
+      exLabel: "Ex 2: Adnotări",
+      recommended: true,
+      recLabel: "#1 Cel mai bun fișier",
+      branch: "ex2-annotation-dependencies",
+      slides: "Core-IoC1 P25, P48 · Core-IoC2 P2–5, P50–51",
+      file: "src/main/resources/application-context.xml",
+      lang: "xml",
+      hlLines: [9, 11, 13, 15],
+      code:
+`<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config />
+
+    <bean id="clientRepository" class="com.luxoft.bankapp.service.storage.MapClientRepository" />
+    <bean id="banking" class="com.luxoft.bankapp.service.BankingImpl" />
+    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" />
+</beans>`,
+      steps: [
+        {
+          cue: "1. Deschidere (configurația hibridă XML + Adnotări)",
+          text: "Acesta este fișierul principal din Exercițiul 2 (configurare bazată pe adnotări, una dintre cele 3 metode de configurare a <code>ApplicationContext</code> alături de XML pur și Java pur). Am păstrat declararea celor trei bean-uri în XML, dar am scos atributele <code>autowire=\"byType\"</code> de pe <code>banking</code> și <code>bankReport</code>."
+        },
+        {
+          cue: "2. Ce face <context:annotation-config />",
+          text: "Linia <code>&lt;context:annotation-config /&gt;</code> (din namespace-ul <code>context</code>) activează procesarea adnotărilor înregistrând <code>BeanPostProcessor</code>-ii Spring, precum <code>AutowiredAnnotationBeanPostProcessor</code>. Fără ea, adnotările <code>@Autowired</code> din cod ar fi complet ignorate și dependențele ar rămâne <code>null</code>."
+        },
+        {
+          cue: "3. Unde declar vs Unde folosesc bean-urile",
+          text: "Bean-urile sunt declarate aici ca <code>&lt;bean&gt;</code> (instanța unică singleton <code>MapClientRepository</code> și serviciile <code>BankingImpl</code>, <code>BankReportServiceImpl</code>). Ele sunt folosite în clasele Java prin <code>@Autowired private ClientRepository repository;</code> (injectat prin Reflection imediat după constructor) și în <code>BankApplication</code> prin <code>context.getBean(...)</code>."
+        },
+        {
+          cue: "4. „Pe lângă” din curs (byType, @Qualifier, comparație)",
+          text: "<code>@Autowired</code> funcționează implicit <em>byType</em> (spre deosebire de <code>byName</code> din XML care ar căuta <code>id=\"repository\"</code>). Dacă am avea două implementări de <code>ClientRepository</code>, ar arunca <code>NoUniqueBeanDefinitionException</code> și am rezolva cu <code>@Qualifier(\"clientRepository\")</code> sau <code>@Primary</code>. Avantajul acestui stil față de XML pur e că e mai puțin verbos și permite combinarea XML-ului de DI cu adnotări pe clase."
+        }
+      ],
+      terms: ["<context:annotation-config />", "AutowiredAnnotationBeanPostProcessor", "Declarare în XML vs @Autowired în Java", "byType vs byName", "@Qualifier / @Primary"]
+    },
+    {
+      id: "ex2-banking-impl",
+      ex: "ex2",
+      exLabel: "Ex 2: Adnotări",
+      recommended: false,
+      recLabel: "Ex 2: Adnotări",
+      branch: "ex2-annotation-dependencies",
+      slides: "Core-IoC2 P3–6, P50",
+      file: "src/main/java/com/luxoft/bankapp/service/BankingImpl.java",
+      lang: "java",
+      hlLines: [3, 4],
+      code:
+`public class BankingImpl implements Banking {
+
+    @Autowired
+    private ClientRepository repository;
+
+    @Override
+    public Client addClient(Client c) {
+        Client created = repository.add(c);
+        c.setRepository(repository);
+        return created;
+    }
+    ...
+}`,
+      steps: [
+        {
+          cue: "1. Rolul clasei & unde e injectată dependența",
+          text: "<code>BankingImpl</code> este fațada de business pentru lucrul cu clienți, conturi și transferuri. Dependența ei către stocare este declarată prin interfața <code>ClientRepository</code>, nu direct clasa concretă, ca să eliminăm cuplarea strânsă."
+        },
+        {
+          cue: "2. Cum funcționează @Autowired pe câmp private",
+          text: "Câmpul <code>repository</code> este <code>private</code> și are adnotarea <code>@Autowired</code>. După cum arată cursul, câmpurile sunt injectate imediat după construirea bean-ului (înainte de metodele de inițializare), prin Java Reflection — deci nu mai este necesar setter-ul."
+        },
+        {
+          cue: "3. „Pe lângă” din curs (ce mai suportă @Autowired)",
+          text: "Din curs știm că <code>@Autowired</code> se poate pune pe setteri, pe un singur constructor (chiar și non-public), pe metode cu oricâți parametri, pe câmpuri <code>private</code> sau pe colecții/array-uri tipizate. Implicit aruncă excepție dacă nu găsește bean-ul, comportament care se poate schimba cu <code>@Autowired(required=false)</code>, iar la ambiguitate folosim <code>@Qualifier</code> sau <code>@Primary</code>."
+        }
+      ],
+      terms: ["Programare la interfață", "Injectare după constructor", "Reflection pe câmp private", "@Autowired(required=false)", "Max 1 constructor @Autowired"]
+    },
+    {
+      id: "ex2-report-impl",
+      ex: "ex2",
+      exLabel: "Ex 2: Adnotări",
+      recommended: false,
+      recLabel: "Ex 2: Adnotări",
+      branch: "ex2-annotation-dependencies",
+      slides: "Core-IoC1 P12 · Core-IoC2 P12",
+      file: "src/main/java/com/luxoft/bankapp/service/BankReportServiceImpl.java",
+      lang: "java",
+      hlLines: [3, 4],
+      code:
+`public class BankReportServiceImpl implements BankReportService {
+
+    @Autowired
+    private ClientRepository repository;
+
+    @Override
+    public int getNumberOfBankClients() {
+        return repository.getAll().size();
+    }
+    ...
+}`,
+      steps: [
+        {
+          cue: "1. Rolul clasei & legătura cu Ex 2",
+          text: "<code>BankReportServiceImpl</code> calculează rapoartele băncii (număr de clienți, număr de conturi, suma creditelor pe <code>CheckingAccount</code>, gruparea pe orașe) folosind <code>ClientRepository</code>."
+        },
+        {
+          cue: "2. De ce vede aceiași clienți ca BankingImpl (Singleton)",
+          text: "Exact cum spune un avantaj cheie din curs: containerul folosește <strong>o singură instanță</strong> de <code>MapClientRepository</code> (scope implicit <code>singleton</code>) pentru mai mulți consumatori (<code>BankingImpl</code> și <code>BankReportServiceImpl</code>). De aceea, clienții adăugați prin <code>BankingImpl</code> apar imediat și în rapoarte."
+        }
+      ],
+      terms: ["Singleton partajat", "Mai mulți consumatori pe același repository", "Streams & rapoarte"]
+    },
+
+    // ======================== EX 3: JAVA CONFIGURATION (S8 - S9) ========================
+    {
+      id: "ex3-bank-app",
+      ex: "ex3",
+      exLabel: "Ex 3: Java Config",
+      recommended: false,
+      recLabel: "Ex 3: Java Config",
+      branch: "ex3-java-configuration",
+      slides: "Core-IoC2 P20–21, P36–46, P51",
+      file: "src/main/java/BankApplication.java",
+      lang: "java",
+      hlLines: [1, 2, 3, 6, 9, 13, 17],
+      code:
+`@Configuration
+@PropertySource("classpath:clients.properties")
+@ComponentScan("com.luxoft.bankapp")
+public class BankApplication {
+
+    @Autowired private ApplicationContext applicationContext;
+    @Autowired private Environment environment;
+
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(BankApplication.class);
+        ...
+    }
+
+    @Bean(name = "savingAccount1")
+    public SavingAccount getDemoSavingAccount1() { return new SavingAccount(1000); }
+
+    @Bean(name = "client1")
+    public Client getDemoClient1() {
+        String name = environment.getProperty("client1");
+        ...
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Deschidere (100% Java, zero XML)",
+          text: "În Exercițiul 3 am șters complet ambele fișiere XML și am trecut la Java-based configuration. Pornim containerul cu <code>AnnotationConfigApplicationContext(BankApplication.class)</code> în locul lui <code>ClassPathXmlApplicationContext</code>."
+        },
+        {
+          cue: "2. Rolul adnotărilor de pe clasă",
+          text: "<code>@Configuration</code> marchează clasa ca sursă de definiții <code>@Bean</code>; <code>@ComponentScan(\"com.luxoft.bankapp\")</code> scanează pachetul după clase cu <code>@Service</code>/<code>@Component</code>; <code>@PropertySource</code> încarcă <code>clients.properties</code> în obiectul Spring <code>Environment</code>."
+        },
+        {
+          cue: "3. @Bean vs @Service & acces la context",
+          text: "Folosesc metode <code>@Bean</code> pentru <code>client1</code>, <code>client2</code> și conturile lor ca să am control programatic pentru mai multe instanțe cu parametri diferiți, și injectez <code>ApplicationContext</code> direct cu <code>@Autowired</code> (alternativa modernă la implementarea interfeței <code>ApplicationContextAware</code> din curs)."
+        },
+        {
+          cue: "4. „Pe lângă” din curs (avantaje Java-based)",
+          text: "Față de XML și adnotări simple, configurarea în Java este <strong>type-safe</strong> (erorile apar la compilare, nu la runtime), iar căutarea referințelor, autocompletarea și refactorizarea în IDE sunt mult mai simple."
+        }
+      ],
+      terms: ["AnnotationConfigApplicationContext", "@Configuration", "@ComponentScan", "@PropertySource + Environment", "@Bean vs @Service", "Type-safety"]
+    },
+    {
+      id: "ex3-map-repo",
+      ex: "ex3",
+      exLabel: "Ex 3: Java Config",
+      recommended: false,
+      recLabel: "Ex 3: Java Config",
+      branch: "ex3-java-configuration",
+      slides: "Core-IoC2 P7–8, P11–15",
+      file: "src/main/java/com/luxoft/bankapp/service/storage/MapClientRepository.java",
+      lang: "java",
+      hlLines: [1, 2],
+      code:
+`@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class MapClientRepository implements ClientRepository {
+    private Map<Long, Client> data;
+    private long currentId = 0;
+    ...
+}`,
+      steps: [
+        {
+          cue: "1. Stereotipul @Service vs @Component / @Repository / @Controller",
+          text: "Am adnotat clasa cu <code>@Service</code> ca să fie descoperită automat de <code>@ComponentScan</code>. În curs, <code>@Component</code> este stereotipul generic, iar <code>@Service</code>, <code>@Repository</code> și <code>@Controller</code> adaugă semantică pe straturi (<code>@Repository</code> traduce și excepțiile SQL în <code>DataAccessException</code>)."
+        },
+        {
+          cue: "2. Scope-urile unui Bean (Singleton vs Prototype)",
+          text: "<code>@Scope(SCOPE_SINGLETON)</code> este și valoarea implicită: există o singură instanță per <code>ApplicationContext</code>, deci <code>HashMap</code>-ul de clienți e partajat în toată aplicația. Celelalte scope-uri sunt <code>prototype</code> (instanță nouă la fiecare <code>getBean()</code> sau injecție — „oricând ai folosi <code>new</code>”, ca la <code>BankFeedServiceImpl</code>) și cele web: <code>request</code> și <code>session</code>."
+        }
+      ],
+      terms: ["@Component / @Service / @Repository / @Controller", "SCOPE_SINGLETON", "SCOPE_PROTOTYPE", "request / session (web)"]
+    },
+
+    // ======================== EX 4: SPRING BOOT & PROFILES (S10 - S12) ========================
+    {
+      id: "ex4-boot-app",
+      ex: "ex4",
+      exLabel: "Ex 4: Spring Boot",
+      recommended: false,
+      recLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      slides: "SpringBoot P3, P7–18, P20–23",
+      file: "src/main/java/com/luxoft/bankapp/BankApplication.java",
+      lang: "java",
+      hlLines: [1, 2, 5],
+      code:
+`@SpringBootApplication
+@PropertySource("classpath:clients.properties")
+public class BankApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BankApplication.class, args);
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Ce aduce Spring Boot (Starters & Parent)",
+          text: "În Exercițiul 4 am trecut la Spring Boot: în <code>pom.xml</code> moștenim <code>spring-boot-starter-parent</code> (care gestionează versiunile compatibile fără tag-uri <code>&lt;version&gt;</code>), folosim <code>spring-boot-starter</code> (core + autoconfigure + logback + YAML) și plugin-ul de Maven care împachetează aplicația ca <strong>Uber-JAR</strong> executabil."
+        },
+        {
+          cue: "2. Cele 3 adnotări din @SpringBootApplication",
+          text: "<code>@SpringBootApplication</code> combină <code>@SpringBootConfiguration</code> (echivalent <code>@Configuration</code>), <code>@EnableAutoConfiguration</code> (adaugă automat bean-uri pe baza librăriilor din classpath) și <code>@ComponentScan</code> (scanează din pachetul <code>com.luxoft.bankapp</code> în jos)."
+        },
+        {
+          cue: "3. „Pe lângă” din curs (@Conditional)",
+          text: "În spate, auto-configurarea Spring Boot se bazează pe adnotări condiționale din curs precum <code>@ConditionalOnMissingBean</code> (creează bean-ul implicit doar dacă nu am definit noi unul) și <code>@ConditionalOnProperty</code>."
+        }
+      ],
+      terms: ["spring-boot-starter-parent", "Uber-JAR", "@SpringBootApplication", "@EnableAutoConfiguration", "@ConditionalOnMissingBean"]
+    },
+    {
+      id: "ex4-yml",
+      ex: "ex4",
+      exLabel: "Ex 4: Spring Boot",
+      recommended: false,
+      recLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      slides: "SpringBoot P24–38",
+      file: "src/main/resources/application.yml",
+      lang: "yaml",
+      hlLines: [1, 2, 6, 7, 11, 12],
+      code:
+`spring.profiles.active: dev
+feed.filename: demo.feed
+
+---
+
+spring:
+    profiles: dev
+debug: true
+
+---
+
+spring:
+    profiles: prod
+debug: false`,
+      steps: [
+        {
+          cue: "1. Configurație externalizată & YAML",
+          text: "Am înlocuit <code>application.properties</code> cu <code>application.yml</code>. YAML este un superset al JSON-ului suportat nativ de <code>SpringApplication</code>, mai clar pentru configurații ierarhice."
+        },
+        {
+          cue: "2. Documente multi-profil (---)",
+          text: "Fișierul este împărțit prin <code>---</code> în mai multe documente YAML specifice profilului: prima secțiune setează <code>spring.profiles.active: dev</code> și <code>feed.filename: demo.feed</code>, a doua activează <code>debug: true</code> pentru <code>dev</code>, iar a treia pune <code>debug: false</code> pentru <code>prod</code>."
+        },
+        {
+          cue: "3. „Pe lângă” din curs (suprascriere din linia de comandă)",
+          text: "Spring Boot folosește o ordine strictă de prioritate a surselor (<code>PropertySource</code>): argumentele din linia de comandă precum <code>--spring.profiles.active=prod</code> suprascriu mereu valoarea din <code>application.yml</code> fără să modificăm fișierul."
+        }
+      ],
+      terms: ["Externalized Configuration", "YAML (JSON superset)", "Multi-profile YAML (---)", "spring.profiles.active", "Prioritate CLI --"]
+    },
+    {
+      id: "ex4-demo-init",
+      ex: "ex4",
+      exLabel: "Ex 4: Spring Boot",
+      recommended: false,
+      recLabel: "Ex 4: Spring Boot",
+      branch: "ex4-spring-boot",
+      slides: "Core-IoC2 P16–18 · SpringBoot P37–38",
+      file: "src/main/java/com/luxoft/bankapp/service/demo/DemoBankInitializationService.java",
+      lang: "java",
+      hlLines: [1, 2, 7, 10, 14],
+      code:
+`@Service
+@Profile("dev")
+public class DemoBankInitializationService implements BankInitializationService {
+    public static final String DEMO_FEED_FILE_NAME = "default.feed";
+
+    @Value("\${feed.filename}")
+    private String fileName;
+
+    @Autowired
+    private BankFeedServiceImpl feedService;
+
+    @Override
+    @PostConstruct
+    public void createClientsForDemo() {
+        if (fileName == null) fileName = DEMO_FEED_FILE_NAME;
+        feedService.loadFeed(new File(fileName));
+    }
+}`,
+      steps: [
+        {
+          cue: "1. @Profile(\"dev\") & @Value",
+          text: "Clasa este un <code>@Service</code> marcat cu <code>@Profile(\"dev\")</code>, deci se încarcă doar când profilul activ este <code>dev</code> (pe <code>prod</code> este ignorată complet). Câmpul <code>fileName</code> primește valoarea <code>demo.feed</code> din YAML prin <code>@Value(\"${feed.filename}\")</code>."
+        },
+        {
+          cue: "2. De ce @PostConstruct și NU în constructor",
+          text: "Metoda <code>createClientsForDemo()</code> are <code>@PostConstruct</code> ca să ruleze imediat <strong>după</strong> ce constructorul s-a terminat și dependențele (<code>feedService</code> și <code>fileName</code>) au fost injectate. În constructor ele ar fi încă <code>null</code> și ar arunca <code>NullPointerException</code>."
+        },
+        {
+          cue: "3. „Pe lângă” din curs (ciclul de viață al unui bean)",
+          text: "În curs sunt prezentate 3 moduri pentru lifecycle callbacks: interfețele Spring <code>InitializingBean</code> / <code>DisposableBean</code>, atributele XML <code>init-method</code> / <code>destroy-method</code> (fără dependență de Spring) și adnotările standard JSR-250 <code>@PostConstruct</code> / <code>@PreDestroy</code> pe care le folosim aici."
+        }
+      ],
+      terms: ["@Profile(\"dev\")", "@Value(\"${feed.filename}\")", "@PostConstruct (lifecycle)", "InitializingBean / init-method", "BankFeedServiceImpl (prototype)"]
+    },
+
+    // ======================== EX 5: AOP, EVENTS & SpEL (S13 - S16) ========================
+    {
+      id: "ex5-ops",
+      ex: "ex5",
+      exLabel: "Ex 5: AOP",
+      recommended: false,
+      recLabel: "Ex 5: AOP",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC1 P7, P23",
+      file: "src/main/java/com/luxoft/bankapp/service/operations/BankingOperationsServiceImpl.java",
+      lang: "java",
+      hlLines: [1, 2, 4, 8],
+      code:
+`@Service
+public class BankingOperationsServiceImpl implements BankingOperationsService {
+    @Override
+    public double getBalance(Client client) { return client.getBalance(); }
+    @Override
+    public void deposit(Client client, double amount) { client.deposit(amount); }
+    @Override
+    public void withdraw(Client client, double amount) { client.withdraw(amount); }
+    // + suprascrierile cu Account
+}`,
+      steps: [
+        {
+          cue: "1. Rolul clasei & separarea responsabilităților",
+          text: "<code>BankingOperationsServiceImpl</code> conține doar logica pură de operațiuni bancare (<code>getBalance</code>, <code>deposit</code>, <code>withdraw</code>, fiecare cu câte două suprascrieri: pentru <code>Client</code> și pentru <code>Account</code>). Nu am scris nicio linie de audit aici — auditul se aplică transparent prin AOP."
+        },
+        {
+          cue: "2. Cum interceptează Spring AOP în spate (Proxy)",
+          text: "Când bean-ul e țintit de <code>AuditAspect</code>, Spring nu injectează direct obiectul real, ci îl învelește într-un <strong>Dynamic Proxy</strong> (JDK Dynamic Proxy pentru că implementează interfața <code>BankingOperationsService</code>, sau CGLIB dacă nu avea interfață)."
+        },
+        {
+          cue: "3. Capcana self-invocation",
+          text: "Apelurile venite din exterior trec prin Proxy și declanșează aspectul, dar dacă o metodă din clasă ar apela <code>this.deposit(...)</code> intern, apelul ar ocoli Proxy-ul și auditul nu ar mai rula."
+        }
+      ],
+      terms: ["Clean business logic", "Dynamic Proxy (JDK Proxy / CGLIB)", "Self-invocation (this.)"]
+    },
+    {
+      id: "ex5-aspect",
+      ex: "ex5",
+      exLabel: "Ex 5: AOP",
+      recommended: false,
+      recLabel: "Ex 5: AOP",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC2 P20–21",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditAspect.java",
+      lang: "java",
+      hlLines: [1, 2, 7, 13, 19, 25, 30],
+      code:
+`@Aspect
+@Configuration
+public class AuditAspect {
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Pointcut("execution(* com.luxoft.bankapp.service.operations.*.deposit(..))")
+    public void anyDeposit() {}
+
+    @Before("anyDeposit()")
+    public void logDeposit(JoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        applicationContext.publishEvent(new DepositEvent(getAccountId(args), (double) args[1]));
+    }
+
+    @Around("anyWithdraw()")
+    public Object logWithdrawal(ProceedingJoinPoint thisJoinPoint) throws Throwable {
+        Object[] args = thisJoinPoint.getArgs();
+        applicationContext.publishEvent(new WithdrawEvent(getAccountId(args), (double) args[1])); // TRYING
+        Object result;
+        try {
+            result = thisJoinPoint.proceed();
+            applicationContext.publishEvent(new WithdrawEvent(getAccountId(args), (double) args[1], WithdrawEvent.State.SUCCESSFUL));
+        } catch (Exception e) {
+            applicationContext.publishEvent(new WithdrawEvent(getAccountId(args), (double) args[1], WithdrawEvent.State.FAILED));
+            throw e;
+        }
+        return result;
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Configurare & Pointcut-uri",
+          text: "<code>AuditAspect</code> este adnotat cu <code>@Aspect</code> și <code>@Configuration</code> (folosind starter-ul <code>spring-boot-starter-aop</code>). Expresia <code>execution(* com.luxoft.bankapp.service.operations.*.deposit(..))</code> interceptează metodele <code>deposit</code> cu orice tip de return (<code>*</code>), din orice clasă a pachetului <code>operations</code>, cu orice parametri (<code>..</code>)."
+        },
+        {
+          cue: "2. @Before vs @Around (de ce 2 evenimente la withdraw)",
+          text: "La <code>deposit</code> și <code>getBalance</code> ajunge <code>@Before</code> cu <code>JoinPoint</code>. La <code>withdraw</code> folosim <code>@Around</code> cu <code>ProceedingJoinPoint</code> ca să emitem <code>TRYING</code> înainte de <code>proceed()</code>, și apoi <code>SUCCESSFUL</code> sau <code>FAILED</code> (în <code>catch</code>) — deci 2 evenimente pe o retragere."
+        },
+        {
+          cue: "3. Două capcane critice din logWithdrawal()",
+          text: "Dacă ștergem <code>thisJoinPoint.proceed()</code>, retragerea reală nu se mai execută deloc (banii rămân în cont). Dacă ștergem <code>throw e;</code> din <code>catch</code>, aspectul înghite excepția <code>NotEnoughFundsException</code> și apelantul crede că retragerea a reușit."
+        }
+      ],
+      terms: ["@Aspect + @Pointcut", "JoinPoint vs ProceedingJoinPoint", "@Before vs @Around", "proceed() + throw e", "applicationContext.publishEvent()"]
+    },
+    {
+      id: "ex5-audit-svc",
+      ex: "ex5",
+      exLabel: "Ex 5: Events",
+      recommended: false,
+      recLabel: "Ex 5: Events",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC2 P22–30",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/AuditService.java",
+      lang: "java",
+      hlLines: [5, 11, 17],
+      code:
+`@Service
+public class AuditService implements Audit {
+    private List<AccountEvent> events = new ArrayList<>(100);
+
+    @EventListener(condition = "#event.amount >= @eventConditionFilter.depositLimit")
+    public void auditOperation(DepositEvent event) {
+        events.add(event);
+        ...
+    }
+
+    @EventListener(condition = "#event.amount >= @eventConditionFilter.withdrawalLimit")
+    public void auditOperation(WithdrawEvent event) {
+        events.add(event);
+        ...
+    }
+
+    @EventListener
+    public void auditOperation(BalanceEvent event) {
+        events.add(event);
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Decuplarea prin Spring Events (Task 3)",
+          text: "Inițial (Task 2), <code>AuditAspect</code> depindea direct de <code>AuditService</code>. În Task 3 le-am decuplat: evenimentele extind <code>AccountEvent</code> (care extinde <code>ApplicationEvent</code>), aspectul le publică în <code>ApplicationContext</code>, iar <code>AuditService</code> le ascultă."
+        },
+        {
+          cue: "2. @EventListener & filtrarea SpEL (Task 4)",
+          text: "Din Spring 4 folosim <code>@EventListener</code> direct pe metode în loc să implementăm interfața <code>ApplicationListener</code>. Condiția SpEL <code>#event.amount >= @eventConditionFilter.depositLimit</code> filtrează evenimentele: se execută doar dacă suma e cel puțin egală cu pragul din configurare."
+        },
+        {
+          cue: "3. „Pe lângă” din curs (avantaje & dezavantaj Events)",
+          text: "Exact ca în curs: avantajul evenimentelor e că putem avea oricâți subscriberi fără să creștem complexitatea sau cuplarea (doar containerul îi știe). Dezavantajul e că devine mai greu să urmărești static din cod ce se întâmplă în sistem la publicarea unui eveniment."
+        }
+      ],
+      terms: ["ApplicationEvent", "@EventListener (Spring 4+)", "Decuplare publisher-subscriber", "SpEL condition", "Avantaj/Dezavantaj Events"]
+    },
+    {
+      id: "ex5-filter",
+      ex: "ex5",
+      exLabel: "Ex 5: SpEL",
+      recommended: false,
+      recLabel: "Ex 5: SpEL",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC2 P30, P45",
+      file: "src/main/java/com/luxoft/bankapp/service/audit/EventConditionFilter.java",
+      lang: "java",
+      hlLines: [1, 3, 6],
+      code:
+`@Component
+public class EventConditionFilter {
+    @Value("\${audit.amount.deposit:0}")
+    public double depositLimit;
+
+    @Value("\${audit.amount.withdrawal:0}")
+    public double withdrawalLimit;
+}`,
+      steps: [
+        {
+          cue: "1. Rolul clasei & @Value cu valoare implicită",
+          text: "<code>EventConditionFilter</code> este un bean <code>@Component</code> care citește din <code>application.yml</code> pragurile minime de audit: <code>audit.amount.deposit</code> (99) și <code>audit.amount.withdrawal</code> (99), cu fallback <code>:0</code> dacă lipsesc din configurare."
+        },
+        {
+          cue: "2. Cum îl apelează SpEL din AuditService",
+          text: "În expresia SpEL <code>#event.amount >= @eventConditionFilter.depositLimit</code>, <code>#event</code> referențiază argumentul metodei, iar <code>@eventConditionFilter</code> (cu <code>@</code>) îi cere lui Spring să caute în container bean-ul cu numele clasei (camelCase) și să citească limita <code>depositLimit</code>."
+        }
+      ],
+      terms: ["@Component", "@Value(\"${...:0}\") fallback", "SpEL @beanName vs #arg"]
+    }
+  ];
+
+  const SPEECH_CATS = [
+    { id: "rec", label: "Recomandate (2)" },
+    { id: "ex1", label: "Ex 1: XML (4)" },
+    { id: "ex2", label: "Ex 2: Adnotări (3)" },
+    { id: "ex3", label: "Ex 3: Java Config (2)" },
+    { id: "ex4", label: "Ex 4: Spring Boot (3)" },
+    { id: "ex5", label: "Ex 5: AOP & Events (4)" },
+    { id: "all", label: "Toate (16)" }
+  ];
+
   const STORAGE_KEY = "jpsh_spring_quiz_v1";
   const THEME_KEY = "jpsh_theme_v1";
 
@@ -2112,7 +2975,12 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     idx: 0,
     studyMode: false,
     answers: {},
-    bookmarks: []
+    bookmarks: [],
+    speechCat: "rec",
+    speechIdx: 0,
+    speechCueMode: false,
+    speechShowCode: true,
+    revealedSteps: {}
   };
 
   function getTheme() {
@@ -2581,6 +3449,118 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     });
   }
 
+  // ======================== SPEECHES ========================
+  function getFilteredSpeeches() {
+    if (state.speechCat === "all") return SPEECHES;
+    if (state.speechCat === "rec") return SPEECHES.filter(s => s.recommended);
+    return SPEECHES.filter(s => s.ex === state.speechCat);
+  }
+
+  function renderSpeechFilters() {
+    const wrap = document.getElementById("speechFilters");
+    wrap.innerHTML = SPEECH_CATS.map(c => {
+      const active = state.speechCat === c.id ? "active" : "";
+      return `<button class="filter-pill ${active}" data-scat="${c.id}" type="button">${c.label}</button>`;
+    }).join("");
+  }
+
+  function renderSpeeches() {
+    renderSpeechFilters();
+
+    const cueBtn = document.getElementById("toggleCueModeBtn");
+    cueBtn.classList.toggle("active-toggle", state.speechCueMode);
+    cueBtn.textContent = state.speechCueMode ? "Mod repetiție: ON" : "Mod repetiție";
+
+    const codeBtn = document.getElementById("toggleSpeechCodeBtn");
+    codeBtn.textContent = state.speechShowCode ? "Ascunde cod" : "Arată cod";
+
+    const list = getFilteredSpeeches();
+    const jump = document.getElementById("speechJump");
+    const stage = document.getElementById("speechStage");
+    const fill = document.getElementById("speechProgressFill");
+    const pLabel = document.getElementById("speechProgressLabel");
+
+    if (state.speechIdx >= list.length) state.speechIdx = 0;
+    if (state.speechIdx < 0) state.speechIdx = list.length - 1;
+
+    jump.innerHTML = list.map((item, i) => {
+      const prefix = item.recommended ? "[*] " : "";
+      const shortFile = item.file.split("/").pop();
+      return `<option value="${i}" ${i === state.speechIdx ? "selected" : ""}>${prefix}${escHtml(item.exLabel)} — ${escHtml(shortFile)}</option>`;
+    }).join("");
+
+    const s = list[state.speechIdx];
+    fill.style.width = Math.round(((state.speechIdx + 1) / list.length) * 100) + "%";
+    pLabel.textContent = `${state.speechIdx + 1} / ${list.length}`;
+
+    const stepsHtml = s.steps.map((st, idx) => {
+      const stepKey = `${s.id}_${idx}`;
+      const isHidden = state.speechCueMode && !state.revealedSteps[stepKey];
+      return `
+        <div class="speech-step ${state.speechCueMode ? "clickable" : ""}" data-sstep="${idx}">
+          <div class="step-head">
+            <span class="step-cue">${escHtml(st.cue)}</span>
+            ${state.speechCueMode ? `<span class="step-hint">${isHidden ? "Apasă să vezi" : "Apasă să ascunzi"}</span>` : ""}
+          </div>
+          ${isHidden
+            ? '<p class="step-hidden">Încearcă să spui cu cuvintele tale, apoi apasă aici ca să verifici.</p>'
+            : `<p class="step-body">${st.text}</p>`}
+        </div>
+      `;
+    }).join("");
+
+    const termsHtml = s.terms.map(t => `<span class="term-chip">${escHtml(t)}</span>`).join("");
+
+    stage.innerHTML = `
+      <article class="q-card">
+        <div class="q-header">
+          <div class="badges">
+            <span class="tag ${s.recommended ? "tag-hot" : "tag-prob"}">${escHtml(s.recLabel)}</span>
+            <span class="tag tag-mono">${escHtml(s.branch)}</span>
+            <span class="tag">${escHtml(s.slides)}</span>
+          </div>
+        </div>
+
+        ${state.speechShowCode ? renderCodeBlock(s) : ""}
+
+        <div class="speech-steps">${stepsHtml}</div>
+
+        <div class="terms-box">
+          <div class="study-label">Termeni din curs de menționat</div>
+          <div class="terms-list">${termsHtml}</div>
+        </div>
+
+        <div class="nav-footer">
+          <button class="btn-secondary" id="prevSBtn" type="button" ${list.length <= 1 ? "disabled" : ""}>← Anterior</button>
+          <button class="btn-primary" id="nextSBtn" type="button" ${list.length <= 1 ? "disabled" : ""}>Următorul fișier →</button>
+        </div>
+      </article>
+    `;
+
+    if (state.speechCueMode) {
+      stage.querySelectorAll("[data-sstep]").forEach(el => {
+        el.addEventListener("click", () => {
+          const idx = el.getAttribute("data-sstep");
+          const key = `${s.id}_${idx}`;
+          state.revealedSteps[key] = !state.revealedSteps[key];
+          renderSpeeches();
+        });
+      });
+    }
+
+    document.getElementById("prevSBtn").addEventListener("click", () => {
+      state.speechIdx = (state.speechIdx - 1 + list.length) % list.length;
+      renderSpeeches();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("nextSBtn").addEventListener("click", () => {
+      state.speechIdx = (state.speechIdx + 1) % list.length;
+      renderSpeeches();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
   // ======================== TABS & EVENTS ========================
   function switchTab(tabName) {
     state.tab = tabName;
@@ -2591,6 +3571,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     });
     document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
     document.getElementById("view-" + tabName).classList.add("active");
+    if (tabName === "speeches") renderSpeeches();
     if (tabName === "sim") renderSimulation();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -2629,6 +3610,30 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     state.idx = 0;
     saveState();
     renderQuiz();
+  });
+
+  document.getElementById("speechFilters").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-scat]");
+    if (!btn) return;
+    state.speechCat = btn.getAttribute("data-scat");
+    state.speechIdx = 0;
+    renderSpeeches();
+  });
+
+  document.getElementById("speechJump").addEventListener("change", (e) => {
+    state.speechIdx = Number(e.target.value) || 0;
+    renderSpeeches();
+  });
+
+  document.getElementById("toggleCueModeBtn").addEventListener("click", () => {
+    state.speechCueMode = !state.speechCueMode;
+    state.revealedSteps = {};
+    renderSpeeches();
+  });
+
+  document.getElementById("toggleSpeechCodeBtn").addEventListener("click", () => {
+    state.speechShowCode = !state.speechShowCode;
+    renderSpeeches();
   });
 
   document.querySelectorAll(".copy-btn").forEach(btn => {
