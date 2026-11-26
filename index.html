@@ -1096,6 +1096,150 @@
       margin-right: 4px;
     }
 
+    /* Per-file "If Prof Asks" Q&A Cards & Self-contained Mini Cheat-Sheet */
+    .qa-section {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .qa-head-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .qa-toggle-all {
+      appearance: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      min-height: 30px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .qa-toggle-all:hover { background: var(--surface-2); color: var(--text); }
+
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    details.qa-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    details.qa-item[open] {
+      border-color: var(--border-strong);
+    }
+
+    details.qa-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    details.qa-item summary::-webkit-details-marker { display: none; }
+
+    details.qa-item summary::after {
+      content: "+";
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      padding-left: 6px;
+    }
+
+    details.qa-item[open] summary::after { content: "−"; }
+
+    .qa-line-badge {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+
+    .qa-q {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .qa-a {
+      margin: 0;
+      padding: 9px 12px 11px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .glossary-list {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .glossary-item {
+      padding: 8px 11px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13.5px;
+      line-height: 1.48;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .glossary-item:last-child { border-bottom: none; }
+
+    .glossary-term {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-right: 6px;
+    }
+
+    .glossary-def { color: var(--text); }
+
     @media (min-width: 680px) {
       .topbar-inner {
         flex-direction: row;
@@ -2279,6 +2423,60 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     { id: "saved", label: "Salvate / Greșite" }
   ];
 
+  const TERM_DEFS = {
+    "Bean": "Un obiect Java obișnuit (POJO) creat, configurat și administrat de containerul Spring IoC (ApplicationContext).",
+    "IoC": "Inversion of Control — nu codul nostru apelează new, ci framework-ul (Spring) controlează crearea și legarea obiectelor.",
+    "DI": "Dependency Injection — mecanismul prin care Spring injectează dependențele unui bean la runtime (prin constructor, setter sau câmp).",
+    "ApplicationContext": "Containerul principal Spring (extinde BeanFactory); păstrează bean-urile într-un Map intern și adaugă Events, i18n, resurse și suport AOP.",
+    "BeanFactory": "Interfața de bază a containerului IoC; mai ușoară, folosită doar când resursele sunt foarte limitate sau pentru compatibilitate.",
+    "Singleton": "Scope-ul implicit în Spring: se creează o singură instanță per ApplicationContext, partajată peste tot unde este cerut bean-ul.",
+    "Prototype": "Scope (@Scope(\"prototype\")) în care Spring creează o instanță nouă de fiecare dată când bean-ul este cerut sau injectat.",
+    "lazy-init": "Implicit false (bean-urile singleton se creează imediat la pornire); dacă e true, bean-ul se creează abia la prima cerere (getBean).",
+    "autowire=\"byType\"": "Mod XML în care Spring caută un singur bean din container care se potrivește cu tipul parametrului din setter.",
+    "autowire=\"byName\"": "Mod XML în care Spring caută un bean cu id exact egal cu numele proprietății/setter-ului (ex: setRepository -> id=\"repository\").",
+    "autowire=\"constructor\"": "Mod XML similar cu byType, dar aplicat pe parametrii constructorului la crearea bean-ului.",
+    "autowire=\"no\"": "Modul implicit în XML: fără legare automată; dependențele se pun manual cu <property ref=\"...\"/> sau cu @Autowired.",
+    "<constructor-arg>": "Tag XML care pasează argumente către constructorul clasei în momentul creării bean-ului.",
+    "<property>": "Tag XML care apelează metoda setter (ex: setCity, setRepository) imediat după construirea bean-ului.",
+    "value vs ref": "value pasează valori simple (String, numere, Enum, \${...}); ref pasează referința către un alt bean din container.",
+    "<import resource>": "Include definițiile de bean-uri dintr-un alt fișier XML, ca să poți referenția bean-uri definite acolo.",
+    "PropertySourcesPlaceholderConfigurer": "Un BeanFactoryPostProcessor care citește fișiere .properties și înlocuiește \${cheie} înainte de crearea bean-urilor.",
+    "BeanCurrentlyInCreationException": "Excepția aruncată la dependență circulară prin constructor (A îl cere pe B și B pe A); se rezolvă trecând la Setter Injection.",
+    "NoUniqueBeanDefinitionException": "Excepția aruncată când Spring găsește >= 2 bean-uri compatibile cu tipul cerut de @Autowired sau byType.",
+    "NoSuchBeanDefinitionException": "Excepția aruncată când ceri sau injectezi un bean pe care Spring nu l-a găsit în container (ex: lipsește @Service sau <bean>).",
+    "<context:annotation-config />": "Tag XML care activează BeanPostProcessor-ii pentru adnotări (@Autowired, @PostConstruct etc.) pe bean-urile declarate în XML.",
+    "BeanPostProcessor": "Hook intern Spring care procesează bean-urile înainte/după inițializare (ex: AutowiredAnnotationBeanPostProcessor procesează @Autowired).",
+    "@Autowired": "Adnotare care îi cere lui Spring să injecteze automat o dependență compatibilă (implicit byType) pe câmp, setter, constructor sau metodă.",
+    "Reflection": "Mecanism Java prin care Spring poate citi/scrie câmpuri private (field.setAccessible(true)) fără să aibă nevoie de setter.",
+    "@Qualifier": "Adnotare pusă lângă @Autowired pentru a specifica exact numele (id-ul) bean-ului când există mai mulți candidați de același tip.",
+    "@Primary": "Marchează unul dintre bean-urile de același tip drept alegerea implicită atunci când @Autowired găsește mai mulți candidați.",
+    "@Configuration": "Marchează o clasă Java ca sursă de definiții de bean-uri (@Bean) pentru AnnotationConfigApplicationContext.",
+    "@ComponentScan": "Îi spune lui Spring ce pachet (și sub-pachetele lui) să scaneze automat după clase cu @Component, @Service, @Repository, @Controller.",
+    "@Bean": "Adnotare pe o metodă dintr-o clasă @Configuration; obiectul returnat de metodă este înregistrat ca bean în container.",
+    "@Service": "Specializare a lui @Component pentru stratul de logică de business; face clasa descoperită automat de @ComponentScan.",
+    "@Component": "Adnotarea stereotip generică ce marchează o clasă Java pentru a fi înregistrată automat ca bean la scanare.",
+    "@Repository": "Stereotip pentru stratul de stocare/persistență; în plus traduce excepțiile SQL/DB în DataAccessException.",
+    "@PropertySource": "Încarcă un fișier .properties (ex: clients.properties) în obiectul Spring Environment.",
+    "Environment": "Interfața Spring care expune proprietățile încărcate (@PropertySource, application.yml, variabile de sistem) și profilele active.",
+    "@SpringBootApplication": "Meta-adnotare care combină @SpringBootConfiguration, @EnableAutoConfiguration și @ComponentScan din pachetul curent în jos.",
+    "Spring Boot Starter": "Dependență agregatoare Maven (ex: spring-boot-starter, spring-boot-starter-aop) gestionată de spring-boot-starter-parent fără tag <version>.",
+    "Uber-JAR": "Arhivă JAR executabilă generată de spring-boot-maven-plugin care conține codul aplicației plus toate librăriile și serverul embedded.",
+    "@ConditionalOnMissingBean": "Adnotare folosită în auto-configurarea Spring Boot ca să creeze un bean implicit doar dacă utilizatorul nu a definit deja unul.",
+    "YAML multi-profil": "Un singur fișier application.yml împărțit prin '---' în secțiuni specifice fiecărui profil (ex: dev vs prod).",
+    "@Profile": "Condiționează crearea unui bean sau a unei configurări doar când acel profil (ex: \"dev\") este activ.",
+    "@Value": "Injectează o valoare din fișierele de configurare (ex: @Value(\"\${feed.filename}\")) sau o valoare implicită (:0).",
+    "@PostConstruct": "Adnotare JSR-250 pe o metodă care rulează automat imediat după constructor și după injectarea @Autowired / @Value.",
+    "@Aspect / AOP": "Programare Orientată pe Aspecte: separă preocupări transversale (audit, logging, tranzacții) de logica de business fără a modifica metodele țintă.",
+    "@Pointcut": "Expresie AspectJ (ex: execution(* pachet.*.metoda(..))) care definește exact ce metode din aplicație vor fi interceptate.",
+    "@Before vs @Around": "@Before rulează doar înainte de metodă (JoinPoint); @Around înconjoară metoda (ProceedingJoinPoint) și îi controlează apelul și excepțiile.",
+    "ProceedingJoinPoint": "Parametru specific lui @Around; apelul thisJoinPoint.proceed() este cel care execută efectiv metoda reală interceptată.",
+    "Dynamic Proxy": "Obiect intermediar creat de Spring AOP (JDK Proxy pe interfață sau CGLIB) care învelește bean-ul real și rulează aspectele la apeluri.",
+    "Self-invocation": "Apel intern de forma this.metoda() în interiorul aceleiași clase; ocolește Proxy-ul Spring AOP și nu declanșează aspectul.",
+    "ApplicationEvent": "Clasa de bază pentru evenimente în Spring, publicate decuplat prin applicationContext.publishEvent(...).",
+    "@EventListener": "Adnotare (din Spring 4+) pe o metodă a unui bean ca să asculte automat evenimentele publicate, opțional cu filtru SpEL.",
+    "SpEL": "Spring Expression Language (ex: #event.amount >= @eventConditionFilter.depositLimit), unde # referă parametrul și @ referă un bean din container."
+  };
+
   const SPEECHES = [
     // ======================== EX 1: XML CONFIGURATION (S1 - S5) ========================
     {
@@ -2324,7 +2522,14 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
       ],
       prevNote: "Înainte era gol (totul cu new în Java). De ce am schimbat: eliminăm cuplarea strânsă și putem înlocui MapClientRepository (ex. cu o bază SQL) fără recompilare.",
       nextNote: "La Ex 2: scoatem autowire=\"byType\" și punem <context:annotation-config /> (de ce: în proiecte mari XML-ul devine greu de urmărit, așa mutăm dependențele cu @Autowired în cod). La Ex 3: XML-ul se șterge complet pentru type-safety la compilare.",
-      terms: ["Inversion of Control (IoC)", "Map intern (Name -> Ref)", "autowire=\"byType\" vs byName", "UnsatisfiedDependencyException", "lazy-init"]
+      ifAsked: [
+        { lines: "L3–L6", q: "Ce fac xmlns și schemaLocation aici?", a: "Declară namespace-ul standard Spring Beans și fișierul <code>spring-beans.xsd</code> ca XML-ul să fie validat pentru tag-urile <code>&lt;beans&gt;</code> și <code>&lt;bean&gt;</code>." },
+        { lines: "L8", q: "De ce clientRepository nu are autowire?", a: "Pentru că <code>MapClientRepository</code> nu are nicio dependență către alt bean (constructorul își creează singur <code>new HashMap&lt;&gt;()</code>)." },
+        { lines: "L10 & L12", q: "Cum funcționează autowire=\"byType\" și de ce nu merge byName aici?", a: "<code>byType</code> caută unicul bean de tip <code>ClientRepository</code> din container și îl pasează la <code>setRepository(...)</code>. <code>byName</code> ar căuta un bean cu <code>id=\"repository\"</code> (după numele setter-ului) și n-ar găsi <code>id=\"clientRepository\"</code>." },
+        { lines: "L10 & L12", q: "Ce se întâmplă dacă există 2 bean-uri de tip ClientRepository?", a: "Containerul aruncă <code>UnsatisfiedDependencyException</code> / <code>NoUniqueBeanDefinitionException</code> la pornire, deoarece nu știe pe care dintre cele două să-l injecteze." },
+        { lines: "L8–L12", q: "Când se instanțiază aceste 3 bean-uri?", a: "Imediat la crearea <code>ClassPathXmlApplicationContext</code>, pentru că implicit în Spring <code>lazy-init</code> este <code>false</code> și scope-ul este <code>singleton</code>." }
+      ],
+      termKeys: ["Bean", "IoC", "DI", "ApplicationContext", "Singleton", "lazy-init", "autowire=\"byType\"", "autowire=\"byName\"", "autowire=\"constructor\"", "autowire=\"no\"", "NoUniqueBeanDefinitionException"]
     },
     {
       id: "ex1-test-clients",
@@ -2389,7 +2594,14 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
       ],
       prevNote: "Creat la Ex 1 Task 3. De ce: în scheletul inițial clienții și conturile erau hardcodați cu new în BankApplication.initialize(); separarea în XML decuplează datele demo de logica aplicației.",
       nextNote: "La Ex 2: rămâne neschimbat. La Ex 3: se șterge complet și devine metode @Bean în BankApplication (de ce: verificarea la compilare / type-safety în loc de XML fără type checking).",
-      terms: ["<import resource>", "PropertySourcesPlaceholderConfigurer", "<constructor-arg> vs <property>", "value vs ref", "<list> / <set> / <map>", "BeanCurrentlyInCreationException"]
+      ifAsked: [
+        { lines: "L8", q: "De ce ai pus <import resource=\"application-context.xml\" />?", a: "Pentru că <code>client1</code> (L25) și <code>client2</code> (L42) referențiază <code>ref=\"clientRepository\"</code>, care e definit în <code>application-context.xml</code>; așa fișierul rămâne valid și încărcat separat." },
+        { lines: "L10–L12", q: "Ce face PropertySourcesPlaceholderConfigurer?", a: "Este un <code>BeanFactoryPostProcessor</code> care încarcă <code>clients.properties</code> și înlocuiește <code>${client1}</code> și <code>${client2}</code> înainte ca bean-urile <code>Client</code> să fie create." },
+        { lines: "L14–L20", q: "Cum se creează savingAccount1 și checkingAccount1?", a: "Prin Constructor Injection (<code>&lt;constructor-arg&gt;</code>): apelează <code>new SavingAccount(1000)</code> și <code>new CheckingAccount(1000)</code> cu valori pasate prin <code>value</code>." },
+        { lines: "L22–L33", q: "Care e diferența dintre <constructor-arg>, <property>, value și ref pe client1?", a: "<code>&lt;constructor-arg&gt;</code> (L23–L24) apelează constructorul <code>Client(name, gender)</code>, iar <code>&lt;property&gt;</code> (L25–L32) apelează setter-ii <code>setRepository</code>, <code>setCity</code>, <code>setAccounts</code>. Folosim <code>value</code> pentru literali/Enum și <code>ref</code> pentru alt bean." },
+        { lines: "L35–L49", q: "Prin ce diferă client2 de client1?", a: "<code>client2</code> (Adam Budzinski, Kiev) are un singur cont în <code>&lt;list&gt;</code> (<code>checkingAccount2</code> cu overdraft <code>1500</code>), spre deosebire de <code>client1</code> care are 2 conturi." }
+      ],
+      termKeys: ["Bean", "<import resource>", "PropertySourcesPlaceholderConfigurer", "<constructor-arg>", "<property>", "value vs ref", "BeanCurrentlyInCreationException", "Singleton"]
     },
     {
       id: "ex1-clients-props",
@@ -2423,7 +2635,12 @@ client3=Anna Smith`,
       ],
       prevNote: "Creat în Ex 1 Task 3. De ce: exact cum recomandă ghidul, nu lăsăm nume/orașe hardcodate în XML, ca să le putem schimba fără recompilare.",
       nextNote: "La Ex 2: neschimbat. La Ex 3–4: îl citim prin @PropertySource(\"classpath:clients.properties\") + Environment (de ce: am renunțat la XML și la PropertySourcesPlaceholderConfigurer).",
-      terms: ["Externalizare literali", "Placeholder ${...}", "Zero recompilare"]
+      ifAsked: [
+        { lines: "L1–L2", q: "Unde sunt folosite cheile client1 și client2?", a: "În <code>test-clients.xml</code> (L23 și L40) prin placeholder-ele <code>${client1}</code> și <code>${client2}</code>, rezolvate de <code>PropertySourcesPlaceholderConfigurer</code>." },
+        { lines: "L3", q: "De ce există client3=Anna Smith dacă nu e în test-clients.xml?", a: "Este prevăzut ca extensie pentru clientul demo din <code>BankApplication.bankingServiceDemo()</code>, care o creează pe Anna Smith cu <code>CLIENT_NAMES[2]</code>." },
+        { lines: "L1–L3", q: "Ce se întâmplă dacă ștergi o linie din clients.properties?", a: "Spring nu poate rezolva placeholder-ul <code>${client1}</code> și aruncă <code>IllegalArgumentException</code> la pornirea contextului." }
+      ],
+      termKeys: ["PropertySourcesPlaceholderConfigurer", "@PropertySource", "Environment", "Bean"]
     },
     {
       id: "ex1-bank-app",
@@ -2482,7 +2699,13 @@ catch (ActiveAccountNotSet e) {
       ],
       prevNote: "Înainte avea new MapClientRepository(), new BankingImpl() și new Client(...) direct în cod. De ce am schimbat: eliminăm cuplarea de o implementare concretă și lăsăm containerul Spring să gestioneze instanțele.",
       nextNote: "La Ex 2: rămâne la fel. La Ex 3: înlocuim ClassPathXmlApplicationContext cu AnnotationConfigApplicationContext (de ce: am șters toate fișierele XML și configurăm containerul 100% în Java).",
-      terms: ["ClassPathXmlApplicationContext", "ApplicationContext vs BeanFactory", "context.getBean(...)", "ActiveAccountNotSet"]
+      ifAsked: [
+        { lines: "L23", q: "Ce face ClassPathXmlApplicationContext cu cele 2 fișiere XML?", a: "Încarcă definițiile de bean-uri din classpath (<code>src/main/resources</code>), instanțiază toate bean-urile singleton și le injectează dependențele înainte de a continua execuția." },
+        { lines: "L37 & L106", q: "De ce faci cast (Banking) context.getBean(\"banking\")?", a: "Metoda <code>getBean(String name)</code> returnează <code>Object</code>. Alternativa tipizată fără cast (folosită la Ex 3) este <code>context.getBean(Banking.class)</code>." },
+        { lines: "L73–L83", q: "Ce face blocul try/catch din workWithExistingClients()?", a: "Jonny nu are încă un cont activ setat, așa că <code>jonny.deposit(5_000)</code> aruncă <code>ActiveAccountNotSet</code>. În <code>catch</code> afișăm mesajul, setăm contul implicit și reluăm depunerea." },
+        { lines: "L108–L124", q: "De ce există if (context.containsBean(\"client1\")) în initialize()?", a: "Pentru ca testele Task 1 și Task 2 (care încarcă doar <code>application-context.xml</code> fără <code>test-clients.xml</code>) să meargă pe ramura <code>else</code>, iar Task 3 să ia bean-urile din XML." }
+      ],
+      termKeys: ["ApplicationContext", "BeanFactory", "Bean", "IoC", "DI", "Singleton"]
     },
     {
       id: "ex1-client-model",
@@ -2521,7 +2744,13 @@ public void setAccounts(List<AbstractAccount> accounts) {
       ],
       prevNote: "Înainte avea doar setAccounts(Set<AbstractAccount>). De ce am adăugat setAccounts(List): în test-clients.xml conturile se injectează cu tag-ul <list>, iar Spring avea nevoie de un setter pe List.",
       nextNote: "La Ex 2: neschimbat. La Ex 3: în metodele @Bean din Java conturile se adaugă direct cu client.addAccount(...), fără să mai fie nevoie de XML.",
-      terms: ["Setter Injection pe colecții", "setAccounts(List)", "<list> din test-clients.xml"]
+      ifAsked: [
+        { lines: "L28–L31", q: "Cum apelează Spring acest constructor din XML?", a: "Prin <code>&lt;constructor-arg name=\"name\" .../&gt;</code> și <code>&lt;constructor-arg name=\"gender\" value=\"MALE\" /&gt;</code> din <code>test-clients.xml</code>; Spring convertește automat string-ul <code>\"MALE\"</code> în enum-ul <code>Gender.MALE</code>." },
+        { lines: "L33–L63", q: "De ce aruncă ActiveAccountNotSet metodele deposit/withdraw/getBalance?", a: "Verifică <code>checkIfActiveAccountSet()</code>; cât timp <code>activeAccount == null</code>, aruncă excepția prinsă în <code>BankApplication.workWithExistingClients()</code>." },
+        { lines: "L79–L85 & L246–L248", q: "De ce sunt două metode setAccounts (una pe Set și una pe List)?", a: "Prima exista în schelet pe <code>Set</code>; la Ex 1 Task 3 am adăugat suprascrierea pe <code>List&lt;AbstractAccount&gt;</code> ca să potrivească <code>&lt;property name=\"accounts\"&gt;&lt;list&gt;...&lt;/list&gt;&lt;/property&gt;</code> din XML." },
+        { lines: "L104–L115", q: "Câte conturi poate avea maxim un Client?", a: "Maxim 2 conturi (dacă <code>accounts.size() &gt;= 2</code>, <code>addAccount</code> aruncă <code>AccountNumberLimitException</code>)." }
+      ],
+      termKeys: ["<constructor-arg>", "<property>", "value vs ref", "DI", "Bean"]
     },
 
     // ======================== EX 2: ANNOTATION-BASED DI (S6 - S8) ========================
@@ -2573,7 +2802,14 @@ public void setAccounts(List<AbstractAccount> accounts) {
       ],
       prevNote: "Față de Ex 1: am scos autowire=\"byType\" și am pus <context:annotation-config />. De ce: lăsăm crearea bean-urilor în XML, dar mutăm dependențele chiar lângă câmpul Java unde sunt folosite, ca să fie mai lizibil.",
       nextNote: "La Ex 3: ștergem complet acest XML și punem @Service + @ComponentScan. De ce: vrem verificare la compilare (type-safety), fără string-uri XML și fără să declarăm manual fiecare serviciu.",
-      terms: ["<context:annotation-config />", "AutowiredAnnotationBeanPostProcessor", "Declarare XML vs @Autowired Java", "byType vs byName", "@Qualifier / @Primary"]
+      ifAsked: [
+        { lines: "L5 & L8–L9", q: "De ce ai adăugat xmlns:context și spring-context.xsd în antet?", a: "Pentru ca parser-ul XML Spring să recunoască tag-ul <code>&lt;context:annotation-config /&gt;</code> de la linia 11." },
+        { lines: "L11", q: "Ce face <context:annotation-config /> și ce se întâmplă dacă o ștergi?", a: "Înregistrează <code>BeanPostProcessor</code>-ii Spring (ex: <code>AutowiredAnnotationBeanPostProcessor</code>). Fără ea, adnotările <code>@Autowired</code> din clasele Java sunt ignorate și câmpul <code>repository</code> rămâne <code>null</code>." },
+        { lines: "L13", q: "Ce este clientRepository și câte instanțe există?", a: "Este un bean singleton (implicit) de tip <code>MapClientRepository</code>; există o singură instanță per <code>ApplicationContext</code>, partajată de <code>banking</code> și <code>bankReport</code>." },
+        { lines: "L15 & L17", q: "De ce nu mai au autowire=\"byType\" față de Ex 1, și unde sunt folosite bean-urile?", a: "Legarea s-a mutat în Java prin <code>@Autowired</code> pe câmpurile <code>repository</code> din <code>BankingImpl</code> și <code>BankReportServiceImpl</code>. Bean-urile <code>banking</code> și <code>bankReport</code> sunt extrase în <code>BankApplication</code> prin <code>context.getBean(...)</code>." },
+        { lines: "L13–L17", q: "Ce se întâmplă dacă adaugi un al doilea bean care implementează ClientRepository?", a: "<code>@Autowired</code> găsește 2 candidați și aruncă <code>NoUniqueBeanDefinitionException</code> la pornire; rezolvăm cu <code>@Qualifier</code> sau <code>@Primary</code>." }
+      ],
+      termKeys: ["Bean", "ApplicationContext", "Singleton", "<context:annotation-config />", "BeanPostProcessor", "@Autowired", "autowire=\"byType\"", "autowire=\"byName\"", "@Qualifier", "@Primary", "NoUniqueBeanDefinitionException"]
     },
     {
       id: "ex2-banking-impl",
@@ -2621,7 +2857,14 @@ public void setAccounts(List<AbstractAccount> accounts) {
       ],
       prevNote: "Față de Ex 1: am pus @Autowired pe repository. De ce: mutăm dependența direct în clasa Java (mai clar decât autowire=\"byType\" în XML) și nu mai depindem de setter-ul setRepository().",
       nextNote: "La Ex 3: adăugăm @Service și @Scope(SCOPE_SINGLETON) pe clasă. De ce: eliminăm complet application-context.xml și lăsăm @ComponentScan să descopere singur serviciul.",
-      terms: ["Programare la interfață", "Reflection după constructor", "@Autowired(required=false)", "Max 1 constructor @Autowired"]
+      ifAsked: [
+        { lines: "L13–L14", q: "Cum injectează @Autowired într-un câmp private fără setter?", a: "<code>AutowiredAnnotationBeanPostProcessor</code> folosește Java Reflection (<code>field.setAccessible(true)</code>) imediat după apelul constructorului ca să seteze instanța <code>MapClientRepository</code>." },
+        { lines: "L17–L23", q: "De ce face addClient și c.setRepository(repository)?", a: "Salvează clientul în map-ul din repository și îi dă și obiectului <code>Client</code> referința către repository ca operațiunile ulterioare pe client să poată actualiza stocarea." },
+        { lines: "L51–L85", q: "Ce fac createAccount și updateAccount?", a: "<code>createAccount</code> instanțiază <code>SavingAccount(0)</code> sau <code>CheckingAccount(0)</code> după parametrul <code>Class type</code> și actualizează clientul; <code>updateAccount</code> înlocuiește contul de acel tip pe client." },
+        { lines: "L88–L103", q: "Cum funcționează getAccount și getAllAccounts?", a: "Folosesc Java Streams: <code>getAccount</code> caută primul cont de clasa cerută sau aruncă <code>AccountNotFoundException</code>; <code>getAllAccounts</code> aplatizează conturile tuturor clienților cu <code>flatMap</code>." },
+        { lines: "L118–L121", q: "De ce mai există setRepository() dacă ai @Autowired pe câmp?", a: "A rămas din Ex 1 (unde era folosit de <code>autowire=\"byType\"</code>) și este util dacă vrem să injectăm manual un mock în teste unitare fără Spring." }
+      ],
+      termKeys: ["@Autowired", "Reflection", "DI", "Bean", "Singleton", "@Qualifier", "@Primary", "NoUniqueBeanDefinitionException"]
     },
     {
       id: "ex2-report-impl",
@@ -2663,7 +2906,14 @@ public void setAccounts(List<AbstractAccount> accounts) {
       ],
       prevNote: "Față de Ex 1: am pus @Autowired pe repository. De ce: eliminăm configurarea legăturii din XML și declarăm dependența direct unde este folosită.",
       nextNote: "La Ex 3: adăugăm @Service deasupra clasei. De ce: renunțăm la declararea manuală a bean-urilor în XML și cerem bean-ul type-safe cu getBean(BankReportService.class).",
-      terms: ["Singleton partajat", "Mai mulți consumatori pe același repository", "@Autowired pe câmp"]
+      ifAsked: [
+        { lines: "L15–L16", q: "De unde știe Spring ce obiect să pună în repository?", a: "Caută în <code>ApplicationContext</code> după tipul <code>ClientRepository</code> și injectează același singleton <code>MapClientRepository</code> ca și în <code>BankingImpl</code>." },
+        { lines: "L25–L31", q: "Cum calculează getAccountsNumber() numărul de conturi?", a: "Ia toți clienții cu <code>repository.getAll()</code>, face <code>flatMap(c -&gt; c.getAccounts().stream())</code> ca să obțină un stream unic cu toate conturile și returnează dimensiunea." },
+        { lines: "L43–L51", q: "De ce filtrează getBankCreditSum() doar CheckingAccount.class și b < 0?", a: "Doar contul curent (<code>CheckingAccount</code>) permite overdraft (sold negativ = credit acordat de bancă), pe când <code>SavingAccount</code> nu poate scădea sub 0." },
+        { lines: "L54–L58", q: "Ce întoarce getClientsByCity()?", a: "Un <code>Map&lt;String, List&lt;Client&gt;&gt;</code> grupat după oraș folosind <code>Collectors.groupingBy(Client::getCity)</code>." },
+        { lines: "L60–L63", q: "Mai e apelat setRepository() în Ex 2?", a: "Nu de Spring (în Ex 2 injecția se face prin Reflection pe câmpul <code>@Autowired</code>); setter-ul a rămas din Ex 1." }
+      ],
+      termKeys: ["@Autowired", "Reflection", "Singleton", "Bean", "DI", "ApplicationContext"]
     },
 
     // ======================== EX 3: JAVA CONFIGURATION (S9 - S12) ========================
@@ -2722,7 +2972,15 @@ public class BankApplication {
       ],
       prevNote: "Față de Ex 2: am șters cele 2 XML-uri și am trecut la AnnotationConfigApplicationContext + @Bean. De ce: eliminăm configurația XML fără verificare la compilare și câștigăm type-safety și refactoring sigur în IDE.",
       nextNote: "La Ex 4: dispar metodele @Bean și pornirea manuală, rămânând doar @SpringBootApplication + SpringApplication.run(...). De ce: Spring Boot elimină boilerplate-ul și încarcă datele demo dintr-un fișier .feed doar pe profilul dev.",
-      terms: ["AnnotationConfigApplicationContext", "@Configuration", "@ComponentScan", "@PropertySource + Environment", "@Bean vs @Service", "Type-safety"]
+      ifAsked: [
+        { lines: "L24–L26", q: "Ce fac cele 3 adnotări de pe BankApplication?", a: "<code>@Configuration</code> marchează clasa ca sursă de bean-uri; <code>@PropertySource</code> încarcă <code>clients.properties</code>; <code>@ComponentScan(\"com.luxoft.bankapp\")</code> descoperă automat clasele cu <code>@Service</code>." },
+        { lines: "L32–L36", q: "De ce injectezi ApplicationContext și Environment în BankApplication?", a: "Metodele <code>@Bean</code> (<code>getDemoClient1</code>/<code>2</code>) folosesc <code>environment.getProperty(...)</code> pentru numele clienților și <code>applicationContext.getBean(...)</code> ca să lege conturile." },
+        { lines: "L40", q: "Prin ce diferă AnnotationConfigApplicationContext de ClassPathXmlApplicationContext?", a: "Citește configurarea din clase Java adnotate (<code>@Configuration</code>), nu din fișiere XML." },
+        { lines: "L54 & L131", q: "De ce apelezi getBean(Banking.class) în loc de getBean(\"banking\")?", a: "Evităm string-urile magice: primim verificare la compilare (type-safety) și nu mai avem nevoie de cast manual." },
+        { lines: "L142–L184", q: "De ce aici folosești @Bean, nu @Service pe Client?", a: "Pentru că avem mai multe instanțe de <code>Client</code> și <code>CheckingAccount</code> cu parametri diferiți (<code>client1</code> în Moscow cu 2 conturi, <code>client2</code> în Kiev cu 1 cont)." },
+        { lines: "L186–L191", q: "De ce metoda propertySourcesPlaceholderConfigurer() este static?", a: "Fiind un <code>BeanFactoryPostProcessor</code>, Spring trebuie să îl instanțieze înaintea clasei <code>@Configuration</code>; dacă nu era <code>static</code>, ar fi forțat crearea prematură a lui <code>BankApplication</code> și nu s-ar fi injectat câmpurile <code>@Autowired</code>." }
+      ],
+      termKeys: ["@Configuration", "@ComponentScan", "@Bean", "@PropertySource", "Environment", "ApplicationContext", "@Autowired", "PropertySourcesPlaceholderConfigurer"]
     },
     {
       id: "ex3-map-repo",
@@ -2760,7 +3018,13 @@ public class MapClientRepository implements ClientRepository {
       ],
       prevNote: "Față de Ex 2: am mutat declararea din <bean id=\"clientRepository\"> în XML pe clasă cu @Service și @Scope. De ce: ca să putem șterge application-context.xml și să lăsăm @ComponentScan să descopere bean-ul.",
       nextNote: "La Ex 4: în proiectul Spring Boot (spring_boot_labs) stocarea este implementată de ClientStorage / MapStorage (tot cu @Service și interfața generică Storage).",
-      terms: ["@Component / @Service / @Repository / @Controller", "SCOPE_SINGLETON", "SCOPE_PROTOTYPE", "request / session (web)"]
+      ifAsked: [
+        { lines: "L10–L11", q: "Ce fac @Service și @Scope(SCOPE_SINGLETON)?", a: "<code>@Service</code> înregistrează clasa la <code>@ComponentScan</code> ca bean în stratul de serviciu; <code>SCOPE_SINGLETON</code> (care e și default) garantează că există o singură instanță în container." },
+        { lines: "L14–L20", q: "Ce s-ar strica dacă am pune @Scope(\"prototype\") pe MapClientRepository?", a: "<code>BankingImpl</code> și <code>BankReportServiceImpl</code> ar primi două <code>HashMap</code>-uri diferite! Clienții adăugați prin <code>BankingImpl</code> n-ar mai apărea în rapoarte." },
+        { lines: "L24–L30", q: "Cum generează add() ID-ul unui client nou?", a: "Incrementează contorul intern <code>currentId</code> (<code>++currentId</code>), setează ID-ul pe client și îl pune în <code>Map&lt;Long, Client&gt; data</code>." },
+        { lines: "L45–L53", q: "Cum găsește getBy(String name) un client?", a: "Parcurge valorile din <code>data.values()</code> comparând <code>client.getName().equals(name)</code> și returnează primul client găsit (sau <code>null</code>)." }
+      ],
+      termKeys: ["@Service", "@Component", "@Repository", "@ComponentScan", "Singleton", "Prototype", "NoSuchBeanDefinitionException"]
     },
     {
       id: "ex3-banking-impl",
@@ -2799,7 +3063,13 @@ public class BankingImpl implements Banking {
       ],
       prevNote: "Față de Ex 2: adăugat @Service și @Scope(SCOPE_SINGLETON). De ce: eliminăm declararea din application-context.xml și câștigăm type-safety prin getBean(Banking.class).",
       nextNote: "La Ex 4–5: rămâne @Service auto-descoperit de @SpringBootApplication (care include @ComponentScan).",
-      terms: ["@Service + @ComponentScan", "getBean(Banking.class)", "SCOPE_SINGLETON"]
+      ifAsked: [
+        { lines: "L14–L15", q: "Ce ai schimbat aici față de Ex 2 și de ce?", a: "Am adăugat <code>@Service</code> și <code>@Scope(SCOPE_SINGLETON)</code> ca să nu mai declarăm <code>&lt;bean id=\"banking\"&gt;</code> în <code>application-context.xml</code> (șters în Ex 3)." },
+        { lines: "L18–L19", q: "Cum funcționează @Autowired fără XML?", a: "<code>@ComponentScan</code> descoperă <code>BankingImpl</code> și <code>MapClientRepository</code> ca bean-uri, iar <code>AnnotationConfigApplicationContext</code> activează implicit procesarea <code>@Autowired</code>." },
+        { lines: "L93–L108", q: "Ce fac getAccount și getAllAccounts?", a: "Filtrează conturile clientului după tip (<code>SavingAccount</code>/<code>CheckingAccount</code>) sau aplatizează cu <code>flatMap</code> conturile tuturor clienților." },
+        { lines: "L123–L126", q: "De ce mai e setRepository aici?", a: "A rămas din Ex 1/Ex 2; e util pentru testare unitară manuală fără container Spring." }
+      ],
+      termKeys: ["@Service", "@ComponentScan", "@Autowired", "Singleton", "Bean", "NoSuchBeanDefinitionException"]
     },
     {
       id: "ex3-report-impl",
@@ -2837,7 +3107,13 @@ public class BankReportServiceImpl implements BankReportService {
       ],
       prevNote: "Față de Ex 2: adăugat @Service pe clasă. De ce: eliminăm XML-ul și înlocuim string-ul \"bankReport\" cu getBean(BankReportService.class) pentru type-safety.",
       nextNote: "La Ex 4–5: rămâne @Service auto-descoperit în Spring Boot fără nicio modificare.",
-      terms: ["@Service", "getBean(BankReportService.class)", "Type-safe lookup"]
+      ifAsked: [
+        { lines: "L14", q: "Aici nu ai pus @Scope. Ce scope are BankReportServiceImpl?", a: "Tot <code>singleton</code>, pentru că acesta este scope-ul implicit în Spring pentru orice bean dacă nu specificăm <code>@Scope</code>." },
+        { lines: "L17–L18", q: "Cum ajunge MapClientRepository aici în Ex 3?", a: "<code>@ComponentScan</code> scanează pachetul, creează bean-urile <code>@Service</code> și injectează automat singura implementare de <code>ClientRepository</code>." },
+        { lines: "L45–L53", q: "Ce calculează getBankCreditSum()?", a: "Adună toate soldurile negative (<code>b &lt; 0</code>) ale conturilor <code>CheckingAccount</code> din bancă — suma totală de overdraft folosit de clienți." },
+        { lines: "L56–L60", q: "Cum funcționează getClientsByCity()?", a: "Folosește <code>Collectors.groupingBy(Client::getCity)</code> ca să grupeze lista de clienți într-un <code>Map&lt;String, List&lt;Client&gt;&gt;</code>." }
+      ],
+      termKeys: ["@Service", "@ComponentScan", "@Autowired", "Singleton", "Bean"]
     },
 
     // ======================== EX 4: SPRING BOOT & PROFILES (S13 - S16) ========================
@@ -2891,7 +3167,14 @@ public class BankReportServiceImpl implements BankReportService {
       ],
       prevNote: "În Ex 1–3 gestionam manual spring-context și versiunile în pom.xml. De ce trecem la Spring Boot: starterele și spring-boot-starter-parent elimină conflictele de versiuni și configurarea manuală.",
       nextNote: "La Ex 5 (Task 2): adăugăm spring-boot-starter-aop. De ce: avem nevoie de AspectJ Weaver și auto-configurarea Spring AOP pentru AuditAspect.",
-      terms: ["spring-boot-starter-parent", "Dependency Management", "spring-boot-starter", "Uber-JAR"]
+      ifAsked: [
+        { lines: "L5–L10", q: "Ce face <parent> spring-boot-starter-parent?", a: "Gestionează versiunile tuturor librăriilor compatibile (<em>Dependency Management</em>) și setează encodarea UTF-8 și versiunea Java, ca să omitem <code>&lt;version&gt;</code> la dependențe." },
+        { lines: "L22–L25", q: "Ce aduce spring-boot-starter?", a: "Nucleul Spring Boot: <code>spring-boot</code>, <code>spring-core</code>, <code>spring-boot-autoconfigure</code>, Logback pentru logging și suportul pentru YAML." },
+        { lines: "L27–L31", q: "La ce ajută spring-boot-devtools și de ce e optional=true?", a: "Oferă restart automat rapid la editări în timpul dezvoltării; <code>&lt;optional&gt;true&lt;/optional&gt;</code> previne includerea lui când aplicația e împachetată pentru producție." },
+        { lines: "L33–L43", q: "De ce exclude spring-boot-starter-test pe junit-vintage-engine?", a: "Pentru că toate testele laboratorului sunt scrise cu JUnit 5 (Jupiter), nu cu JUnit 4." },
+        { lines: "L46–L52", q: "Ce face spring-boot-maven-plugin?", a: "Împachetează aplicația cu toate dependențele într-un <strong>Uber-JAR</strong> executabil cu <code>Main-Class</code> configurat automat." }
+      ],
+      termKeys: ["Spring Boot Starter", "Uber-JAR", "@SpringBootApplication", "@ConditionalOnMissingBean"]
     },
     {
       id: "ex4-boot-app",
@@ -2929,7 +3212,13 @@ public class BankApplication {
       ],
       prevNote: "Față de Ex 3: am șters AnnotationConfigApplicationContext, @ComponentScan explicit și metodele @Bean de demo. De ce: conform ghidului (Task 2), mutăm inițializarea demo în DemoBankInitializationService (separat de main), iar @SpringBootApplication face auto-configurarea și scanarea automat.",
       nextNote: "La Ex 5: clasa rămâne identică — @ComponentScan-ul inclus în @SpringBootApplication descoperă automat noul AuditAspect și serviciile AOP.",
-      terms: ["@SpringBootApplication", "@EnableAutoConfiguration", "@ConditionalOnMissingBean", "SpringApplication.run()"]
+      ifAsked: [
+        { lines: "L1 & L7", q: "De ce BankApplication trebuie să stea în pachetul com.luxoft.bankapp?", a: "<code>@SpringBootApplication</code> include <code>@ComponentScan</code> pornind din pachetul clasei curente în jos; dacă o mutam într-un subpachet, serviciile nu mai erau scanate." },
+        { lines: "L7", q: "Ce 3 adnotări combină @SpringBootApplication?", a: "<code>@SpringBootConfiguration</code> (configurare), <code>@EnableAutoConfiguration</code> (auto-configurare pe baza classpath-ului cu <code>@ConditionalOnMissingBean</code>) și <code>@ComponentScan</code>." },
+        { lines: "L8", q: "Ce caută @PropertySource(\"classpath:clients.properties\") aici?", a: "Încarcă <code>clients.properties</code> în <code>Environment</code> pe lângă proprietățile din <code>application.yml</code>." },
+        { lines: "L13", q: "Ce face SpringApplication.run(BankApplication.class, args)?", a: "Pornește containerul Spring, aplică auto-configurarea, încarcă <code>application.yml</code>, creează bean-urile active pe profil și execută metodele <code>@PostConstruct</code>." }
+      ],
+      termKeys: ["@SpringBootApplication", "@Configuration", "@ComponentScan", "@ConditionalOnMissingBean", "@PropertySource", "ApplicationContext"]
     },
     {
       id: "ex4-yml",
@@ -2974,7 +3263,13 @@ debug: false`,
       ],
       prevNote: "În Ex 4 Task 2 am înlocuit application.properties cu YAML (de ce: suport nativ pentru multi-profile într-un singur fișier); în Task 3 am adăugat feed.filename ca să nu hardcodăm \"demo.feed\" în Java.",
       nextNote: "La Ex 5 (Task 4): adăugăm blocul audit.amount (deposit: 99, withdrawal: 99). De ce: vrem să filtrăm evenimentele auditate fără să modificăm codul din AuditService.",
-      terms: ["Externalized Configuration", "Multi-profile YAML (---)", "spring.profiles.active", "Prioritate CLI --"]
+      ifAsked: [
+        { lines: "L2", q: "Ce se întâmplă dacă schimbi spring.profiles.active din dev în prod?", a: "Se activează secțiunea <code>prod</code> (<code>debug: false</code>), iar bean-ul <code>DemoBankInitializationService</code> (<code>@Profile(\"dev\")</code>) nu se mai creează, deci nu se încarcă clienții demo." },
+        { lines: "L2", q: "Cum poți suprascrie profilul fără să editezi application.yml?", a: "Din linia de comandă cu <code>--spring.profiles.active=prod</code> — argumentele CLI au prioritate mai mare decât fișierele YAML în <code>PropertySource</code>." },
+        { lines: "L3", q: "Unde este folosită proprietatea feed.filename: demo.feed?", a: "Este injectată în <code>DemoBankInitializationService</code> (L18) prin <code>@Value(\"${feed.filename}\")</code>." },
+        { lines: "L5–L15", q: "Ce reprezintă separatorul --- din YAML?", a: "Împarte un singur <code>application.yml</code> în mai multe documente YAML specifice fiecărui profil (<code>dev</code> și <code>prod</code>)." }
+      ],
+      termKeys: ["YAML multi-profil", "@Profile", "@Value", "Environment"]
     },
     {
       id: "ex4-demo-init",
@@ -3023,7 +3318,13 @@ public class DemoBankInitializationService implements BankInitializationService 
       ],
       prevNote: "Față de Ex 3 (unde clienții demo erau metode @Bean în BankApplication): am mutat inițializarea într-un serviciu separat @Profile(\"dev\") cu @Value(\"${feed.filename}\"). De ce: izolăm datele de test doar pe mediul dev și nu hardcodăm numele fișierului în Java.",
       nextNote: "La Ex 5: rămâne neschimbat și încarcă automat clienții de test peste care rulează auditul AOP.",
-      terms: ["@Profile(\"dev\")", "@Value(\"${feed.filename}\")", "@PostConstruct (lifecycle)", "InitializingBean / init-method"]
+      ifAsked: [
+        { lines: "L12–L13", q: "Ce face @Profile(\"dev\") de pe clasă?", a: "Îi spune lui Spring să instanțieze acest bean <strong>doar</strong> când profilul activ este <code>dev</code>; pe <code>prod</code> clasa e ignorată complet." },
+        { lines: "L16 & L18–L19 & L28–L31", q: "Cum funcționează @Value(\"${feed.filename}\") și la ce servește DEMO_FEED_FILE_NAME?", a: "<code>@Value</code> injectează valoarea <code>demo.feed</code> din <code>application.yml</code>; dacă <code>fileName</code> ar rămâne <code>null</code>, metoda folosește fallback-ul <code>\"default.feed\"</code>." },
+        { lines: "L21–L22", q: "Ce scope are BankFeedServiceImpl injectat aici?", a: "<code>BankFeedServiceImpl</code> are <code>@Scope(SCOPE_PROTOTYPE)</code> și Constructor Injection pe <code>Banking</code>; Spring creează o instanță nouă pentru acest bean." },
+        { lines: "L25–L34", q: "De ce folosești @PostConstruct și nu pui loadFeed() direct în constructor?", a: "Când rulează constructorul, <code>feedService</code> (<code>@Autowired</code>) și <code>fileName</code> (<code>@Value</code>) sunt încă <code>null</code> și ar da <code>NullPointerException</code>. <code>@PostConstruct</code> rulează imediat după injectare." }
+      ],
+      termKeys: ["@Service", "@Profile", "@Value", "@Autowired", "@PostConstruct", "Prototype", "BeanPostProcessor"]
     },
 
     // ======================== EX 5: AOP, EVENTS & SpEL (S17 - S23) ========================
@@ -3060,7 +3361,12 @@ public class DemoBankInitializationService implements BankInitializationService 
       ],
       prevNote: "Față de Ex 4: am adăugat spring-boot-starter-aop. De ce: fără AspectJ Weaver în classpath, Spring Boot nu activează auto-configurarea AOP și proxy-urile pentru @Aspect.",
       nextNote: "Ultimul exercițiu (variantă finală pe branch-ul main).",
-      terms: ["spring-boot-starter-aop", "AspectJ Weaver", "Auto-configurare AOP"]
+      ifAsked: [
+        { lines: "L27–L30", q: "De ce a trebuit să adaugi spring-boot-starter-aop în Ex 5?", a: "Starter-ul de bază (L23) nu include AspectJ Weaver. Fără această dependență, adnotările <code>@Aspect</code>, <code>@Pointcut</code> și <code>@Around</code> din <code>AuditAspect</code> nu sunt procesate și nu se creează proxy-urile AOP." },
+        { lines: "L5–L10", q: "De ce nu are tag <version> dependența spring-boot-starter-aop?", a: "Versiunea este moștenită automat din secțiunea de Dependency Management a lui <code>spring-boot-starter-parent</code> (2.2.6.RELEASE)." },
+        { lines: "L51–L57", q: "Ce face spring-boot-maven-plugin jos în pom.xml?", a: "Construiește <strong>Uber-JAR</strong>-ul executabil care împachetează codul împreună cu toate starterele (inclusiv AspectJ)." }
+      ],
+      termKeys: ["Spring Boot Starter", "Uber-JAR", "@Aspect / AOP", "Dynamic Proxy"]
     },
     {
       id: "ex5-ops",
@@ -3101,7 +3407,13 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
       ],
       prevNote: "Serviciu nou introdus în Ex 5 Task 1. De ce: izolăm operațiunile pe conturi (deposit, withdraw, getBalance) într-un @Service dedicat ca să poată fi interceptate curat prin AOP fără să modificăm BankingImpl.",
       nextNote: "În Task 2–4 este interceptat extern de AuditAspect fără nicio modificare în această clasă.",
-      terms: ["@Service curat", "Dynamic Proxy (JDK Proxy / CGLIB)", "Self-invocation (this.)"]
+      ifAsked: [
+        { lines: "L7", q: "Ce modificare ai făcut în această clasă la Task 1?", a: "Am adăugat doar <code>@Service</code> deasupra clasei ca Spring să o înregistreze ca bean și să o poată înveli într-un Proxy AOP." },
+        { lines: "L11–L44", q: "De ce fiecare operațiune (getBalance, deposit, withdraw) are 2 metode?", a: "Una primește <code>Client</code> (folosește contul activ) și una primește direct <code>Account</code>. Pointcut-ul <code>deposit(..)</code> cu <code>(..)</code> le prinde pe ambele automat." },
+        { lines: "L7–L45", q: "Cum rulează auditul dacă aici nu apelezi AuditService?", a: "Spring AOP creează un <strong>Dynamic Proxy</strong> (JDK Proxy pe interfața <code>BankingOperationsService</code>, sau CGLIB) în jurul bean-ului; apelurile din exterior trec prin Proxy și declanșează <code>AuditAspect</code>." },
+        { lines: "L23–L43", q: "Ce se întâmplă dacă o metodă din clasă apelează this.deposit(...)?", a: "Apelul intern pe <code>this</code> ocolește Proxy-ul (<em>self-invocation</em>), deci <code>AuditAspect</code> nu se mai declanșează." }
+      ],
+      termKeys: ["@Service", "@Aspect / AOP", "Dynamic Proxy", "Self-invocation", "@Pointcut", "Bean", "Singleton"]
     },
     {
       id: "ex5-aspect",
@@ -3162,7 +3474,15 @@ public class AuditAspect {
       ],
       prevNote: "În Ex 5 Task 2 apela direct serviciul Audit; în Task 3 am trecut la Spring Events. De ce: eliminăm dependența directă dintre AuditAspect și AuditService, decuplând complet logarea.",
       nextNote: "Ultimul exercițiu (variantă finală pe main).",
-      terms: ["@Aspect + @Pointcut", "JoinPoint vs ProceedingJoinPoint", "@Before vs @Around", "proceed() + throw e", "publishEvent()"]
+      ifAsked: [
+        { lines: "L18–L19", q: "De ce pui și @Aspect și @Configuration pe AuditAspect?", a: "<code>@Aspect</code> marchează clasa ca aspect AspectJ, dar nu o face automat bean Spring; <code>@Configuration</code> (sau <code>@Component</code>) e necesară ca <code>@ComponentScan</code> să o înregistreze în container." },
+        { lines: "L22–L23", q: "De ce injectezi ApplicationContext aici în Task 3?", a: "Ca să publicăm evenimente cu <code>applicationContext.publishEvent(...)</code>, eliminând dependența directă către <code>AuditService</code> din Task 2." },
+        { lines: "L25–L32", q: "Cum se citește execution(* com.luxoft.bankapp.service.operations.*.deposit(..))?", a: "Orice tip de return (<code>*</code>), orice clasă din pachetul <code>operations</code>, metoda <code>deposit</code>, cu orice număr și tip de parametri (<code>..</code>)." },
+        { lines: "L34–L41 & L71–L78", q: "De ce folosești @Before cu JoinPoint la deposit și getBalance?", a: "Ne interesează doar să logăm operațiunea înainte de execuție; <code>joinPoint.getArgs()</code> ne dă argumentele ca să extragem contul și suma." },
+        { lines: "L43–L69", q: "De ce folosești @Around cu ProceedingJoinPoint la withdraw? Ce se strică dacă ștergi L54 (proceed) sau L65 (throw e)?", a: "<code>@Around</code> emite <code>TRYING</code> înainte de <code>proceed()</code> (L54) și <code>SUCCESSFUL</code>/<code>FAILED</code> după (2 evenimente). Fără <code>proceed()</code> retragerea nu se mai execută; fără <code>throw e;</code> (L65) aspectul înghite <code>NotEnoughFundsException</code>." },
+        { lines: "L80–L94", q: "Ce face metoda privată getAccountId(Object[] methodArgs)?", a: "Verifică dacă primul argument este <code>instanceof Client</code> (ia <code>getActiveAccount()</code>) sau direct <code>Account</code> și îi returnează <code>account.getId()</code>." }
+      ],
+      termKeys: ["@Aspect / AOP", "@Configuration", "@Pointcut", "@Before vs @Around", "ProceedingJoinPoint", "Dynamic Proxy", "ApplicationContext", "ApplicationEvent"]
     },
     {
       id: "ex5-events",
@@ -3211,7 +3531,13 @@ public class WithdrawEvent extends AccountEvent {
       ],
       prevNote: "Creat în Task 3 și șters WithdrawState.java din Task 2. De ce: starea TRYING/SUCCESSFUL/FAILED ține doar de WithdrawEvent, deci devine inner enum WithdrawEvent.State, iar datele tranzacției circulă decuplat ca obiecte ApplicationEvent.",
       nextNote: "În Task 4, proprietatea amount a acestor evenimente este inspectată prin SpEL (#event.amount) în AuditService.",
-      terms: ["extends ApplicationEvent", "DepositEvent / WithdrawEvent / BalanceEvent", "WithdrawEvent.State"]
+      ifAsked: [
+        { lines: "AccountEvent L5–L13", q: "De ce extinde AccountEvent clasa ApplicationEvent?", a: "Pentru a putea fi publicat prin <code>applicationContext.publishEvent(...)</code> în sistemul de evenimente Spring; pasează numele operațiunii ca <code>source</code> către <code>super(source)</code>." },
+        { lines: "WithdrawEvent L8–L13", q: "Ce face constructorul cu 2 argumente al lui WithdrawEvent?", a: "Apelează <code>super(\"WITHDRAWAL\", accountId)</code> și setează implicit <code>state = State.TRYING</code> — folosit înainte de <code>proceed()</code> în <code>AuditAspect</code>." },
+        { lines: "WithdrawEvent L15–L20", q: "Când se apelează constructorul cu 3 argumente?", a: "După <code>proceed()</code>, pentru a emite starea finală <code>State.SUCCESSFUL</code> sau în <code>catch</code> pentru <code>State.FAILED</code>." },
+        { lines: "WithdrawEvent L32–L35", q: "De ce ai șters WithdrawState.java și ai mutat enum-ul aici?", a: "În Task 3 starea aparține exclusiv evenimentului de retragere, așa că devine <code>WithdrawEvent.State</code>." }
+      ],
+      termKeys: ["ApplicationEvent", "@EventListener", "SpEL"]
     },
     {
       id: "ex5-audit-svc",
@@ -3263,7 +3589,13 @@ public class AuditService implements Audit {
       ],
       prevNote: "Task 2 (apel direct din aspect) -> Task 3 (@EventListener pentru decuplare) -> Task 4 (condiție SpEL). De ce: întâi am eliminat dependența aspectului, apoi am adăugat filtrare fără modificare de cod.",
       nextNote: "Ultimul exercițiu (variantă finală pe main).",
-      terms: ["ApplicationEvent", "@EventListener (Spring 4+)", "SpEL condition", "Avantaj/Dezavantaj Events"]
+      ifAsked: [
+        { lines: "L15–L20", q: "La ce folosește lista events = new ArrayList<>(100)?", a: "Păstrează în memorie toate evenimentele auditate, ca testele din <code>BankApplicationTests4</code> să poată verifica câte evenimente s-au înregistrat." },
+        { lines: "L23 & L31", q: "Cum se citește condition = \"#event.amount >= @eventConditionFilter.depositLimit\"?", a: "<code>#event</code> e parametrul metodei (apelează <code>getAmount()</code>), iar <code>@eventConditionFilter</code> (cu <code>@</code>) caută bean-ul Spring cu acest nume și citește câmpul <code>depositLimit</code> (<code>99</code>)." },
+        { lines: "L39–L44", q: "De ce auditOperation(BalanceEvent) NU are condition?", a: "Interogarea soldului nu implică nicio sumă de tranzacție (<code>amount</code>), deci fiecare verificare de sold se auditează necondiționat." },
+        { lines: "L46–L49", q: "De ce getEvents() returnează new ArrayList<>(events) și nu direct events?", a: "Returnează o copie defensivă a listei, ca apelantul să nu poată modifica lista internă a serviciului." }
+      ],
+      termKeys: ["@Service", "@EventListener", "ApplicationEvent", "SpEL", "Singleton", "Bean"]
     },
     {
       id: "ex5-filter",
@@ -3302,7 +3634,12 @@ public class EventConditionFilter {
       ],
       prevNote: "Creat în Ex 5 Task 4. De ce: vrem să limităm auditul din configurare (application.yml) fără să modificăm codul din AuditService când se schimbă pragurile.",
       nextNote: "Ultimul exercițiu (variantă finală pe main).",
-      terms: ["@Component", "@Value(\"${...:0}\") fallback", "SpEL @beanName vs #arg"]
+      ifAsked: [
+        { lines: "L6", q: "De ce e necesar @Component pe EventConditionFilter?", a: "Ca clasa să fie înregistrată ca bean în <code>ApplicationContext</code> sub numele implicit <code>eventConditionFilter</code>; altfel expresia SpEL <code>@eventConditionFilter</code> din <code>AuditService</code> nu l-ar găsi." },
+        { lines: "L9–L13", q: "Ce face :0 din @Value(\"${audit.amount.deposit:0}\")?", a: "Este valoarea implicită (fallback): dacă proprietatea lipsește din <code>application.yml</code>, limita devine <code>0</code> în loc să arunce eroare la pornire." },
+        { lines: "L10 & L13", q: "De ce câmpurile sunt public (sau ar putea avea getteri)?", a: "Ca SpEL din <code>@EventListener</code> să poată accesa direct <code>@eventConditionFilter.depositLimit</code> (cu câmpuri <code>private</code> ar fi avut nevoie de <code>getDepositLimit()</code>)." }
+      ],
+      termKeys: ["@Component", "@Value", "SpEL", "Bean", "Singleton"]
     },
     {
       id: "ex5-yml",
@@ -3339,7 +3676,12 @@ audit.amount:
       ],
       prevNote: "Față de Ex 4: am adăugat secțiunea audit.amount (99). De ce (Task 4): vrem să putem limita ce evenimente se auditează din configurare externă, fără să recompilăm AuditService.",
       nextNote: "Ultimul exercițiu (variantă finală pe main).",
-      terms: ["YAML ierarhic", "audit.amount.deposit / withdrawal", "Prag dinamic SpEL"]
+      ifAsked: [
+        { lines: "L4–L6", q: "Ce se întâmplă în BankApplicationTests4 dacă modifici deposit: 99 în 150?", a: "Testele depun <code>100</code>. Cu limita <code>150</code>, condiția SpEL <code>100 &gt;= 150</code> devine <code>false</code>, evenimentul nu mai e auditat și testul pică pe <code>assertEquals</code>." },
+        { lines: "L4–L6", q: "Cum se mapează sintaxa YAML indentată audit.amount -> deposit: 99 la @Value?", a: "Spring Boot aplatizează structura YAML cu puncte, rezultând cheia <code>audit.amount.deposit</code> citită de <code>@Value(\"${audit.amount.deposit:0}\")</code>." },
+        { lines: "L1–L2 & L8–L18", q: "De ce au rămas profilele dev/prod și feed.filename din Ex 4?", a: "Pe <code>dev</code> se încarcă clienții din <code>demo.feed</code> (inclusiv Jonny Bravo folosit în <code>BankApplicationTests4.@BeforeEach</code>) peste care rulăm operațiunile de audit." }
+      ],
+      termKeys: ["YAML multi-profil", "@Profile", "@Value", "SpEL"]
     }
   ];
 
@@ -3896,7 +4238,20 @@ audit.amount:
       `;
     }).join("");
 
-    const termsHtml = s.terms.map(t => `<span class="term-chip">${escHtml(t)}</span>`).join("");
+    const termsHtml = (s.termKeys || []).map(k => {
+      const def = TERM_DEFS[k] || "";
+      return `<div class="glossary-item"><span class="glossary-term">${escHtml(k)}</span><span class="glossary-def">${escHtml(def)}</span></div>`;
+    }).join("");
+
+    const qaHtml = (s.ifAsked || []).map(item => `
+      <details class="qa-item">
+        <summary>
+          <span class="qa-line-badge">${escHtml(item.lines)}</span>
+          <span class="qa-q">${escHtml(item.q)}</span>
+        </summary>
+        <p class="qa-a">${item.a}</p>
+      </details>
+    `).join("");
 
     stage.innerHTML = `
       <article class="q-card">
@@ -3918,9 +4273,17 @@ audit.amount:
           <div class="evo-row"><span class="evo-tag">La ex următor:</span>${escHtml(s.nextNote)}</div>
         </div>
 
+        <div class="qa-section">
+          <div class="qa-head-row">
+            <div class="study-label" style="margin:0;">Dacă te întreabă din acest fișier (pe linii reale)</div>
+            <button class="qa-toggle-all" id="qaToggleAllBtn" type="button">Deschide toate</button>
+          </div>
+          <div class="qa-list" id="qaList">${qaHtml}</div>
+        </div>
+
         <div class="terms-box">
-          <div class="study-label">Termeni din curs de menționat</div>
-          <div class="terms-list">${termsHtml}</div>
+          <div class="study-label">Mini Cheat-Sheet de termeni (pentru acest fișier)</div>
+          <div class="glossary-list">${termsHtml}</div>
         </div>
 
         <div class="nav-footer">
@@ -3929,6 +4292,16 @@ audit.amount:
         </div>
       </article>
     `;
+
+    const qaToggleBtn = document.getElementById("qaToggleAllBtn");
+    if (qaToggleBtn) {
+      qaToggleBtn.addEventListener("click", () => {
+        const items = [...document.querySelectorAll("#qaList details.qa-item")];
+        const allOpen = items.length > 0 && items.every(d => d.open);
+        items.forEach(d => { d.open = !allOpen; });
+        qaToggleBtn.textContent = allOpen ? "Deschide toate" : "Închide toate";
+      });
+    }
 
     if (state.speechCueMode) {
       stage.querySelectorAll("[data-sstep]").forEach(el => {
