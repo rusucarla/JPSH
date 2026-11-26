@@ -2410,11 +2410,15 @@ client3=Anna Smith`,
       steps: [
         {
           cue: "1. Externalizarea literalilor",
-          text: "<code>clients.properties</code> externalizează numele clienților de test în afara codului Java și a XML-ului, așa încât să putem schimba datele fără recompilarea aplicației."
+          text: "<code>clients.properties</code> externalizează numele clienților de test (<code>Jonny Bravo</code>, <code>Adam Budzinski</code>, <code>Anna Smith</code>) în afara codului Java și a XML-ului, așa încât să putem schimba datele fără recompilarea aplicației."
         },
         {
-          cue: "2. Cum este citit",
-          text: "În Ex 1–2 este citit de <code>PropertySourcesPlaceholderConfigurer</code> pentru <code>${client1}</code> și <code>${client2}</code> din <code>test-clients.xml</code>."
+          cue: "2. Cum este citit în runtime",
+          text: "În Ex 1–2 este încărcat de <code>PropertySourcesPlaceholderConfigurer</code> și înlocuiește <code>${client1}</code> și <code>${client2}</code> din <code>test-clients.xml</code> chiar înainte de crearea bean-urilor."
+        },
+        {
+          cue: "3. Ce se întâmplă dacă lipsește cheia sau configurer-ul",
+          text: "Dacă ștergem <code>PropertySourcesPlaceholderConfigurer</code> din XML, Spring ar pasa literalmente string-ul <code>\"${client1}\"</code> ca nume al clientului; iar dacă lipsește cheia din <code>clients.properties</code>, contextul aruncă <code>IllegalArgumentException</code> la pornire."
         }
       ],
       prevNote: "Creat în Ex 1 Task 3.",
@@ -2464,12 +2468,16 @@ catch (ActiveAccountNotSet e) {
           text: "În <code>main()</code> am înlocuit <code>new MapClientRepository()</code> cu <code>ClassPathXmlApplicationContext(\"application-context.xml\", \"test-clients.xml\")</code>. Spring preia rolul de framework și ne instanțiază toate bean-urile."
         },
         {
-          cue: "2. ApplicationContext vs BeanFactory",
+          cue: "2. Fluxul complet din main()",
+          text: "<code>initialize(context)</code> ia bean-ul <code>banking</code>, adaugă <code>client1</code> și <code>client2</code>; <code>workWithExistingClients()</code> face depuneri, retrageri și un transfer de 1000 între Jonny și Adam; <code>bankingServiceDemo()</code> o creează pe Anna Smith; iar <code>bankReportsDemo(context)</code> ia bean-ul <code>bankReport</code> și afișează statisticile."
+        },
+        {
+          cue: "3. ApplicationContext vs BeanFactory",
           text: "Folosim <code>ApplicationContext</code> (care extinde <code>BeanFactory</code>) pentru că adaugă suport pentru evenimente, internaționalizare, resurse și integrare Spring AOP."
         },
         {
-          cue: "3. Extragerea bean-urilor & try/catch",
-          text: "În <code>initialize()</code> și <code>bankReportsDemo()</code> cerem bean-urile gata injectate prin <code>context.getBean(...)</code>. Iar în <code>workWithExistingClients()</code>, <code>try/catch (ActiveAccountNotSet e)</code> setează contul activ implicit dacă lipsește și reîncearcă depunerea."
+          cue: "4. Blocul try/catch din workWithExistingClients()",
+          text: "Jonny nu are inițial un cont activ setat, așa că <code>jonny.deposit(5_000)</code> aruncă <code>ActiveAccountNotSet</code>; în <code>catch</code> afișăm mesajul, apelăm <code>setDefaultActiveAccountIfNotSet()</code> (care alege primul cont) și reluăm depunerea."
         }
       ],
       prevNote: "În scheletul inițial avea new MapClientRepository(), new BankingImpl(), new Client(...) direct în Java.",
@@ -2505,6 +2513,10 @@ public void setAccounts(List<AbstractAccount> accounts) {
         {
           cue: "2. Ce am adăugat",
           text: "Am adăugat setter-ul <code>setAccounts(List&lt;AbstractAccount&gt; accounts)</code> ca Spring să poată injecta lista de conturi prin Setter Injection după apelarea constructorului <code>Client(name, gender)</code>."
+        },
+        {
+          cue: "3. Ce se întâmplă dacă lipsește acest setter",
+          text: "La pornirea contextului, Spring ar căuta un setter compatibil cu <code>&lt;list&gt;</code> pentru proprietatea <code>accounts</code> și ar arunca <code>BeanCreationException</code> / <code>TypeMismatchException</code>."
         }
       ],
       prevNote: "Lipsea setter-ul pe List<AbstractAccount> în scheletul inițial.",
@@ -2592,15 +2604,19 @@ public void setAccounts(List<AbstractAccount> accounts) {
       steps: [
         {
           cue: "1. Rolul clasei & injecția pe câmp",
-          text: "<code>BankingImpl</code> implementează operațiunile de business ale băncii și depinde de interfața <code>ClientRepository</code>. În Ex 2 am pus <code>@Autowired</code> direct pe câmpul <code>private ClientRepository repository;</code>."
+          text: "<code>BankingImpl</code> implementează fațada de business a băncii și depinde de interfața <code>ClientRepository</code>. În Ex 2 am pus <code>@Autowired</code> direct pe câmpul <code>private ClientRepository repository;</code>."
         },
         {
           cue: "2. Cum injectează într-un câmp private",
-          text: "După ce instanțiază bean-ul prin constructor, Spring folosește Java Reflection (<code>setAccessible(true)</code>) ca să injecteze instanța unică de <code>MapClientRepository</code> înainte de metodele de inițializare — fără să mai apeleze setter-ul."
+          text: "După ce instanțiază bean-ul prin constructor, Spring folosește Java Reflection (<code>setAccessible(true)</code>) ca să injecteze instanța unică de <code>MapClientRepository</code> înainte de metodele de inițializare — fără să mai apeleze <code>setRepository()</code>."
         },
         {
-          cue: "3. „Pe lângă” din curs (ce suportă @Autowired)",
-          text: "Din curs: <code>@Autowired</code> merge pe setteri, pe un singur constructor (chiar non-public), pe metode cu oricâți parametri, pe câmpuri private și pe colecții tipizate. Putem seta <code>@Autowired(required=false)</code> dacă dependența e opțională, și rezolvăm conflictele cu <code>@Qualifier</code> sau <code>@Primary</code>."
+          cue: "3. Ce fac metodele vizibile pe ecran",
+          text: "<code>addClient(c)</code> salvează clientul în <code>repository</code> și îi setează și clientului referința către repository; <code>createAccount</code> și <code>updateAccount</code> actualizează conturile clientului în repository; iar <code>transferMoney(from, to, amount)</code> apelează <code>from.withdraw(amount)</code> și <code>to.deposit(amount)</code>."
+        },
+        {
+          cue: "4. „Pe lângă” din curs (ce suportă @Autowired)",
+          text: "Din curs: <code>@Autowired</code> merge pe setteri, pe un singur constructor (chiar non-public), pe metode cu oricâți parametri, pe câmpuri private și pe colecții tipizate. Putem pune <code>@Autowired(required=false)</code> dacă e opțional, și rezolvăm conflictele cu <code>@Qualifier</code> sau <code>@Primary</code>."
         }
       ],
       prevNote: "Față de Ex 1: am adăugat @Autowired pe câmpul repository (în Ex 1 depindea de setRepository() + autowire=\"byType\").",
@@ -2634,11 +2650,15 @@ public void setAccounts(List<AbstractAccount> accounts) {
       steps: [
         {
           cue: "1. Rolul clasei & modificarea din Ex 2",
-          text: "<code>BankReportServiceImpl</code> generează rapoartele băncii (număr de clienți, conturi, credite, orașe). Ca și în <code>BankingImpl</code>, în Ex 2 am adăugat <code>@Autowired</code> pe câmpul <code>repository</code>."
+          text: "<code>BankReportServiceImpl</code> generează rapoartele băncii fără să țină stare proprie. Ca și în <code>BankingImpl</code>, în Ex 2 am adăugat <code>@Autowired</code> pe câmpul <code>private ClientRepository repository;</code>."
         },
         {
-          cue: "2. De ce împarte aceiași clienți (Singleton)",
+          cue: "2. De ce vede aceiași clienți (Singleton)",
           text: "Un avantaj esențial din curs: containerul injectează <strong>aceeași instanță singleton</strong> de <code>MapClientRepository</code> în mai multe servicii (<code>BankingImpl</code> și <code>BankReportServiceImpl</code>), așa că rapoartele văd imediat clienții adăugați."
+        },
+        {
+          cue: "3. Ce fac metodele cu Stream-uri de pe ecran",
+          text: "<code>getNumberOfBankClients()</code> returnează numărul de clienți; <code>getAccountsNumber()</code> aplatizează conturile cu <code>flatMap</code>; <code>getBankCreditSum()</code> filtrează doar <code>CheckingAccount</code> cu sold negativ (<code>b &lt; 0</code>) și le însumează; iar <code>getClientsByCity()</code> grupează clienții cu <code>Collectors.groupingBy(Client::getCity)</code>."
         }
       ],
       prevNote: "Față de Ex 1: am adăugat @Autowired pe repository și am scos autowire=\"byType\" din XML.",
@@ -2732,6 +2752,10 @@ public class MapClientRepository implements ClientRepository {
         {
           cue: "2. Scope-urile unui Bean",
           text: "<code>@Scope(SCOPE_SINGLETON)</code> este valoarea implicită: o singură instanță per <code>ApplicationContext</code>. Celelalte scope-uri din curs sunt <code>prototype</code> (instanță nouă la fiecare cerere — „oricând ai folosi <code>new</code>”) și cele web: <code>request</code> și <code>session</code>."
+        },
+        {
+          cue: "3. Ce se strică dacă ștergi @Service",
+          text: "Fără XML și fără <code>@Service</code>, <code>@ComponentScan</code> nu ar mai crea bean-ul <code>MapClientRepository</code>, iar <code>BankingImpl</code> și <code>BankReportServiceImpl</code> ar pica la pornire cu <code>NoSuchBeanDefinitionException</code>."
         }
       ],
       prevNote: "Față de Ex 2: am mutat declararea din <bean id=\"clientRepository\"> în XML direct pe clasă cu @Service și @Scope.",
@@ -2767,6 +2791,10 @@ public class BankingImpl implements Banking {
         {
           cue: "2. Cum e găsit și folosit acum",
           text: "La pornire, <code>@ComponentScan(\"com.luxoft.bankapp\")</code> de pe <code>BankApplication</code> găsește clasa, o înregistrează ca bean singleton și injectează automat <code>MapClientRepository</code>. În <code>BankApplication</code> îl luăm acum tipizat cu <code>context.getBean(Banking.class)</code>."
+        },
+        {
+          cue: "3. Ce se întâmplă dacă ștergi @Service sau @ComponentScan",
+          text: "Spring nu ar mai înregistra <code>BankingImpl</code> în container, iar apelul <code>context.getBean(Banking.class)</code> ar arunca <code>NoSuchBeanDefinitionException</code>."
         }
       ],
       prevNote: "Față de Ex 2: adăugat @Service și @Scope(SCOPE_SINGLETON) ca să nu mai depindă de application-context.xml.",
@@ -2801,6 +2829,10 @@ public class BankReportServiceImpl implements BankReportService {
         {
           cue: "2. Acces type-safe în BankApplication",
           text: "În <code>bankReportsDemo()</code> din <code>BankApplication</code> nu îl mai cerem după string-ul <code>\"bankReport\"</code>, ci după interfață: <code>context.getBean(BankReportService.class)</code> — verificare la compilare!"
+        },
+        {
+          cue: "3. Legătura cu MapClientRepository",
+          text: "Deși am șters XML-ul, <code>@Autowired</code> de pe câmpul <code>repository</code> continuă să primească aceeași instanță singleton de <code>MapClientRepository</code>, acum adnotată și ea cu <code>@Service</code>."
         }
       ],
       prevNote: "Față de Ex 2: adăugat @Service pe clasă și eliminat <bean id=\"bankReport\"> din XML.",
@@ -2851,6 +2883,10 @@ public class BankReportServiceImpl implements BankReportService {
         {
           cue: "2. Starters & Uber-JAR",
           text: "<code>spring-boot-starter</code> aduce nucleul Spring, auto-configurarea, Logback și suportul YAML. Plugin-ul <code>spring-boot-maven-plugin</code> împachetează totul într-un <strong>Uber-JAR</strong> executabil cu <code>Main-Class</code> configurat automat."
+        },
+        {
+          cue: "3. Ce face spring-boot-devtools & starter-test",
+          text: "<code>spring-boot-devtools</code> oferă restart rapid în dezvoltare și proprietăți implicite pentru dev, iar <code>spring-boot-starter-test</code> aduce JUnit 5, Mockito și <code>@SpringBootTest</code> pentru testele <code>BankApplicationTests1..4</code>."
         }
       ],
       prevNote: "În Ex 1–3 configuram manual spring-context în pom.xml; în Ex 4 folosim starterele Spring Boot.",
@@ -2885,6 +2921,10 @@ public class BankApplication {
         {
           cue: "2. Simplificarea metodei main() & @Conditional",
           text: "Întreaga pornire e o singură linie: <code>SpringApplication.run(BankApplication.class, args)</code>. În spate, auto-configurarea folosește adnotări precum <code>@ConditionalOnMissingBean</code> (creează bean-ul implicit doar dacă nu există unul definit de noi) și <code>@ConditionalOnProperty</code>."
+        },
+        {
+          cue: "3. De ce stă în pachetul rădăcină com.luxoft.bankapp",
+          text: "<code>@ComponentScan</code> implicit scanează pachetul clasei cu <code>@SpringBootApplication</code> și toate sub-pachetele lui. Dacă am muta <code>BankApplication</code> într-un subpachet (ex: <code>com.luxoft.bankapp.app</code>), serviciile din <code>service.*</code> nu ar mai fi găsite."
         }
       ],
       prevNote: "Față de Ex 3: au dispărut AnnotationConfigApplicationContext, @ComponentScan explicit și toate metodele @Bean de test.",
@@ -3012,6 +3052,10 @@ public class DemoBankInitializationService implements BankInitializationService 
         {
           cue: "2. Ce activează în Spring Boot",
           text: "Aduce librăriile Spring AOP și AspectJ Weaver în classpath, iar auto-configurarea Spring Boot activează automat suportul pentru <code>@Aspect</code> și crearea Proxy-urilor dinamice."
+        },
+        {
+          cue: "3. Ce se întâmplă dacă ștergi acest starter",
+          text: "Adnotările AspectJ (<code>@Aspect</code>, <code>@Pointcut</code>, <code>@Around</code>) fie nu mai compilează, fie nu mai sunt procesate, iar <code>AuditService</code> nu mai primește niciun eveniment la operațiunile bancare."
         }
       ],
       prevNote: "Față de Ex 4: am adăugat doar dependența spring-boot-starter-aop.",
@@ -3048,7 +3092,11 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         },
         {
           cue: "2. Cum o interceptează Spring AOP (Dynamic Proxy)",
-          text: "Fiind țintită de <code>AuditAspect</code>, Spring învelește bean-ul într-un <strong>Dynamic Proxy</strong> (JDK Dynamic Proxy pe interfața <code>BankingOperationsService</code>, sau CGLIB). Apelurile externe trec prin Proxy și declanșează auditul; un apel intern <code>this.deposit(...)</code> ar ocoli Proxy-ul."
+          text: "Fiind țintită de <code>AuditAspect</code>, Spring învelește bean-ul într-un <strong>Dynamic Proxy</strong> (JDK Dynamic Proxy pe interfața <code>BankingOperationsService</code>, sau CGLIB). Când testul apelează <code>withdraw(...)</code>, apelează Proxy-ul care declanșează aspectul."
+        },
+        {
+          cue: "3. Capcana self-invocation",
+          text: "Dacă o metodă din <code>BankingOperationsServiceImpl</code> ar apela <code>this.deposit(...)</code> intern, apelul ar merge direct pe obiectul țintă, ar ocoli Proxy-ul și <code>AuditAspect</code> nu s-ar mai executa."
         }
       ],
       prevNote: "Adăugat ca serviciu nou @Service în Ex 5 Task 1.",
@@ -3155,6 +3203,10 @@ public class WithdrawEvent extends AccountEvent {
         {
           cue: "2. De ce s-a șters WithdrawState.java",
           text: "În Task 2 foloseam un enum separat <code>WithdrawState</code>. În Task 3 l-am șters și l-am mutat ca <code>WithdrawEvent.State</code> (<code>TRYING</code>, <code>SUCCESSFUL</code>, <code>FAILED</code>) direct în evenimentul publicat către <code>ApplicationContext</code>."
+        },
+        {
+          cue: "3. Cum le folosește Task 4 (SpEL)",
+          text: "<code>DepositEvent</code> și <code>WithdrawEvent</code> expun getter-ul <code>getAmount()</code>, pe care expresia SpEL <code>#event.amount</code> din <code>AuditService</code> îl citește automat ca să decidă dacă evenimentul trece de pragul de audit."
         }
       ],
       prevNote: "Creat în Ex 5 Task 3 în locul enum-ului separat WithdrawState.java din Task 2.",
@@ -3242,6 +3294,10 @@ public class EventConditionFilter {
         {
           cue: "2. Cum îl referențiază SpEL",
           text: "În <code>AuditService</code>, expresia <code>@eventConditionFilter.depositLimit</code> folosește simbolul <code>@</code> ca să ceară containerului Spring bean-ul cu acest nume (camelCase) și să-i citească limita."
+        },
+        {
+          cue: "3. Ce se întâmplă dacă ștergi @Component sau @Value",
+          text: "Fără <code>@Component</code>, SpEL ar arunca o eroare la evaluare pentru că nu ar găsi bean-ul <code>@eventConditionFilter</code>; iar fără proprietățile din YAML, fallback-ul <code>:0</code> ar audita absolut orice sumă."
         }
       ],
       prevNote: "Creat în Ex 5 Task 4 pentru filtrarea declarativă a evenimentelor de audit.",
@@ -3274,7 +3330,11 @@ audit.amount:
         },
         {
           cue: "2. Efectul în aplicație și în teste",
-          text: "Valorile sunt injectate în <code>EventConditionFilter</code> și evaluate de SpEL în <code>@EventListener</code>. Tranzacțiile >= 99 (ex: 100 în <code>BankApplicationTests4</code>) sunt auditate, iar dacă ridicăm pragul la 150, nu se mai înregistrează."
+          text: "Valorile sunt injectate în <code>EventConditionFilter</code> și evaluate de SpEL în <code>@EventListener</code>. Tranzacțiile >= 99 (ex: 100 în <code>BankApplicationTests4</code>) sunt auditate, iar cele mai mici sunt ignorate."
+        },
+        {
+          cue: "3. Exemplu concret de modificare (Task 4)",
+          text: "Dacă schimbăm <code>deposit: 150</code> în YAML, o depunere de <code>100</code> face condiția <code>100 >= 150</code> să fie <code>false</code> și evenimentul nu se mai adaugă în <code>AuditService.events</code>."
         }
       ],
       prevNote: "Față de Ex 4: am adăugat secțiunea audit.amount (deposit și withdrawal = 99).",
