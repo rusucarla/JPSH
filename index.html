@@ -1268,7 +1268,7 @@
       </div>
       <div class="header-actions">
         <div class="score-pill" id="globalScorePill" title="Scor total în modul Grilă">
-          <span id="globalScoreText">0 / 26</span>
+          <span id="globalScoreText">0 / 30</span>
         </div>
         <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Schimbă tema Light/Dark">
           <span id="themeIcon"></span>
@@ -1277,8 +1277,8 @@
       </div>
     </div>
     <nav class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="quiz" role="tab" aria-selected="true">Grilă (26)</button>
-      <button class="tab-btn" data-tab="speeches" role="tab" aria-selected="false">Discursuri (23)</button>
+      <button class="tab-btn active" data-tab="quiz" role="tab" aria-selected="true">Grilă (30)</button>
+      <button class="tab-btn" data-tab="speeches" role="tab" aria-selected="false">Discursuri (31)</button>
       <button class="tab-btn" data-tab="sim" role="tab" aria-selected="false">Simulare (5)</button>
       <button class="tab-btn" data-tab="cheat" role="tab" aria-selected="false">Cheat-Sheet</button>
     </nav>
@@ -1315,7 +1315,7 @@
       <ul class="rec-list">
         <li><strong>#1 Recomandat:</strong> <code>application-context.xml</code> pe <code>ex2-annotation-dependencies</code> — doar 16 linii, 0 capcane, acoperă tot ce i-a întrebat pe colegi (bean-uri, <code>@Autowired</code>, <code>byType</code> vs <code>byName</code>).</li>
         <li><strong>#2 Alternativă foarte bună:</strong> <code>test-clients.xml</code> (Ex 1 / Ex 2) — exact ce a prezentat colegul pe 24 nov; acoperă constructor vs setter, <code>value</code> vs <code>ref</code>, colecții și <code>PropertySourcesPlaceholderConfigurer</code>.</li>
-        <li><strong>Evită ca tab activ:</strong> <code>BankApplicationTask1Tests.java</code> (are <code>try/catch { // ignore }</code> prin Reflection).</li>
+        <li><strong>Când îți cere să rulezi testele:</strong> apasă filtrul <strong>Teste (8)</strong> de mai jos — ai explicația pas cu pas + „de ce” pe linii reale pentru toate testele (<code>mvnw test</code> sau Run din IntelliJ) din Ex 1–5.</li>
       </ul>
     </div>
 
@@ -2409,17 +2409,153 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
       ],
       speech: "Spring AOP creează un Proxy Dinamic — JDK Proxy sau CGLIB — în jurul bean-ului. Apelurile din exterior trec prin Proxy și declanșează aspectul, dar un apel intern cu this.deposit() ocolește Proxy-ul și nu mai face audit.",
       screen: "ex5-aop-events -> BankingOperationsServiceImpl.java și AuditAspect.java."
+    },
+    {
+      id: 27,
+      cat: "tests",
+      catLabel: "Teste (Ex 1–5)",
+      branch: "ex1 / ex2 / ex3 vs ex4 / ex5",
+      priority: "hot",
+      priorityLabel: "Întrebare de test",
+      file: "src/test/java/BankApplicationTask1Tests.java",
+      lang: "java",
+      hlLines: [1, 3],
+      code:
+`@SpringJUnitConfig(locations = "classpath:application-context.xml")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class BankApplicationTask1Tests { ... }`,
+      question: "De ce au testele din Ex 1–3 @DirtiesContext(AFTER_EACH_TEST_METHOD), iar testele din Ex 4–5 (BankApplicationTests1–4) NU îl au?",
+      options: [
+        "@DirtiesContext este obligatoriu doar pentru XML; Spring Boot șterge singur datele din HashMap după fiecare @Test.",
+        "Spring TestContext cache-uiește ApplicationContext-ul: în Ex 1–3 MapClientRepository e Singleton mutabil și testele verifică valori fixe (0, 2 clienți), deci fără reset s-ar contamina; în Ex 4 testele sunt read-only, iar în Ex 5 aserțiunile sunt relative (+ amount, + 1/+2).",
+        "În Ex 4–5 fiecare @Test rulează automat pe un port random cu o bază H2 separată.",
+        "Nu este nicio diferență; @DirtiesContext doar afișează loguri mai scurte în Maven."
+      ],
+      correct: 1,
+      explainPoints: [
+        "<strong>Spring TestContext Caching:</strong> Implicit Spring refolosește același <code>ApplicationContext</code> între teste ca să nu pornească containerul de zeci de ori.",
+        "<strong>De ce trebuie în Ex 1–3:</strong> <code>MapClientRepository</code> e Singleton cu stare în memorie și testele au valori fixe (<code>balance == 0</code>, <code>clients == 2</code>). <code>@DirtiesContext</code> distruge și recreează contextul după fiecare metodă (mai lent, dar izolat).",
+        "<strong>De ce lipsește în Ex 4–5:</strong> <code>Tests1–2</code> doar citesc date, iar <code>Tests3–4</code> verifică diferențe relative (<code>balance + amount</code>, <code>countOfEvents + 1/+2</code>)."
+      ],
+      speech: "Spring cache-uiește ApplicationContext-ul între teste pentru viteză. În Ex 1–3 bean-urile sunt singleton-uri cu stare mutabilă și aserțiuni fixe, deci @DirtiesContext îl recreează după fiecare metodă pentru izolare; în Ex 4–5 testele sunt read-only sau relative, deci refolosirea contextului e sigură.",
+      screen: "BankApplicationTask1Tests.java (L17–L19) vs BankApplicationTests3.java / Tests4.java."
+    },
+    {
+      id: 28,
+      cat: "tests",
+      catLabel: "Teste (Ex 1–5)",
+      branch: "ex1 / ex2 / ex3",
+      priority: "trap",
+      priorityLabel: "Capcană Singleton",
+      file: "src/test/java/BankApplicationTask3Tests.java",
+      lang: "java",
+      hlLines: [4, 5],
+      code:
+`@Test
+public void client1Configuration() {
+    assertNotNull(client1, "client1 bean should be configured");
+    assertSame(savingAccount1, client1.getAccount(SavingAccount.class));
+    assertSame(checkingAccount1, client1.getAccount(CheckingAccount.class));
+}`,
+      question: "Ce dovedește assertSame (L113) în plus față de assertEquals și ce s-ar întâmpla dacă bean-ul savingAccount1 ar avea scope=\"prototype\"?",
+      options: [
+        "assertSame compară doar clasele celor două obiecte; cu prototype testul ar trece la fel.",
+        "assertSame verifică identitatea de referință (==, exact același obiect în heap): dovedește DI + Singleton. Cu scope=\"prototype\", client1 și testul ar primi instanțe diferite și assertSame ar pica.",
+        "assertSame apelează metoda equals() suprascrisă în SavingAccount.",
+        "assertSame verifică doar dacă ambele referințe sunt nenule."
+      ],
+      correct: 1,
+      explainPoints: [
+        "<strong><code>assertSame</code> vs <code>assertEquals</code>:</strong> <code>assertSame</code> verifică <code>==</code> (aceeași adresă în memorie), nu doar egalitatea logică prin <code>equals()</code>.",
+        "<strong>Ce demonstrează:</strong> Bean-ul <code>savingAccount1</code> injectat în <code>client1</code> este exact același Singleton injectat prin <code>@Autowired</code> în clasa de test.",
+        "<strong>Dacă pui <code>prototype</code>:</strong> Spring ar crea o instanță nouă pentru <code>client1</code> și alta pentru test, deci <code>assertSame</code> ar eșua imediat."
+      ],
+      speech: "assertSame verifică egalitatea de referință (==), nu equals(). Așa dovedește că contul injectat în client1 este exact aceeași instanță Singleton injectată și în test; cu scope prototype s-ar crea două instanțe distincte și testul ar pica.",
+      screen: "ex1 / ex2 / ex3 -> BankApplicationTask3Tests.java (L108–L118)."
+    },
+    {
+      id: 29,
+      cat: "tests",
+      catLabel: "Teste (Ex 1–5)",
+      branch: "ex4-spring-boot / ex5-aop-events",
+      priority: "med",
+      priorityLabel: "Reflection în Teste",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests2.java",
+      lang: "java",
+      hlLines: [5, 6, 7],
+      code:
+`@Test
+public void initializationServiceBeanAnnotation5() {
+    String actualFileName = null;
+    try {
+        Field field = DemoBankInitializationService.class.getDeclaredField("fileName");
+        field.setAccessible(true);
+        actualFileName = (String) field.get(initializationService);
+    } catch (Exception e) { ... }
+    assertEquals("demo.feed", actualFileName);
+}`,
+      question: "De ce folosesc BankApplicationTests1–2 Java Reflection (getDeclaredField, setAccessible(true), getAnnotation) și de ce pot citi adnotările la runtime?",
+      options: [
+        "Sunt teste white-box de verificare structurală: controlează că ai pus @Autowired/@Profile/@Value fără să schimbe vizibilitatea private; getAnnotation merge pentru că adnotările au RetentionPolicy.RUNTIME.",
+        "Java Reflection este singurul mod prin care JUnit 5 poate rula metode @Test.",
+        "setAccessible(true) transformă definitiv câmpul din private în public în bytecode.",
+        "Adnotările Spring sunt șterse la compilare, dar Spring Boot le ghicește după numele variabilei."
+      ],
+      correct: 0,
+      explainPoints: [
+        "<strong>Test white-box:</strong> Profesorul nu verifică doar rezultatul final, ci și că ai configurat dependențele prin Spring (<code>@Autowired</code>, <code>@Profile(\"dev\")</code>, <code>@Value</code>).",
+        "<strong><code>setAccessible(true)</code>:</strong> Ocolește modificatorul <code>private</code> al câmpului <code>fileName</code> (fără să ceară getter) — exact mecanismul folosit de Spring la field injection.",
+        "<strong>De ce merge la runtime:</strong> Adnotările <code>@Autowired</code>, <code>@Profile</code> și <code>@Value</code> au <code>@Retention(RetentionPolicy.RUNTIME)</code>, deci rămân disponibile în JVM prin Reflection."
+      ],
+      speech: "Testele din Ex 4 folosesc Reflection pentru verificare structurală: controlează că ai folosit @Autowired, @Profile(\"dev\") și @Value chiar și pe câmpuri private (cu setAccessible(true)). Asta funcționează la runtime deoarece aceste adnotări au RetentionPolicy.RUNTIME.",
+      screen: "ex4-spring-boot / ex5-aop-events -> BankApplicationTests1.java și Tests2.java (L183–L233)."
+    },
+    {
+      id: 30,
+      cat: "tests",
+      catLabel: "Teste (Ex 1–5)",
+      branch: "ex5-aop-events",
+      priority: "hot",
+      priorityLabel: "Capcană AOP Tests",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests4.java",
+      lang: "java",
+      hlLines: [5, 7, 8],
+      code:
+`double amount = balance + overdraft + 1000;
+int countOfEvents = auditService.getEvents().size();
+
+assertThrows(NotEnoughFundsException.class,
+        () -> bankingOperationsService.withdraw(account, amount));
+
+assertEquals(auditService.getEvents().size(), countOfEvents + 2);`,
+      question: "De ce verifică withdrawFromClient3 atât assertThrows(NotEnoughFundsException.class, ...) cât și countOfEvents + 2, și ce pică dacă uiți throw e; în AuditAspect?",
+      options: [
+        "La orice excepție Spring Events publică automat de două ori același obiect; throw e; nu influențează testul.",
+        "@Around publică 1 event înainte de proceed() și 1 event FAILED în catch (+2). Dacă uiți throw e;, aspectul înghite excepția și assertThrows pică!",
+        "countOfEvents + 2 vine de la apelarea metodei withdraw de două ori de către JUnit.",
+        "assertThrows previne aspectul să mai intre în blocul catch."
+      ],
+      correct: 1,
+      explainPoints: [
+        "<strong>De ce +2 evenimente:</strong> Advice-ul <code>@Around</code> (<code>logWithdrawal</code>) publică un <code>WithdrawEvent</code> înainte de <code>proceed()</code> și încă un <code>WithdrawEvent</code> cu starea <code>FAILED</code> în blocul <code>catch</code>.",
+        "<strong>Rolul <code>throw e;</code>:</strong> Dacă aspectul nu re-aruncă excepția după auditarea eșecului, apelantul nu mai vede <code>NotEnoughFundsException</code> și <code>assertThrows</code> (L119) pică.",
+        "<strong>Legătura cu SpEL (Task 4):</strong> Suma <code>amount</code> e peste <code>audit.amount.withdrawal: 99</code> din <code>application.yml</code>; dacă ai ridica pragul peste <code>amount</code>, L122 ar pica."
+      ],
+      speech: "Advice-ul @Around publică un eveniment înainte de proceed() și încă unul cu starea FAILED în catch, deci +2 în AuditService. Dacă uiți throw e; în catch, excepția este înghițită și assertThrows(NotEnoughFundsException.class) pică.",
+      screen: "ex5-aop-events -> BankApplicationTests4.java (L104–L123) și AuditAspect.java (L43–L69)."
     }
   ];
 
   const CATEGORIES = [
-    { id: "all", label: "Toate (26)" },
+    { id: "all", label: "Toate (30)" },
     { id: "hot", label: "Întrebate colegilor (7)" },
     { id: "ex1", label: "Ex 1: XML (4)" },
     { id: "ex2", label: "Ex 2 & DI (3)" },
     { id: "ex3", label: "Ex 3: Java Config (3)" },
     { id: "ex4", label: "Ex 4: Spring Boot (3)" },
     { id: "ex5", label: "Ex 5: AOP & Events (6)" },
+    { id: "tests", label: "Teste (4)" },
     { id: "saved", label: "Salvate / Greșite" }
   ];
 
@@ -2474,7 +2610,17 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     "Self-invocation": "Apel intern de forma this.metoda() în interiorul aceleiași clase; ocolește Proxy-ul Spring AOP și nu declanșează aspectul.",
     "ApplicationEvent": "Clasa de bază pentru evenimente în Spring, publicate decuplat prin applicationContext.publishEvent(...).",
     "@EventListener": "Adnotare (din Spring 4+) pe o metodă a unui bean ca să asculte automat evenimentele publicate, opțional cu filtru SpEL.",
-    "SpEL": "Spring Expression Language (ex: #event.amount >= @eventConditionFilter.depositLimit), unde # referă parametrul și @ referă un bean din container."
+    "SpEL": "Spring Expression Language (ex: #event.amount >= @eventConditionFilter.depositLimit), unde # referă parametrul și @ referă un bean din container.",
+    "@SpringJUnitConfig": "Adnotare compozită (Spring Test + JUnit 5) care încarcă ApplicationContext-ul din XML (locations=...) sau clase @Configuration fără Spring Boot.",
+    "@SpringBootTest": "Pornește întregul ApplicationContext Spring Boot (inclusiv auto-configurarea, @ComponentScan și application.yml) pentru teste de integrare.",
+    "@DirtiesContext": "Marchează contextul Spring drept murdar (ex: AFTER_EACH_TEST_METHOD), forțând recrearea containerului pentru a izola testele cu stare mutabilă.",
+    "Spring TestContext Caching": "Optimizare Spring Test: clasele de test cu aceeași configurație de context refolosesc același ApplicationContext și aceleași bean-uri Singleton.",
+    "@TestInstance(PER_CLASS)": "Setare JUnit 5 care creează o singură instanță a clasei de test pentru toate metodele @Test (implicit este PER_METHOD).",
+    "@BeforeEach": "Metodă JUnit 5 executată automat înaintea fiecărei metode @Test din clasă pentru pregătirea stării inițiale.",
+    "assertSame vs assertEquals": "assertSame(a, b) verifică identitatea de referință (a == b, același obiect în heap); assertEquals(a, b) verifică egalitatea logică prin equals().",
+    "assertThrows": "Aserțiune JUnit 5 care verifică că blocul lambda executat aruncă exact excepția așteptată; pică dacă excepția este înghițită.",
+    "Integration vs Unit Test": "Un unit test izolează o singură clasă cu new/mock-uri fără Spring; un test cu @SpringJUnitConfig / @SpringBootTest pornește containerul real și testează integrarea.",
+    "RetentionPolicy.RUNTIME": "Politică Java ce păstrează adnotarea în bytecode și în JVM la rulare, permițând citirea ei prin Reflection (getAnnotation)."
   };
 
   const SPEECHES = [
@@ -3682,17 +3828,589 @@ audit.amount:
         { lines: "L1–L2 & L8–L18", q: "De ce au rămas profilele dev/prod și feed.filename din Ex 4?", a: "Pe <code>dev</code> se încarcă clienții din <code>demo.feed</code> (inclusiv Jonny Bravo folosit în <code>BankApplicationTests4.@BeforeEach</code>) peste care rulăm operațiunile de audit." }
       ],
       termKeys: ["YAML multi-profil", "@Profile", "@Value", "SpEL"]
+    },
+
+    // ======================== TESTE (EX 1 - EX 5) ========================
+    {
+      id: "test-task1",
+      ex: "ex1",
+      extraEx: ["ex2"],
+      isTest: true,
+      exLabel: "Teste Ex 1–2",
+      status: "Identic în Ex 1 și Ex 2",
+      recommended: false,
+      recLabel: "Test Ex 1–2",
+      branch: "ex1-xml-configuration / ex2-annotation-dependencies",
+      slides: "Core-IoC1 P48–49 & Core-IoC2",
+      file: "src/test/java/BankApplicationTask1Tests.java",
+      lang: "java",
+      hlLines: [2, 3, 4, 15, 16],
+      code:
+`// Extrase din BankApplicationTask1Tests.java (L17-L56, L115-L125)
+@SpringJUnitConfig(locations = "classpath:application-context.xml")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class BankApplicationTask1Tests {
+    @Autowired private ApplicationContext applicationContext;
+    @Autowired private Banking banking;
+    @Autowired private ClientRepository repository;
+
+    @BeforeEach
+    public void init() {
+        try {
+            BankApplication.class.getMethod("initialize", ApplicationContext.class)
+                    .invoke(null, applicationContext);
+        } catch (Exception e) { // ignore }
+    }
+
+    @Test
+    public void repositoryBeanConfiguration() {
+        assertNotNull(repository, "repository bean should be configured");
+        assertTrue((repository instanceof MapClientRepository), ...);
+    }
+
+    @Test
+    public void workWithExistingClientsTest() {
+        BankApplication.workWithExistingClients(banking);
+        assertEquals(4000, banking.getClient(CLIENT_NAMES[0]).getActiveAccount().getBalance());
+        assertEquals(-500, banking.getClient(CLIENT_NAMES[1]).getActiveAccount().getBalance());
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Rol și de ce e Test de Integrare",
+          text: "<code>@SpringJUnitConfig</code> pornește un <code>ApplicationContext</code> real din <code>application-context.xml</code> și injectează prin <code>@Autowired</code> bean-urile <code>banking</code> și <code>repository</code> direct în test. Nu e unit test cu mock-uri, ci test de integrare pe containerul Spring."
+        },
+        {
+          cue: "2. De ce @DirtiesContext(AFTER_EACH_TEST_METHOD)",
+          text: "Implicit Spring TestContext <strong>cache-uiește</strong> containerul între teste pentru viteză. Aici însă <code>MapClientRepository</code> este Singleton cu date mutabile în memorie, iar testele verifică valori fixe (<code>balance == 0</code>, <code>2</code> clienți) — deci fără <code>@DirtiesContext</code>, <code>bankingServiceDemoTest</code> ar lăsa clientul 3 în container și ar strica testele următoare."
+        },
+        {
+          cue: "3. De ce Reflection cu try/catch în @BeforeEach init()",
+          text: "În scheletul inițial al laboratorului, <code>BankApplication.initialize</code> nu primea încă <code>ApplicationContext</code>. Autorul a folosit <code>getMethod(\"initialize\", ApplicationContext.class).invoke(...)</code> ca testul să <strong>compileze</strong> chiar înainte de rezolvarea Task 1 — deși în producție un <code>catch (Exception e) { // ignore }</code> este un anti-pattern (înghite erorile)."
+        },
+        {
+          cue: "4. Ce verifică concret testele",
+          text: "Injectează prin interfețe (<code>Banking</code>, <code>ClientRepository</code>) și verifică prin <code>instanceof</code> implementările (<code>BankingImpl</code>, <code>MapClientRepository</code>), apoi validează clienții inițiali (sold <code>0</code> pe checking) și rezultatul operațiunilor din <code>workWithExistingClients</code> (<code>4000</code> / <code>-500</code>)."
+        }
+      ],
+      prevNote: "Ex 1 este baza; în Ex 2 fișierul rămâne 100% neschimbat — de ce: trecerea de la XML autowire=\"byType\" la @Autowired este un refactor intern de DI, iar testele de comportament nu trebuie să se rupă când schimbi doar mecanismul de legare.",
+      nextNote: "În Ex 3 se modifică o singură linie (L17): @SpringJUnitConfig(locations = ...) devine @SpringJUnitConfig(BankApplication.class), pentru că fișierele XML sunt șterse.",
+      ifAsked: [
+        { lines: "L17", q: "Ce face @SpringJUnitConfig(locations = ...) și de ce e test de integrare?", a: "Este o adnotare compozită (Spring + JUnit 5) care încarcă <code>ClassPathXmlApplicationContext</code> pentru test. Spre deosebire de un unit test izolat cu <code>new</code>/mock-uri, aici verificăm împreună configurarea XML, DI-ul și logica claselor." },
+        { lines: "L18–L19", q: "De ce avem @DirtiesContext(AFTER_EACH_TEST_METHOD) și ce face @TestInstance(PER_CLASS)?", a: "<code>@DirtiesContext</code> forțează recrearea <code>ApplicationContext</code>-ului după fiecare test ca <code>MapClientRepository</code> (Singleton) să nu păstreze clienți/solduri modificate de testul anterior (compromis: izolare vs viteză). <code>@TestInstance(PER_CLASS)</code> face JUnit 5 să creeze o singură instanță a clasei de test în loc de una per metodă." },
+        { lines: "L24–L31 & L48–L55", q: "De ce injectăm prin interfețe (Banking, ClientRepository) și apoi verificăm instanceof?", a: "Programăm decuplat după interfață (DI), iar <code>assertTrue(repository instanceof MapClientRepository)</code> confirmă că în XML/configurare a fost înregistrată exact implementarea cerută de specificație." },
+        { lines: "L33–L43", q: "Ce caută blocul cu getMethod(\"initialize\") și try/catch { // ignore } în @BeforeEach?", a: "Așa au fost scrise testele de trainer ca să compileze și pe scheletul gol al studentului (când <code>initialize</code> nu avea încă semnătura cu <code>ApplicationContext</code>). Dezavantaj: un <code>catch</code> gol ascunde eventuale excepții — de aceea există comentariul <code>TODO</code> pe L41–L42." },
+        { lines: "L89 vs L120–L123", q: "De ce client1CheckingAccount cere balance = 0, dar workWithExistingClientsTest cere 4000?", a: "<code>init()</code> din <code>@BeforeEach</code> doar populează conturile inițiale (Jonny: 1000 saving, 0 checking). Abia <code>workWithExistingClients(banking)</code> îi depune 5000 și îi transferă 1000 lui Adam -> <code>4000</code> la Jonny și <code>-500</code> la Adam." }
+      ],
+      termKeys: ["@SpringJUnitConfig", "Integration vs Unit Test", "@DirtiesContext", "Spring TestContext Caching", "@TestInstance(PER_CLASS)", "@BeforeEach", "@Autowired", "Reflection", "Singleton", "ApplicationContext"]
+    },
+    {
+      id: "test-task2",
+      ex: "ex1",
+      extraEx: ["ex2"],
+      isTest: true,
+      exLabel: "Teste Ex 1–2",
+      status: "Identic în Ex 1 și Ex 2",
+      recommended: false,
+      recLabel: "Test Ex 1–2",
+      branch: "ex1-xml-configuration / ex2-annotation-dependencies",
+      slides: "Core-IoC1 P25 & Core-IoC2",
+      file: "src/test/java/BankApplicationTask2Tests.java",
+      lang: "java",
+      hlLines: [2, 8, 12, 17, 23],
+      code:
+`// Extrase din BankApplicationTask2Tests.java (L21-L51, L67-L71, L131-L160)
+@SpringJUnitConfig(locations = "classpath:application-context.xml")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class BankApplicationTask2Tests {
+    @Autowired private ApplicationContext applicationContext;
+    @Autowired private Banking banking;
+    @Autowired private ClientRepository repository;
+    @Autowired private BankReportService bankReport;
+
+    @Test
+    public void bankReportConfiguration() {
+        assertNotNull(bankReport, "bankReport bean should be configured");
+        assertTrue((bankReport instanceof BankReportServiceImpl), ...);
+    }
+
+    @Test
+    public void getNumberOfBankClients() {
+        assertEquals(2, bankReport.getNumberOfBankClients());
+        BankApplication.workWithExistingClients(banking);
+        BankApplication.bankingServiceDemo(banking);
+        assertEquals(3, bankReport.getNumberOfBankClients());
+    }
+
+    @Test
+    public void getBankCreditSum() {
+        assertEquals(0, bankReport.getBankCreditSum());
+        BankApplication.workWithExistingClients(banking);
+        BankApplication.bankingServiceDemo(banking);
+        assertEquals(-500, bankReport.getBankCreditSum());
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Ce adaugă față de Task 1",
+          text: "Injectează în plus <code>@Autowired private BankReportService bankReport</code> (Task 2) și adaugă 4 teste: <code>bankReportConfiguration</code> plus cele 3 rapoarte agregate (număr clienți, număr conturi, suma creditelor)."
+        },
+        {
+          cue: "2. Dovada abstractă a Singleton-ului partajat",
+          text: "Observă pe L133–L138: testul apelează <code>bankingServiceDemo(banking)</code>, apoi întreabă <code>bankReport.getNumberOfBankClients()</code> — și primește <code>3</code> fără să paseze nimic către <code>bankReport</code>. Asta demonstrează că <code>BankingImpl</code> și <code>BankReportServiceImpl</code> împart <strong>exact aceeași instanță Singleton</strong> de <code>MapClientRepository</code>."
+        },
+        {
+          cue: "3. Logica numerelor și de ce rămâne @DirtiesContext",
+          text: "Înainte de operațiuni sunt 2 clienți, 3 conturi și credit 0; după operațiuni sunt 3 clienți (+Anna), 5 conturi (+2 ale Annei) și credit <code>-500</code> (Adam pe overdraft). Fără <code>@DirtiesContext</code>, testul 2 ar găsi deja 3 clienți și 5 conturi în repository."
+        }
+      ],
+      prevNote: "Extinde testele din Task 1 pentru a verifica bean-ul BankReportService (Task 2). Este 100% identic între Ex 1 (XML) și Ex 2 (@Autowired).",
+      nextNote: "În Ex 3 se schimbă doar L21 din locations = \"classpath:application-context.xml\" în @SpringJUnitConfig(BankApplication.class).",
+      ifAsked: [
+        { lines: "L37–L38 & L131–L139", q: "Cum știe bankReport că s-a adăugat al 3-lea client dacă am modificat doar prin banking?", a: "Ambele servicii primesc prin DI același bean <code>clientRepository</code> (scope implicit <code>singleton</code>). Dacă <code>clientRepository</code> ar fi fost <code>prototype</code>, <code>bankReport</code> ar fi rămas cu 2 clienți și testul ar fi picat!" },
+        { lines: "L151–L160", q: "De ce getBankCreditSum() este 0 înainte și -500 după workWithExistingClients?", a: "Inițial niciun cont nu e pe minus (<code>0</code>). În <code>workWithExistingClients</code>, Adam retrage 1500 din 0 și apoi primește 1000 transfer de la Jonny -> rămâne cu <code>-500</code> pe <code>CheckingAccount</code> (singurul cont negativ)." },
+        { lines: "L40–L47", q: "De ce aici apare e.printStackTrace() în catch față de Task1Tests?", a: "Tot un wrapper didactic de Reflection pentru <code>BankApplication.initialize(ApplicationContext)</code>; aici printează stacktrace-ul dacă lipsește metoda, dar tot ignoră excepția (anti-pattern evitat în cod real)." },
+        { lines: "L67–L71", q: "Ce excepție aruncă Spring dacă uiți @Service pe BankReportServiceImpl sau <bean id=\"bankReport\">?", a: "Containerul nu pornește contextul de test și aruncă <code>UnsatisfiedDependencyException</code> / <code>NoSuchBeanDefinitionException</code> la injectarea câmpului <code>bankReport</code> (L37–L38)." }
+      ],
+      termKeys: ["@SpringJUnitConfig", "@DirtiesContext", "Singleton", "Prototype", "@Autowired", "NoSuchBeanDefinitionException", "@BeforeEach", "Bean"]
+    },
+    {
+      id: "test-task3",
+      ex: "ex1",
+      extraEx: ["ex2"],
+      isTest: true,
+      exLabel: "Teste Ex 1–2",
+      status: "Identic în Ex 1 și Ex 2",
+      recommended: false,
+      recLabel: "Test Ex 1–2",
+      branch: "ex1-xml-configuration / ex2-annotation-dependencies",
+      slides: "Core-IoC1 P41, P55 & Core-IoC2 P10",
+      file: "src/test/java/BankApplicationTask3Tests.java",
+      lang: "java",
+      hlLines: [2, 6, 8, 12, 16, 17],
+      code:
+`// Extrase din BankApplicationTask3Tests.java (L19-L57, L72-L81, L108-L135)
+@SpringJUnitConfig(locations = {"classpath:application-context.xml", "classpath:test-clients.xml"})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class BankApplicationTask3Tests {
+    @Autowired @Qualifier("savingAccount1") private SavingAccount savingAccount1;
+    @Autowired @Qualifier("checkingAccount1") private CheckingAccount checkingAccount1;
+    @Autowired @Qualifier("client1") private Client client1;
+    @Autowired @Qualifier("checkingAccount2") private CheckingAccount checkingAccount2;
+    @Autowired @Qualifier("client2") private Client client2;
+    @Autowired private PropertySourcesPlaceholderConfigurer placeholderConfigurer;
+
+    @Test
+    public void placeholderConfigurerBeanConfiguration() {
+        PropertySource<?> localProperties = placeholderConfigurer.getAppliedPropertySources().get("localProperties");
+        assertNotNull(localProperties, "You should configure PropertySourcesPlaceholderConfigurer bean");
+        assertEquals("Jonny Bravo", localProperties.getProperty("client1"));
+        assertEquals("Adam Budzinski", localProperties.getProperty("client2"));
+    }
+
+    @Test
+    public void client1Configuration() {
+        assertSame(savingAccount1, client1.getAccount(SavingAccount.class));
+        assertSame(checkingAccount1, client1.getAccount(CheckingAccount.class));
+        assertEquals(Client.Gender.MALE, client1.getGender());
+        assertEquals("Moscow", client1.getCity());
+    }
+}`,
+      steps: [
+        {
+          cue: "1. De ce încarcă două fișiere XML pe L19",
+          text: "Spre deosebire de Task 1 și Task 2, aici pasăm ambele XML-uri (<code>application-context.xml</code> + <code>test-clients.xml</code>) pentru ca <code>context.containsBean(\"client1\")</code> să fie <code>true</code> în <code>BankApplication.initialize</code> și să încarce clienții declarați ca bean-uri."
+        },
+        {
+          cue: "2. De ce @Autowired + @Qualifier pe L35–L53",
+          text: "Avem două bean-uri de tip <code>Client</code> (<code>client1</code>, <code>client2</code>) și două de tip <code>CheckingAccount</code> (<code>checkingAccount1</code>, <code>checkingAccount2</code>). Fără <code>@Qualifier(\"...\")</code>, <code>@Autowired</code> (care merge implicit <code>byType</code>) ar arunca <code>NoUniqueBeanDefinitionException</code>."
+        },
+        {
+          cue: "3. Ce demonstrează placeholderConfigurerBeanConfiguration (L72–L81)",
+          text: "Verifică faptul că numele clienților (<code>\"Jonny Bravo\"</code>, <code>\"Adam Budzinski\"</code>) provin din <code>clients.properties</code> prin bean-ul <code>PropertySourcesPlaceholderConfigurer</code>, nu sunt hardcodate."
+        },
+        {
+          cue: "4. assertSame (L113–L114, L131) — test de Singleton + DI",
+          text: "<code>assertSame</code> verifică <code>==</code> (aceeași referință în heap): demonstrează că <code>client1</code> a primit prin DI exact același obiect <code>savingAccount1</code> singleton creat de Spring."
+        }
+      ],
+      prevNote: "Extinde Task 1 cu verificarea bean-urilor de clienți, conturi și clients.properties (Task 3). Este identic între Ex 1 și Ex 2.",
+      nextNote: "În Ex 3 se schimbă L19 la @SpringJUnitConfig(BankApplication.class) — iar testul L76 obligă BankApplication.java din Ex 3 să păstreze @Bean static PropertySourcesPlaceholderConfigurer!",
+      ifAsked: [
+        { lines: "L19", q: "De ce Task 3 încarcă test-clients.xml în plus față de Task 1–2, și ce se întâmplă în initialize()?", a: "În <code>BankApplication.initialize(context)</code> (L108) există <code>if (context.containsBean(\"client1\"))</code>. Când e încărcat <code>test-clients.xml</code>, ia clienții din container; în Task 1–2 lipsește <code>client1</code>, așa că intră pe ramura <code>else</code> și îi creează cu <code>new</code>." },
+        { lines: "L35–L53", q: "De ce este obligatoriu @Qualifier lângă @Autowired aici?", a: "Pentru că există mai mulți candidați în container de tipul <code>Client</code> și <code>CheckingAccount</code>. <code>@Autowired</code> caută <code>byType</code> și fără <code>@Qualifier</code> ar arunca <code>NoUniqueBeanDefinitionException</code>." },
+        { lines: "L72–L81", q: "Ce verifică getAppliedPropertySources().get(\"localProperties\")?", a: "Confirmă că ai definit bean-ul <code>PropertySourcesPlaceholderConfigurer</code> și că a încărcat efectiv cheile <code>client1</code> și <code>client2</code> din <code>clients.properties</code> (nu doar că ai pus manual string-ul în XML)." },
+        { lines: "L113–L114 & L131", q: "De ce folosește assertSame în loc de assertEquals și ce pică la prototype?", a: "<code>assertSame</code> verifică egalitatea de referință (<code>==</code>, aceeași instanță în memorie). Dacă <code>savingAccount1</code> ar avea <code>scope=\"prototype\"</code>, <code>client1</code> și câmpul din test ar primi două instanțe diferite și <code>assertSame</code> ar eșua." },
+        { lines: "L116–L117 & L133–L134", q: "De ce verifică city (Moscow/Kiev) și Gender abia în Task 3?", a: "Pentru că în Task 1 (<code>else</code>) orașul nu era setat în Java; în Task 3 el demonstrează setter injection prin <code>&lt;property name=\"city\" value=\"...\"/&gt;</code> pe bean-urile XML." }
+      ],
+      termKeys: ["@SpringJUnitConfig", "@Autowired", "@Qualifier", "NoUniqueBeanDefinitionException", "PropertySourcesPlaceholderConfigurer", "assertSame vs assertEquals", "Singleton", "Prototype", "@DirtiesContext"]
+    },
+    {
+      id: "test-ex3-migration",
+      ex: "ex3",
+      isTest: true,
+      exLabel: "Teste Ex 3",
+      status: "Modificat (1 linie / fișier)",
+      recommended: false,
+      recLabel: "Test Ex 3 (Diff)",
+      branch: "ex3-java-configuration",
+      slides: "Core-IoC2 P14, P30–34",
+      file: "src/test/java/BankApplicationTask1..3Tests.java",
+      lang: "java",
+      hlLines: [2, 5, 8],
+      code:
+`// BankApplicationTask1Tests.java (L17):
+-@SpringJUnitConfig(locations = "classpath:application-context.xml")
++@SpringJUnitConfig(BankApplication.class)
+
+// BankApplicationTask2Tests.java (L21):
+-@SpringJUnitConfig(locations = "classpath:application-context.xml")
++@SpringJUnitConfig(BankApplication.class)
+
+// BankApplicationTask3Tests.java (L19):
+-@SpringJUnitConfig(locations = {"classpath:application-context.xml", "classpath:test-clients.xml"})
++@SpringJUnitConfig(BankApplication.class)`,
+      steps: [
+        {
+          cue: "1. De ce s-a schimbat O SINGURĂ linie în toate 3 testele",
+          text: "În Ex 3 ștergem complet <code>application-context.xml</code> și <code>test-clients.xml</code>. De aceea schimbăm <code>@SpringJUnitConfig</code> din <code>locations = \"classpath:...xml\"</code> în <code>BankApplication.class</code> — acum Spring Test pornește un context Java-based (<code>AnnotationConfigApplicationContext</code>) din clasa <code>@Configuration</code>."
+        },
+        {
+          cue: "2. De ce toate 3 testele pasează aceeași clasă BankApplication.class",
+          text: "În Ex 1–2 exista o separare între <code>application-context.xml</code> (Task 1–2) și <code>test-clients.xml</code> (Task 3). În Ex 3, <code>@ComponentScan</code> scanează serviciile și metodele <code>@Bean</code> din <code>BankApplication</code> declară clienții, așa că toate 3 testele folosesc același punct de configurare."
+        },
+        {
+          cue: "3. Capcana ascunsă impusă de Task3Tests L76",
+          text: "Chiar dacă în Ex 3 citim proprietățile cu <code>@PropertySource</code> + <code>Environment</code>, <code>BankApplicationTask3Tests</code> injectează încă <code>PropertySourcesPlaceholderConfigurer</code> pe L56 și îi verifică <code>localProperties</code> (L76) — acesta e motivul real pentru care <code>BankApplication.java</code> păstrează acel <code>@Bean static</code>."
+        }
+      ],
+      prevNote: "Față de Ex 2: singura diferență în src/test este înlocuirea path-urilor XML cu BankApplication.class (L17 / L21 / L19). Toate metodele @Test rămân neschimbate!",
+      nextNote: "În Ex 4 (Spring Boot), cele 3 fișiere Task1–3Tests dispar și sunt înlocuite de BankApplicationTests1 și Tests2 cu @SpringBootTest.",
+      ifAsked: [
+        { lines: "Task1 L17 / Task2 L21 / Task3 L19", q: "Ce tip de container pornește @SpringJUnitConfig(BankApplication.class) și ce s-ar întâmpla dacă lăsai locations XML?", a: "Pornește configurare Java (<code>AnnotationConfigApplicationContext</code> + <code>@ComponentScan</code>). Cu <code>locations</code> XML, testele ar arunca <code>FileNotFoundException</code> pentru că fișierele XML au fost șterse în Ex 3." },
+        { lines: "Task3 L19", q: "De ce Task3Tests nu mai are două surse de configurare în Ex 3?", a: "Pentru că ambele XML-uri au fost unificate în clasa <code>@Configuration BankApplication</code> (care conține și <code>@ComponentScan</code> pentru servicii și <code>@Bean</code>-uri pentru <code>client1</code>, <code>client2</code> și conturi)." },
+        { lines: "Task3 L72–L81", q: "De ce metoda @Bean PropertySourcesPlaceholderConfigurer din BankApplication.java trebuie musai să fie static?", a: "Este un <code>BeanFactoryPostProcessor</code> ce rulează înaintea creării bean-urilor obișnuite; metoda <code>static</code> îi permite lui Spring s-o apeleze fără să instanțieze mai întâi clasa <code>@Configuration</code> (evită probleme de cicluri cu <code>@Autowired</code>)." },
+        { lines: "Task1–3 @DirtiesContext", q: "De ce @DirtiesContext(AFTER_EACH_TEST_METHOD) rămâne necesar și în Ex 3?", a: "Pentru că <code>MapClientRepository</code> tot Singleton mutabil în memorie este, iar aserțiunile din Task 1–3 continuă să compare valori absolute fixe." }
+      ],
+      termKeys: ["@SpringJUnitConfig", "@Configuration", "@ComponentScan", "@Bean", "@PropertySource", "PropertySourcesPlaceholderConfigurer", "Environment", "@DirtiesContext"]
+    },
+    {
+      id: "test-boot1",
+      ex: "ex4",
+      extraEx: ["ex5"],
+      isTest: true,
+      exLabel: "Teste Ex 4–5",
+      status: "Nou în Ex 4 (Identic în Ex 5)",
+      recommended: false,
+      recLabel: "Test Ex 4–5",
+      branch: "ex4-spring-boot / ex5-aop-events",
+      slides: "SpringBoot P15, P25–33",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests1.java",
+      lang: "java",
+      hlLines: [1, 16, 28, 36],
+      code:
+`// Extrase din BankApplicationTests1.java (L26-L77, L111-L162)
+@SpringBootTest(classes = BankApplication.class)
+public class BankApplicationTests1 {
+    @Autowired private Banking banking;
+    @Autowired private Storage storage;
+    @Autowired private BankFeedService bankFeedService;
+    @Autowired private BankInitializationService initializationService;
+
+    @Test
+    public void bankingBeanAnnotation() {
+        Annotation annotation = null;
+        try {
+            annotation = BankingImpl.class.getDeclaredField("storage")
+                    .getAnnotation(Autowired.class);
+        } catch (NoSuchFieldException e) { fail(...); }
+        assertNotNull(annotation, "storage field should contain annotation @Autowired");
+    }
+
+    @Test
+    public void bankFeedServiceConfiguration2() {
+        assertSame(banking, ((BankFeedServiceImpl) bankFeedService).getBanking(),
+                "bankFeedService should use banking bean");
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation1() {
+        String value = null;
+        try {
+            Annotation annotation = DemoBankInitializationService.class.getAnnotation(Profile.class);
+            value = ((Profile) annotation).value()[0];
+        } catch (RuntimeException e) { fail(...); }
+        assertEquals(value, "dev", "Profile annotation should contain value: dev");
+    }
+}`,
+      steps: [
+        {
+          cue: "1. De ce @SpringBootTest și de ce au dispărut @BeforeEach și @DirtiesContext",
+          text: "<code>@SpringBootTest</code> pornește întregul container Spring Boot cu <code>application.yml</code>. Profilul activ <code>dev</code> creează <code>DemoBankInitializationService</code>, al cărui <code>@PostConstruct</code> încarcă automat <code>demo.feed</code> — deci nu mai avem nevoie de <code>@BeforeEach</code>. Iar testele doar <strong>citesc</strong> date (read-only), deci context caching e sigur și rapid fără <code>@DirtiesContext</code>."
+        },
+        {
+          cue: "2. De ce folosește Reflection pe clase și adnotări (L61–L179)",
+          text: "Este un test white-box: nu verifică doar că programul returnează sumele corecte, ci inspectează direct clasele (<code>getDeclaredField(\"storage\")</code>, <code>getConstructor(Banking.class)</code>, <code>getAnnotation(Profile.class)</code>) ca să garanteze că ai folosit <code>@Autowired</code> și <code>@Profile(\"dev\")</code> în loc de <code>new</code>."
+        },
+        {
+          cue: "3. De ce merge citirea adnotărilor la runtime",
+          text: "<code>@Autowired</code> și <code>@Profile</code> au retenția <code>RetentionPolicy.RUNTIME</code>, astfel că rămân în bytecode și JVM le poate inspecta prin Reflection."
+        },
+        {
+          cue: "4. De ce soldurile inițiale sunt acum 4000 și -500 (L213, L236)",
+          text: "În Ex 1–3 checking-ul lui Jonny pornea de la 0; aici fișierul <code>demo.feed</code> încărcat automat la pornire conține direct starea de după tranzacții (<code>4000</code> la Jonny, <code>-500</code> la Adam)."
+        }
+      ],
+      prevNote: "Față de Ex 3: @SpringJUnitConfig e înlocuit de @SpringBootTest; @BeforeEach init() dispare (înlocuit de @PostConstruct + @Profile(\"dev\")); dispare și @DirtiesContext pentru că testele sunt read-only.",
+      nextNote: "BankApplicationTests2 extinde exact acest fișier cu încă 3 teste pentru @Value și câmpul fileName. În Ex 5, Tests1 rămâne 100% neschimbat.",
+      ifAsked: [
+        { lines: "L26", q: "Ce aduce @SpringBootTest față de @SpringJUnitConfig și de ce nu mai are @DirtiesContext?", a: "Activează auto-configurarea Spring Boot și încarcă <code>application.yml</code> (profilul <code>dev</code>). Nu are <code>@DirtiesContext</code> deoarece niciun test nu modifică starea din <code>ClientStorage</code>, așa că Spring poate refolosi contextul cached rapid." },
+        { lines: "L68–L76 & L125–L133", q: "De ce pe BankingImpl verifică getDeclaredField(\"storage\"), iar pe BankFeedServiceImpl verifică getConstructor(Banking.class)?", a: "Reflectă cele două stiluri de injecție din laborator: Field Injection pe <code>BankingImpl</code>/<code>BankReportServiceImpl</code> și Constructor Injection pe <code>BankFeedServiceImpl</code> (constructorul garantează că dependința nu poate fi null). (Detaliu fin: pe L130–L133 autorul a lăsat copy-paste mesajul cu <code>BankingImpl</code>/<code>storage</code>, dar codul verifică <code>BankFeedServiceImpl</code>!)" },
+        { lines: "L114", q: "Ce demonstrează assertSame(banking, ((BankFeedServiceImpl) bankFeedService).getBanking())?", a: "Confirmă <code>==</code> pe referințe: <code>BankFeedServiceImpl</code> a primit prin constructor exact același bean Singleton <code>banking</code> pe care l-a injectat Spring și în clasa de test." },
+        { lines: "L151–L159", q: "Cum citește testul @Profile(\"dev\") și ce pică dacă pui prod în application.yml?", a: "Îl citește prin Reflection (datorită <code>RetentionPolicy.RUNTIME</code>). Dacă în <code>application.yml</code> schimbi <code>spring.profiles.active</code> în <code>prod</code>, bean-ul <code>DemoBankInitializationService</code> nu se mai creează și testul crapă chiar la pornire cu <code>NoSuchBeanDefinitionException</code> pentru <code>BankInitializationService</code> (L44–L45)." },
+        { lines: "L213 & L236", q: "De ce client1CheckingAccount verifică 4000 și client2CheckingAccount -500 fără să apelăm workWithExistingClients?", a: "Pentru că <code>@PostConstruct</code> din <code>DemoBankInitializationService</code> a parsat automat la boot-are fișierul <code>demo.feed</code> unde sunt salvate deja acele balanțe." }
+      ],
+      termKeys: ["@SpringBootTest", "Spring TestContext Caching", "Integration vs Unit Test", "Reflection", "RetentionPolicy.RUNTIME", "@Autowired", "@Profile", "@PostConstruct", "assertSame vs assertEquals", "Singleton"]
+    },
+    {
+      id: "test-boot2",
+      ex: "ex4",
+      extraEx: ["ex5"],
+      isTest: true,
+      exLabel: "Teste Ex 4–5",
+      status: "Nou în Ex 4 (Identic în Ex 5)",
+      recommended: false,
+      recLabel: "Test Ex 4–5",
+      branch: "ex4-spring-boot / ex5-aop-events",
+      slides: "SpringBoot P25–33",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests2.java",
+      lang: "java",
+      hlLines: [2, 10, 17, 25, 26, 29],
+      code:
+`// Extrase din BankApplicationTests2.java (L28-L48, L183-L233 — testele noi Task 2)
+@SpringBootTest(classes = BankApplication.class)
+public class BankApplicationTests2 {
+    @Autowired private BankInitializationService initializationService;
+
+    @Test
+    public void initializationServiceBeanAnnotation3() {
+        try { DemoBankInitializationService.class.getDeclaredField("fileName"); }
+        catch (NoSuchFieldException e) { fail(...); }
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation4() {
+        Annotation annotation = null;
+        try {
+            annotation = DemoBankInitializationService.class.getDeclaredField("fileName")
+                    .getAnnotation(Value.class);
+        } catch (NoSuchFieldException e) { fail(...); }
+        assertNotNull(annotation, "fileName field should contain annotation @Value");
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation5() {
+        String actualFileName = null;
+        try {
+            Field field = DemoBankInitializationService.class.getDeclaredField("fileName");
+            field.setAccessible(true);
+            actualFileName = (String) field.get(initializationService);
+        } catch (Exception e) { fail(...); }
+        assertEquals("demo.feed", actualFileName);
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Ce adaugă față de BankApplicationTests1",
+          text: "Conține aceleași verificări ca <code>Tests1</code> plus <strong>3 teste progresive</strong> pentru Task 2 (L183–L233): (1) există câmpul <code>fileName</code>, (2) are adnotarea <code>@Value</code>, (3) valoarea efectiv injectată în bean este <code>\"demo.feed\"</code>."
+        },
+        {
+          cue: "2. De ce field.setAccessible(true) pe L222",
+          text: "Câmpul <code>fileName</code> din <code>DemoBankInitializationService</code> este <code>private</code> și nu are getter. Fără <code>setAccessible(true)</code>, JVM ar arunca <code>IllegalAccessException</code>; exact aceeași tehnică de Reflection o folosește și Spring în spate pentru <code>@Value</code> și <code>@Autowired</code>."
+        },
+        {
+          cue: "3. Lanțul complet testat de L231 și Context Caching",
+          text: "<code>assertEquals(\"demo.feed\", actualFileName)</code> confirmă întregul lanț: profilul activ <code>dev</code> din <code>application.yml</code> -> proprietatea <code>feed.filename</code> -> <code>@Value</code> injectat înaintea lui <code>@PostConstruct</code>. Împreună cu <code>Tests1</code>, Maven pornește containerul Spring Boot o singură dată (TestContext Caching)."
+        }
+      ],
+      prevNote: "Extinde BankApplicationTests1 (L1–L181 și L235–L293 sunt identice) cu 3 teste de Reflection pentru @Value și externalizarea feed.filename în application.yml (Task 2).",
+      nextNote: "În Ex 5 rămâne 100% neschimbat; se adaugă BankApplicationTests3 (BankingOperationsService) și Tests4 (AOP + Events + SpEL).",
+      ifAsked: [
+        { lines: "L183–L212", q: "De ce sunt 3 teste separate (Annotation3, 4, 5) în loc de unul singur?", a: "Diagnostic granular în stil TDD/grading: dacă pică <code>Annotation3</code> știi că ai denumit greșit câmpul <code>fileName</code>; dacă pică <code>4</code> lipsește <code>@Value</code>; dacă pică <code>5</code> lipsește sau e greșită cheia din <code>application.yml</code>." },
+        { lines: "L221–L224", q: "De ce apelează field.setAccessible(true) și ce se întâmplă fără el?", a: "Pentru că <code>fileName</code> este <code>private</code>. Fără <code>setAccessible(true)</code>, <code>field.get(initializationService)</code> aruncă <code>IllegalAccessException</code>." },
+        { lines: "L231", q: "Ce se întâmplă la L231 dacă în application.yml lipsește feed.filename sau e alt profil activ?", a: "Dacă profilul activ e altul fără <code>feed.filename</code> definit și nu ai valoare implicită, Spring aruncă <code>IllegalArgumentException</code> (nu poate rezolva placeholder-ul <code>\${feed.filename}</code>) încă de la pornirea contextului." },
+        { lines: "L28 (cu Tests1)", q: "Câte instanțe de ApplicationContext pornește Maven când rulează Tests1 și Tests2 împreună?", a: "Una singură, prin <strong>Spring TestContext Caching</strong>: ambele au aceeași adnotare <code>@SpringBootTest(classes = BankApplication.class)</code> și niciuna nu are <code>@DirtiesContext</code>." }
+      ],
+      termKeys: ["@SpringBootTest", "Spring TestContext Caching", "Reflection", "RetentionPolicy.RUNTIME", "@Value", "@Profile", "YAML multi-profil", "@PostConstruct"]
+    },
+    {
+      id: "test-aop3",
+      ex: "ex5",
+      isTest: true,
+      exLabel: "Teste Ex 5",
+      status: "Nou în Ex 5 (Task 1)",
+      recommended: false,
+      recLabel: "Test Ex 5 (Ops)",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC2 (AOP) & SpringBoot",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests3.java",
+      lang: "java",
+      hlLines: [1, 4, 9, 10, 11, 24, 29, 32],
+      code:
+`// Extrase din BankApplicationTests3.java (L16-L45, L69-L80, L95-L113)
+@SpringBootTest(classes = BankApplication.class)
+public class BankApplicationTests3 {
+    @Autowired private Banking banking;
+    @Autowired private BankingOperationsService bankingOperationsService;
+    private Client client;
+
+    @BeforeEach
+    public void init() {
+        client = banking.getClient("Jonny Bravo");
+        client.setDefaultActiveAccountIfNotSet();
+        client.getActiveAccount().setId(999);
+    }
+
+    @Test
+    public void depositToClient1() {
+        Account account = client.getActiveAccount();
+        double balance = account.getBalance();
+        double amount = 100;
+        bankingOperationsService.deposit(client, amount);
+        assertEquals(account.getBalance(), balance + amount);
+    }
+
+    @Test
+    public void withdrawFromClient3() {
+        Account account = client.getActiveAccount();
+        double balance = account.getBalance();
+        double overdraft = (account instanceof CheckingAccount)
+                ? ((CheckingAccount) account).getOverdraft() : 0;
+        double amount = balance + overdraft + 1000;
+        assertThrows(NotEnoughFundsException.class,
+                () -> bankingOperationsService.withdraw(account, amount));
+        assertEquals(account.getBalance(), balance);
+    }
+}`,
+      steps: [
+        {
+          cue: "1. De ce testăm BankingOperationsService în locul metodelor de pe Client/Account",
+          text: "Spring AOP funcționează prin <strong>Dynamic Proxy</strong> și poate intercepta doar bean-uri gestionate de Spring container. Entitățile de domeniu (<code>Client</code>, <code>Account</code>) sunt create cu <code>new</code>, așa că în Ex 5 Task 1 am introdus serviciul <code>@Service BankingOperationsServiceImpl</code> ca punct de intrare interceptabil."
+        },
+        {
+          cue: "2. De ce setDefaultActiveAccountIfNotSet() și setId(999) în @BeforeEach",
+          text: "Apelurile cu <code>client</code> ar arunca <code>ActiveAccountNotSet</code> dacă n-ar exista cont activ, iar <code>setId(999)</code> pune un ID determinist citit ulterior de aspectul de audit la publicarea evenimentelor."
+        },
+        {
+          cue: "3. De ce lipsește @DirtiesContext deși testele modifică soldul aceluiași client",
+          text: "Spre deosebire de Ex 1–3, toate aserțiunile de aici sunt <strong>relative</strong> (<code>balance + amount</code>, <code>balance - amount</code>, <code>balance + overdraft + 1000</code>), deci testele trec indiferent în ce ordine rulează — păstrând viteza oferită de TestContext Caching."
+        },
+        {
+          cue: "4. Polimorfism și atomicitatate în withdrawFromClient3 (L95–L113)",
+          text: "Dacă contul activ e <code>CheckingAccount</code> îi adună și <code>overdraft</code> + <code>1000</code> ca să depășească sigur limita, verifică aruncarea <code>NotEnoughFundsException</code> (L109) și confirmă că soldul a rămas neatins (L112)."
+        }
+      ],
+      prevNote: "Nou în Ex 5 (Task 1): validează comportamentul funcțional al noului bean BankingOperationsService (deposit, withdraw, getBalance), pregătind terenul pentru AOP.",
+      nextNote: "BankApplicationTests4 rulează exact aceleași 6 scenarii, dar în loc de solduri verifică evenimentele din AuditService.",
+      ifAsked: [
+        { lines: "L22–L23", q: "De ce testul apelează bankingOperationsService.deposit(...) în loc de client.deposit(...)?", a: "<code>Client</code> este creat cu <code>new</code> (nu e bean Spring), deci AOP nu-l poate intercepta. Prin <code>BankingOperationsService</code> (bean injectat de Spring), testul trece prin <strong>Dynamic Proxy</strong>-ul care aplică <code>AuditAspect</code>." },
+        { lines: "L27–L33", q: "De ce face @BeforeEach setDefaultActiveAccountIfNotSet() și setId(999)?", a: "Previne <code>ActiveAccountNotSet</code> la operațiunile pe <code>Client</code> și setează un <code>accountId = 999</code> clar pe contul activ, pe care <code>AuditAspect.getAccountId(...)</code> îl include în fiecare eveniment." },
+        { lines: "L38–L44 & L72–L79", q: "Toate testele modifică soldul aceluiași Jonny Bravo fără @DirtiesContext — nu se strică între ele?", a: "Nu, pentru că nu compară solduri hardcodate (ex: 4000), ci diferențe relative (<code>balance + 100</code>, <code>balance - 100</code>). Chiar dacă testele se execută în ordine aleatoare pe același context cached, delta rămâne exactă!" },
+        { lines: "L102–L107", q: "De ce există verificarea if (account instanceof CheckingAccount) pe L102?", a: "<code>SavingAccount</code> nu are overdraft, dar <code>CheckingAccount</code> permite retragere până la <code>balance + overdraft</code>. Testul ia dinamic <code>overdraft</code> și mai adaugă <code>1000</code> ca să garanteze depășirea fondurilor." },
+        { lines: "L109–L112", q: "De ce verifică L112 assertEquals(account.getBalance(), balance) după assertThrows?", a: "Ca să se asigure că o retragere eșuată nu a modificat parțial soldul înainte de a arunca <code>NotEnoughFundsException</code>." }
+      ],
+      termKeys: ["@SpringBootTest", "Spring TestContext Caching", "@BeforeEach", "assertThrows", "@Service", "@Aspect / AOP", "Dynamic Proxy", "Singleton"]
+    },
+    {
+      id: "test-aop4",
+      ex: "ex5",
+      isTest: true,
+      exLabel: "Teste Ex 5",
+      status: "Nou în Ex 5 (Tasks 2–4)",
+      recommended: false,
+      recLabel: "Test Ex 5 (AOP)",
+      branch: "ex5-aop-events",
+      slides: "Core-IoC2 (AOP & Events)",
+      file: "src/test/java/com/luxoft/bankapp/BankApplicationTests4.java",
+      lang: "java",
+      hlLines: [1, 4, 5, 11, 13, 19, 24, 27],
+      code:
+`// Extrase din BankApplicationTests4.java (L19-L51, L77-L88, L103-L124)
+@SpringBootTest(classes = BankApplication.class)
+public class BankApplicationTests4 {
+    @Autowired private Banking banking;
+    @Autowired private BankingOperationsService bankingOperationsService;
+    @Autowired private AuditService auditService;
+    private Client client;
+
+    @Test
+    public void depositToClient1() {
+        double amount = 100;
+        int countOfEvents = auditService.getEvents().size();
+        bankingOperationsService.deposit(client, amount);
+        assertEquals(auditService.getEvents().size(), countOfEvents + 1);
+    }
+
+    @Test
+    public void withdrawFromClient1() {
+        double amount = 100;
+        int countOfEvents = auditService.getEvents().size();
+        bankingOperationsService.withdraw(client, amount);
+        assertEquals(auditService.getEvents().size(), countOfEvents + 2);
+    }
+
+    @Test
+    public void withdrawFromClient3() {
+        ...
+        int countOfEvents = auditService.getEvents().size();
+        assertThrows(NotEnoughFundsException.class,
+                () -> bankingOperationsService.withdraw(account, amount));
+        assertEquals(auditService.getEvents().size(), countOfEvents + 2);
+    }
+}`,
+      steps: [
+        {
+          cue: "1. Ce flux complet (end-to-end) verifică acest test",
+          text: "Validează integrarea dintre Tasks 2, 3 și 4 din Ex 5: apelul pe <code>BankingOperationsService</code> trece prin <code>AuditAspect</code> (AOP), publică <code>ApplicationEvent</code>, iar <code>AuditService</code> (<code>@EventListener</code> + filtrul SpEL cu pragurile din <code>application.yml</code>) le adaugă în lista <code>events</code>."
+        },
+        {
+          cue: "2. De ce +1 la deposit/getBalance și +2 la withdraw",
+          text: "<code>logDeposit</code> și <code>logBalance</code> folosesc <code>@Before</code>, deci publică <strong>1 eveniment</strong> înainte de execuție. <code>logWithdrawal</code> folosește <code>@Around</code>: publică <strong>1 eveniment</strong> înainte de <code>proceed()</code> și încă <strong>1 eveniment</strong> după (cu starea <code>SUCCESSFUL</code> sau <code>FAILED</code>) = <strong>+2 evenimente</strong>."
+        },
+        {
+          cue: "3. De ce folosește delta countOfEvents în loc de size() == 1",
+          text: "<code>AuditService</code> este Singleton într-un <code>ApplicationContext</code> refolosit prin TestContext Caching — deci lista <code>events</code> conține deja evenimentele acumulate de metodele anterioare și chiar de rularea lui <code>BankApplicationTests3</code>!"
+        },
+        {
+          cue: "4. Capcana completă testată în withdrawFromClient3 (L119–L122)",
+          text: "Verifică simultan 3 lucruri: aspectul prinde excepția și loghează <code>FAILED</code> (<code>+2</code>), apoi re-aruncă obligatoriu <code>throw e;</code> ca să treacă <code>assertThrows</code> (L119), iar <code>amount</code> depășește pragul SpEL din YAML."
+        }
+      ],
+      prevNote: "Oglindește exact cele 6 scenarii din BankApplicationTests3, dar în loc de solduri testează efectul transversal (AOP + Events + SpEL) prin AuditService.getEvents().size().",
+      nextNote: "Ultimul test al aplicației (Ex 5 / main) — combină Proxy AOP, EventListener și configurarea YAML prin SpEL.",
+      ifAsked: [
+        { lines: "L46–L50 & L82–L86", q: "De ce deposit și getBalance adaugă +1 eveniment, iar withdraw adaugă +2?", a: "<code>deposit</code> și <code>getBalance</code> sunt interceptate de advice-uri <code>@Before</code> (1 eveniment). <code>withdraw</code> e interceptat de <code>@Around</code>, care emite 1 eveniment înainte de <code>proceed()</code> și al 2-lea după (<code>SUCCESSFUL</code> sau <code>FAILED</code>)." },
+        { lines: "L46", q: "De ce salvăm countOfEvents înainte de apel în loc să scriem assertEquals(1, auditService.getEvents().size())?", a: "Pentru că nu avem <code>@DirtiesContext</code> și <code>AuditService</code> e Singleton pe toată durata suitei — când rulează <code>Tests4</code>, în <code>events</code> sunt deja adunate evenimente din celelalte teste și din <code>Tests3</code>." },
+        { lines: "L119–L122", q: "Ce pică în withdrawFromClient3 dacă uiți throw e; în catch-ul din AuditAspect? Dar dacă uiți proceed()?", a: "Fără <code>throw e;</code>, aspectul înghite excepția și pică <code>assertThrows</code> (L119). Fără <code>thisJoinPoint.proceed()</code>, metoda reală nu rulează deloc -> nici nu aruncă excepția (pică L119), și în plus L84 nu ar scădea banii în <code>Tests3</code>." },
+        { lines: "L44, L57, L80, L94", q: "Toate testele folosesc amount = 100. Ce se întâmplă dacă modifici audit.amount.deposit: 99 în 150 în application.yml?", a: "Condiția SpEL <code>#event.amount &gt;= @eventConditionFilter.depositLimit</code> devine <code>100 &gt;= 150</code> (<code>false</code>), <code>AuditService.auditOperation</code> nu mai e apelată și testele de deposit pică așteptând <code>countOfEvents + 1</code>." },
+        { lines: "L28–L29 & L48 vs L61", q: "De ce injectează clasa concretă AuditService în loc de interfața Audit, și cum prinde @Pointcut atât deposit(client) cât și deposit(account)?", a: "Interfața <code>Audit</code> nu expune metoda <code>getEvents()</code>, așa că testul are nevoie direct de <code>AuditService</code> (posibil pentru că nu e proxied de aspect, sau cu CGLIB proxy). Iar pointcut-ul <code>execution(* ...*.deposit(..))</code> folosește wildcard <code>(..)</code>, deci potrivește orice listă de parametri." }
+      ],
+      termKeys: ["@SpringBootTest", "Spring TestContext Caching", "@Aspect / AOP", "Dynamic Proxy", "@Before vs @Around", "ProceedingJoinPoint", "@Pointcut", "ApplicationEvent", "@EventListener", "SpEL", "assertThrows", "Singleton"]
     }
   ];
 
   const SPEECH_CATS = [
     { id: "rec", label: "Recomandate (2)" },
-    { id: "ex1", label: "Ex 1: XML (5)" },
-    { id: "ex2", label: "Ex 2: Adnotări (3)" },
-    { id: "ex3", label: "Ex 3: Java Config (4)" },
-    { id: "ex4", label: "Ex 4: Spring Boot (4)" },
-    { id: "ex5", label: "Ex 5: AOP & Events (7)" },
-    { id: "all", label: "Toate (23)" }
+    { id: "tests", label: "Teste (8)" },
+    { id: "ex1", label: "Ex 1: XML (8)" },
+    { id: "ex2", label: "Ex 2: Adnotări (6)" },
+    { id: "ex3", label: "Ex 3: Java Config (5)" },
+    { id: "ex4", label: "Ex 4: Spring Boot (6)" },
+    { id: "ex5", label: "Ex 5: AOP & Events (11)" },
+    { id: "all", label: "Toate (31)" }
   ];
 
   const STORAGE_KEY = "jpsh_spring_quiz_v1";
@@ -4182,7 +4900,8 @@ audit.amount:
   function getFilteredSpeeches() {
     if (state.speechCat === "all") return SPEECHES;
     if (state.speechCat === "rec") return SPEECHES.filter(s => s.recommended);
-    return SPEECHES.filter(s => s.ex === state.speechCat);
+    if (state.speechCat === "tests") return SPEECHES.filter(s => s.isTest);
+    return SPEECHES.filter(s => s.ex === state.speechCat || (s.extraEx && s.extraEx.includes(state.speechCat)));
   }
 
   function renderSpeechFilters() {
@@ -4213,7 +4932,7 @@ audit.amount:
     if (state.speechIdx < 0) state.speechIdx = list.length - 1;
 
     jump.innerHTML = list.map((item, i) => {
-      const prefix = item.recommended ? "[*] " : "";
+      const prefix = item.recommended ? "[*] " : (item.isTest ? "[TEST] " : "");
       const shortFile = item.file.split("/").pop();
       return `<option value="${i}" ${i === state.speechIdx ? "selected" : ""}>${prefix}${escHtml(item.exLabel)} — ${escHtml(shortFile)} (${escHtml(item.status)})</option>`;
     }).join("");
