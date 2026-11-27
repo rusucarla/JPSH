@@ -1344,8 +1344,55 @@
     <div id="simStage"></div>
   </section>
 
-  <!-- TAB 3: CHEAT SHEET -->
+  <!-- TAB 4: CHEAT SHEET -->
   <section id="view-cheat" class="view">
+    <div class="cs-card">
+      <h2>Overview Ex 1–5 — Ce face fiecare exercițiu și de ce</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin:0 0 12px;">
+        Firul roșu: aceeași aplicație bancară (<code>BankApplication</code> — clienți, conturi <code>SavingAccount</code> / <code>CheckingAccount</code>, operațiuni și rapoarte) migrată progresiv în 5 etape, de la configurare XML până la Spring Boot + AOP + Events.
+      </p>
+      <div class="kv-list">
+        <div class="kv-item">
+          <div class="kv-title">Ex 1 — Configurare XML (<code>ex1-xml-configuration</code>)</div>
+          <div class="kv-cols cols-2">
+            <div class="kv-field"><span class="kv-k">Ce face</span>Cedăm crearea obiectelor containerului <code>ClassPathXmlApplicationContext</code>: în <code>application-context.xml</code> declarăm <code>clientRepository</code>, <code>banking</code> și <code>bankReport</code> legate cu <code>autowire="byType"</code>; în <code>test-clients.xml</code> declarăm clienții și conturile (<code>&lt;constructor-arg&gt;</code>, <code>&lt;property&gt;</code>, <code>value</code> vs <code>ref</code>, <code>&lt;list&gt;</code>) cu nume din <code>clients.properties</code> via <code>PropertySourcesPlaceholderConfigurer</code>.</div>
+            <div class="kv-field"><span class="kv-k">De ce</span>Eliminăm cuplarea strânsă (<code>new</code> prin cod): putem schimba implementarea unui repository sau datele de test fără recompilare (IoC / DI).</div>
+          </div>
+        </div>
+        <div class="kv-item">
+          <div class="kv-title">Ex 2 — Dependențe prin Adnotări (<code>ex2-annotation-dependencies</code>)</div>
+          <div class="kv-cols cols-2">
+            <div class="kv-field"><span class="kv-k">Ce face</span>Configurare hibridă: bean-urile rămân în <code>application-context.xml</code>, dar scoatem <code>autowire="byType"</code>, adăugăm <code>&lt;context:annotation-config /&gt;</code> (activează <code>AutowiredAnnotationBeanPostProcessor</code>) și punem <code>@Autowired</code> direct pe câmpurile <code>repository</code> din <code>BankingImpl</code> și <code>BankReportServiceImpl</code>. Testele <code>Task1–3Tests</code> rămân 100% identice.</div>
+            <div class="kv-field"><span class="kv-k">De ce</span>În proiecte mari legarea dependențelor în XML devine greu de urmărit; cu <code>@Autowired</code> vezi dependențele direct lângă clasa care le folosește.</div>
+          </div>
+        </div>
+        <div class="kv-item">
+          <div class="kv-title">Ex 3 — Configurare pur Java (<code>ex3-java-configuration</code>)</div>
+          <div class="kv-cols cols-2">
+            <div class="kv-field"><span class="kv-k">Ce face</span>Ștergem complet XML-urile și trecem la <code>AnnotationConfigApplicationContext(BankApplication.class)</code>. <code>BankApplication</code> devine <code>@Configuration</code> + <code>@ComponentScan</code> + <code>@PropertySource</code>; serviciile primesc <code>@Service</code>, iar clienții/conturile devin metode <code>@Bean</code> cu valori din <code>Environment</code>. În teste se schimbă 1 singură linie: <code>@SpringJUnitConfig(BankApplication.class)</code>.</div>
+            <div class="kv-field"><span class="kv-k">De ce</span>Obținem <strong>type-safety la compilare</strong> (fără nume de clase ca string-uri XML care crapă la runtime) și configurare centralizată, curată.</div>
+          </div>
+        </div>
+        <div class="kv-item">
+          <div class="kv-title">Ex 4 — Migrare la Spring Boot (<code>ex4-spring-boot</code>)</div>
+          <div class="kv-cols cols-2">
+            <div class="kv-field"><span class="kv-k">Ce face</span>Trecem la <code>spring-boot-starter-parent</code> / <code>spring-boot-starter</code> (Uber-JAR) și <code>@SpringBootApplication</code>. <code>DemoBankInitializationService</code> (<code>@Profile("dev")</code>) citește <code>feed.filename</code> cu <code>@Value</code> din <code>application.yml</code> multi-profil (<code>dev</code>/<code>prod</code>) și încarcă automat <code>demo.feed</code> prin <code>@PostConstruct</code>. Testele trec la <code>@SpringBootTest</code> (<code>Tests1–2</code>) și verifică adnotările prin Reflection.</div>
+            <div class="kv-field"><span class="kv-k">De ce</span>Eliminăm boilerplate-ul prin <strong>auto-configurare</strong>, separăm mediile (<code>dev</code> vs <code>prod</code>) fără să schimbăm cod și externalizăm configurarea în YAML.</div>
+          </div>
+        </div>
+        <div class="kv-item">
+          <div class="kv-title">Ex 5 — AOP, Spring Events &amp; SpEL (<code>ex5-aop-events</code>)</div>
+          <div class="kv-cols cols-2">
+            <div class="kv-field"><span class="kv-k">Ce face</span>Introducem bean-ul <code>BankingOperationsService</code> (interceptabil prin <strong>Dynamic Proxy</strong>), <code>AuditAspect</code> (<code>@Before</code> &rarr; +1 event la <code>deposit</code>/<code>getBalance</code>; <code>@Around</code> &rarr; +2 eventuri la <code>withdraw</code>, inclusiv <code>FAILED</code> + <code>throw e;</code>), <code>AuditService</code> (<code>@EventListener</code>) și filtrare <strong>SpEL</strong> cu pragurile (<code>99</code>) din <code>application.yml</code> via <code>EventConditionFilter</code>. <code>Tests3–4</code> validează soldurile și auditul.</div>
+            <div class="kv-field"><span class="kv-k">De ce</span>Separăm preocupările transversale (audit) de logica de business fără să murdărim metodele bancare, decuplăm prin Events și configurăm pragurile extern fără recompilare.</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:12px;">
+        <strong>Rezumat în 20 de secunde (de spus la început):</strong> „Am pornit în <strong>Ex 1</strong> de la configurare XML cu <code>autowire="byType"</code> și <code>.properties</code>, apoi în <strong>Ex 2</strong> am mutat legarea dependențelor în cod cu <code>@Autowired</code> și <code>&lt;context:annotation-config /&gt;</code>. În <strong>Ex 3</strong> am eliminat XML-ul și am trecut la Java Config (<code>@Configuration</code>, <code>@ComponentScan</code>, <code>@Bean</code>) pentru type-safety. În <strong>Ex 4</strong> am migrat la Spring Boot cu auto-configurare, profile <code>dev</code>/<code>prod</code> în <code>application.yml</code>, <code>@Value</code> și <code>@PostConstruct</code>. Iar în <strong>Ex 5</strong> am adăugat auditare decuplată prin Spring AOP (<code>@Before</code>/<code>@Around</code>), Spring Events (<code>@EventListener</code>) și filtrare SpEL configurabilă din YAML.”
+      </div>
+    </div>
+
     <div class="cs-card">
       <h2>Cum decurge prezentarea (din conversația colegilor)</h2>
       <ul class="cs-list">
